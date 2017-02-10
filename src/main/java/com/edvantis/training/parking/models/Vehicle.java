@@ -5,7 +5,7 @@ package com.edvantis.training.parking.models;
  */
 public class Vehicle {
     private String model;
-    private Owner owner;
+    //private Owner owner;
     private String number;
     private VehicleType carType;
 
@@ -19,14 +19,14 @@ public class Vehicle {
     public void setModel(String model) {
         this.model = model;
     }
-
-    public Owner getOwner() {
-        return owner;
-    }
-
-    public void setOwner(Owner owner) {
-        this.owner = owner;
-    }
+//
+//    public Owner getOwner() {
+//        return owner;
+//    }
+//
+//    public void setOwner(Owner owner) {
+//        this.owner = owner;
+//    }
 
     public String getNumber() {
         return number;

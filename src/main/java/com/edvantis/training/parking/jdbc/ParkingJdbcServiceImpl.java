@@ -10,7 +10,7 @@ import static com.edvantis.training.parking.jdbc.Constants.*;
  */
 public class ParkingJdbcServiceImpl implements ParkingJdbcService {
 
-    private Connection connection = null;
+    private static Connection connection = null;
     private Statement statement = null;
     private ResultSet resultSet = null;
     private PreparedStatement pstmt = null;
@@ -54,7 +54,8 @@ public class ParkingJdbcServiceImpl implements ParkingJdbcService {
         disconnectFromDB();
     }
 
-    private void getConnection(String dbName, String login, String password) {
+    public static Connection getConnection(String dbName, String login, String password) {
+        Connection connection = null;
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
             connection = DriverManager.getConnection(dbName, login, password);
@@ -63,6 +64,7 @@ public class ParkingJdbcServiceImpl implements ParkingJdbcService {
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         }
+        return connection;
     }
 
     private void createDatabase(String dbName) {
@@ -80,10 +82,10 @@ public class ParkingJdbcServiceImpl implements ParkingJdbcService {
         try {
             DatabaseMetaData meta = connection.getMetaData();
             if (!existVehicleTable(meta)) {
-                createVehicleTable(connection);
+                createVehicleTable();
             }
             if (!existOwnerTable(meta)) {
-                createOwnerTable(connection);
+                createOwnerTable();
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -112,12 +114,12 @@ public class ParkingJdbcServiceImpl implements ParkingJdbcService {
         return false;
     }
 
-    private void createVehicleTable(Connection connection) throws SQLException {
+    private void createVehicleTable() throws SQLException {
         pstmt = connection.prepareStatement(CREATE_VEHICLE_TABLE);
         pstmt.executeUpdate();
     }
 
-    private void createOwnerTable(Connection connection) throws SQLException {
+    private void createOwnerTable() throws SQLException {
         pstmt = connection.prepareStatement(CREATE_OWNER_TABLE);
         pstmt.executeUpdate();
     }

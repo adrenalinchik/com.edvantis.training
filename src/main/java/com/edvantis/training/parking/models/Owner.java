@@ -1,5 +1,7 @@
 package com.edvantis.training.parking.models;
 
+import java.time.LocalDate;
+
 /**
  * Created by taras.fihurnyak on 2/2/2017.
  */
@@ -8,7 +10,7 @@ public class Owner {
     private String firstName;
     private String lastName;
     private Gender gender;
-    private int age;
+    private LocalDate dob;
 
     public Owner() {
     }
@@ -37,11 +39,11 @@ public class Owner {
         this.gender = gender;
     }
 
-    public int getAge() {
-        return age;
+    public LocalDate getDOB() {
+        return dob;
     }
 
-    public void setAge(int age) {
-        this.age = age;
+    public void setDOB(LocalDate age) {
+        this.dob = age;
     }
 }
