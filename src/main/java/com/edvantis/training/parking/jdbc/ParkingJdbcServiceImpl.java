@@ -1,7 +1,15 @@
 package com.edvantis.training.parking.jdbc;
 
+import com.edvantis.training.parking.models.Garage;
+import com.edvantis.training.parking.models.Owner;
+import com.edvantis.training.parking.models.Vehicle;
+import com.edvantis.training.parking.repository.GarageServiceJdbcRepositoryImp;
+import com.edvantis.training.parking.repository.OwnerServiceJdbcRepositoryImp;
+import com.edvantis.training.parking.repository.VehicleServiceJdbcRepositoryImp;
+import org.apache.log4j.Logger;
+
 import java.sql.*;
-import java.util.concurrent.ThreadLocalRandom;
+import java.util.ArrayList;
 
 import static com.edvantis.training.parking.jdbc.Constants.*;
 
@@ -10,48 +18,51 @@ import static com.edvantis.training.parking.jdbc.Constants.*;
  */
 public class ParkingJdbcServiceImpl implements ParkingJdbcService {
 
-    private static Connection connection = null;
     private Statement statement = null;
     private ResultSet resultSet = null;
     private PreparedStatement pstmt = null;
+    private final static Logger logger = Logger.getLogger(ParkingJdbcServiceImpl.class);
 
     @Override
     public void createDb(String dbName, String login, String password) {
-        getConnection(DATABASE_URL + SSL_CONECTION_FALSE, login, password);
-        createDatabase(dbName);
-        checkTables();
-        disconnectFromDB();
+        Connection connection = getConnection(DATABASE_URL + SSL_CONNECTION_FALSE, login, password);
+        createDatabase(dbName, connection);
+        disconnectFromDB(connection);
     }
 
     @Override
-    public void populateDb(String dbName, String login, String password, String tableName, int recordNumber) {
-        getConnection(DATABASE_URL + dbName + SSL_CONECTION_FALSE, login, password);
-        switch (tableName.toLowerCase()) {
-            case "owner":
-                generateOwners(recordNumber);
-                break;
-            case "vehicle":
-                if (getOwnerTableRowNumber("owner") != 0) {
-                    generateVehicles(recordNumber);
-                } else System.out.println("No owner in table. Generate Owners first!");
-                break;
+    public void populateDb(String dbName, String login, String password, ArrayList<Object> arrayList) {
+        Connection connection = getConnection(DATABASE_URL + dbName + SSL_CONNECTION_FALSE, login, password);
+        if (arrayList.get(0) instanceof Owner) {
+            for (Object i : arrayList) {
+                generateOwners(dbName, login, password, (Owner) i);
+            }
 
+        } else if (arrayList.get(0) instanceof Vehicle) {
+            for (Object i : arrayList) {
+                generateVehicles(dbName, login, password, (Vehicle) i);
+            }
+        } else if (arrayList.get(0) instanceof Garage) {
+            for (Object i : arrayList) {
+                generateGarages(dbName, login, password, (Garage) i);
+            }
         }
-        disconnectFromDB();
+
+        disconnectFromDB(connection);
     }
 
     @Override
     public void clearDb(String dbName, String login, String password, String tableName) {
-        getConnection(DATABASE_URL + dbName + SSL_CONECTION_FALSE, login, password);
-        cleanTable(tableName);
-        disconnectFromDB();
+        Connection connection = getConnection(DATABASE_URL + dbName + SSL_CONNECTION_FALSE, login, password);
+        cleanTable(tableName, connection);
+        disconnectFromDB(connection);
     }
 
     @Override
     public void dropDb(String dbName, String login, String password, String databaseName) {
-        getConnection(DATABASE_URL + dbName + SSL_CONECTION_FALSE, login, password);
-        dropDatabase(databaseName);
-        disconnectFromDB();
+        Connection connection = getConnection(DATABASE_URL + dbName + SSL_CONNECTION_FALSE, login, password);
+        dropDatabase(databaseName, connection);
+        disconnectFromDB(connection);
     }
 
     public static Connection getConnection(String dbName, String login, String password) {
@@ -60,35 +71,60 @@ public class ParkingJdbcServiceImpl implements ParkingJdbcService {
             Class.forName("com.mysql.cj.jdbc.Driver");
             connection = DriverManager.getConnection(dbName, login, password);
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.error(e);
         } catch (ClassNotFoundException e) {
-            e.printStackTrace();
+            logger.error(e);
         }
         return connection;
     }
 
-    private void createDatabase(String dbName) {
+    private void generateVehicles(String dbName, String login, String password, Vehicle vehicle) {
+
+        VehicleServiceJdbcRepositoryImp.getInstance().insert(dbName, login, password, vehicle);
+
+
+    }
+
+    private void generateOwners(String dbName, String login, String password, Owner owner) {
+
+        OwnerServiceJdbcRepositoryImp.getInstance().insert(dbName, login, password, owner);
+
+    }
+
+    private void generateGarages(String dbName, String login, String password, Garage garage) {
+
+        GarageServiceJdbcRepositoryImp.getInstance().insert(dbName, login, password, garage);
+
+    }
+
+    private void createDatabase(String dbName, Connection connection) {
         try {
             statement = connection.createStatement();
             statement.executeUpdate(CREATE_DB + dbName);
             connection.setCatalog(dbName);
-            checkTables();
+            checkTables(connection);
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.error(e);
         }
     }
 
-    private void checkTables() {
+    private void checkTables(Connection connection) {
         try {
             DatabaseMetaData meta = connection.getMetaData();
             if (!existVehicleTable(meta)) {
-                createVehicleTable();
+                createVehicleTable(connection);
             }
             if (!existOwnerTable(meta)) {
-                createOwnerTable();
+                createOwnerTable(connection);
+            }
+            if (!existGarageTable(meta)) {
+                createGarageTable(connection);
+            }
+            if (!existParkingTable(meta)) {
+                createParkingTable(connection);
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.error(e);
         }
     }
 
@@ -97,6 +133,17 @@ public class ParkingJdbcServiceImpl implements ParkingJdbcService {
         while (resultSet.next()) {
             String name = resultSet.getString("TABLE_NAME");
             if (name.equals("vehicle")) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean existGarageTable(DatabaseMetaData meta) throws SQLException {
+        resultSet = meta.getTables(null, null, "GARAGE", null);
+        while (resultSet.next()) {
+            String name = resultSet.getString("TABLE_NAME");
+            if (name.equals("garage")) {
                 return true;
             }
         }
@@ -114,131 +161,65 @@ public class ParkingJdbcServiceImpl implements ParkingJdbcService {
         return false;
     }
 
-    private void createVehicleTable() throws SQLException {
+    private boolean existParkingTable(DatabaseMetaData meta) throws SQLException {
+        resultSet = meta.getTables(null, null, "PARKING", null);
+        while (resultSet.next()) {
+            String name = resultSet.getString("TABLE_NAME");
+            if (name.equals("parking")) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private void createVehicleTable(Connection connection) throws SQLException {
         pstmt = connection.prepareStatement(CREATE_VEHICLE_TABLE);
         pstmt.executeUpdate();
     }
 
-    private void createOwnerTable() throws SQLException {
+    private void createOwnerTable(Connection connection) throws SQLException {
         pstmt = connection.prepareStatement(CREATE_OWNER_TABLE);
         pstmt.executeUpdate();
     }
 
-    private void generateOwners(int rowNumber) {
-        String firstname = "Owner_";
-        String lastname = "OwnerLastname_";
-
-        for (int i = 0; i <= rowNumber; i++) {
-            addOwnerToTable(CREATE_OWNER, firstname + i, lastname + i, "Male", ThreadLocalRandom.current().nextInt(18, 100 + 1));
-            addOwnerToTable(CREATE_OWNER, firstname + "Female_" + i, lastname + "Female_" + i, "Female", ThreadLocalRandom.current().nextInt(18, 100 + 1));
-        }
-
+    private void createGarageTable(Connection connection) throws SQLException {
+        pstmt = connection.prepareStatement(CREATE_GARAGE_TABLE);
+        pstmt.executeUpdate();
     }
 
-    private void generateVehicles(int rowNumber) {
-        String model = "supercar_";
-        for (int i = 0; i <= rowNumber; i++) {
-            addVehicleToTable(CREATE_VEHICLE, "Electro", ThreadLocalRandom.current().nextInt(1, rowNumber + 1), String.valueOf(ThreadLocalRandom.current().nextInt(100000, 999999 + 1)), model + "ELECT");
-            addVehicleToTable(CREATE_VEHICLE, "Diesel", ThreadLocalRandom.current().nextInt(1, rowNumber + 1), String.valueOf(ThreadLocalRandom.current().nextInt(100000, 999999 + 1)), model + "TDT");
-            addVehicleToTable(CREATE_VEHICLE, "GASOLINE", ThreadLocalRandom.current().nextInt(1, rowNumber + 1), String.valueOf(ThreadLocalRandom.current().nextInt(100000, 999999 + 1)), model + "4W");
-            addVehicleToTable(CREATE_VEHICLE, "HIBRID", ThreadLocalRandom.current().nextInt(1, rowNumber + 1), String.valueOf(ThreadLocalRandom.current().nextInt(100000, 999999 + 1)), model + "ECO");
-        }
-
+    private void createParkingTable(Connection connection) throws SQLException {
+        pstmt = connection.prepareStatement(CREATE_PARKING_TABLE);
+        pstmt.executeUpdate();
     }
 
-    private int addOwnerToTable(String query, String firstname, String lastname, String gender, int age) {
-        int id = 0;
-        try {
-            pstmt = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
-            pstmt.setString(1, firstname);
-            pstmt.setString(2, lastname);
-            if (gender.toLowerCase().equals("male")) {
-                pstmt.setInt(3, 1);
-            } else pstmt.setInt(3, 2);
-            pstmt.setInt(4, age);
-            pstmt.executeUpdate();
-            ResultSet generatedKeys = pstmt.getGeneratedKeys();
-            generatedKeys.next();
-            id = generatedKeys.getInt(1);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return id;
-    }
-
-    private int addVehicleToTable(String query, String type, int owner_id, String carNumber, String model) {
-        int id = 0;
-        try {
-            pstmt = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
-            switch (type.toLowerCase()) {
-                case "electro":
-                    pstmt.setInt(1, 1);
-                    break;
-                case "hibrid":
-                    pstmt.setInt(1, 2);
-                    break;
-                case "gasoline":
-                    pstmt.setInt(1, 3);
-                    break;
-                case "diesel":
-                    pstmt.setInt(1, 4);
-                    break;
-            }
-            pstmt.setInt(2, owner_id);
-            pstmt.setString(3, carNumber);
-            pstmt.setString(4, model);
-            pstmt.executeUpdate();
-            ResultSet generatedKeys = pstmt.getGeneratedKeys();
-            generatedKeys.next();
-            id = generatedKeys.getInt(1);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return id;
-    }
-
-    private int getOwnerTableRowNumber(String tableName) {
-        int number = 0;
-        try {
-            pstmt = connection.prepareStatement(GET_MAX_ROW_NUMBER + tableName);
-            ResultSet rs = pstmt.executeQuery();
-            rs.next();
-            number = rs.getInt(1);
-            return number;
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return number;
-    }
-
-    private void cleanTable(String tableName) {
+    private void cleanTable(String tableName, Connection connection) {
         try {
             pstmt = connection.prepareStatement(CLEAN_TABLE + tableName);
             pstmt.executeUpdate();
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.error(e);
         }
 
     }
 
-    private void dropDatabase(String databaseName) {
+    private void dropDatabase(String databaseName, Connection connection) {
         try {
             pstmt = connection.prepareStatement(DROP_DATABASE + databaseName);
             pstmt.executeUpdate();
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.error(e);
         }
 
     }
 
-    private void disconnectFromDB() {
+    private void disconnectFromDB(Connection connection) {
         try {
             if (resultSet != null) resultSet.close();
             if (statement != null) statement.close();
             if (connection != null) connection.close();
             if (pstmt != null) pstmt.close();
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error(e);
         }
     }
 }

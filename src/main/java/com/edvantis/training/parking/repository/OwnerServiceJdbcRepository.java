@@ -1,4 +1,4 @@
-package com.edvantis.training.parking.serviceJdbcRepository;
+package com.edvantis.training.parking.repository;
 
 import com.edvantis.training.parking.models.Owner;
 
