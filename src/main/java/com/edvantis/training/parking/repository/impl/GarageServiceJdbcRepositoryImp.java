@@ -1,8 +1,9 @@
-package com.edvantis.training.parking.repository;
+package com.edvantis.training.parking.repository.impl;
 
 import com.edvantis.training.parking.jdbc.ParkingJdbcServiceImpl;
 import com.edvantis.training.parking.models.Garage;
 import com.edvantis.training.parking.models.GarageType;
+import com.edvantis.training.parking.repository.GarageServiceJdbcRepository;
 import org.apache.log4j.Logger;
 
 import java.sql.PreparedStatement;
@@ -17,25 +18,23 @@ import static com.edvantis.training.parking.jdbc.Constants.*;
 /**
  * Created by taras.fihurnyak on 2/13/2017.
  */
-public class GarageServiceJdbcRepositoryImp implements GaragerServiceJdbcRepository {
+public class GarageServiceJdbcRepositoryImp implements GarageServiceJdbcRepository {
 
-    private final static Logger logger = Logger.getLogger(GarageServiceJdbcRepositoryImp.class);
+    private final Logger logger = Logger.getLogger(GarageServiceJdbcRepositoryImp.class);
+    private String dbName;
+    private String login;
+    private String password;
 
-    private static GarageServiceJdbcRepositoryImp instance = null;
-
-    private GarageServiceJdbcRepositoryImp() {
-    }
-
-    public static GarageServiceJdbcRepositoryImp getInstance() {
-        if (instance == null) {
-            instance = new GarageServiceJdbcRepositoryImp();
-        }
-        return instance;
+    public GarageServiceJdbcRepositoryImp(String dbName, String login, String password) {
+        this.dbName = dbName;
+        this.login = login;
+        this.password = password;
     }
 
     @Override
-    public Garage getById(String dbName, String login, String password, int id) {
+    public Garage getById(int id) {
         Garage garage = null;
+
         try {
             PreparedStatement pstmt = ParkingJdbcServiceImpl
                     .getConnection(DATABASE_URL + dbName + SSL_CONNECTION_FALSE, login, password)
@@ -57,13 +56,15 @@ public class GarageServiceJdbcRepositoryImp implements GaragerServiceJdbcReposit
             garage.setSquare(rs.getFloat(3));
 
         } catch (SQLException e) {
+            logger.warn(e);
+        } catch (Exception e) {
             logger.error(e);
         }
         return garage;
     }
 
     @Override
-    public void insert(String dbName, String login, String password, Garage garage) {
+    public void insert(Garage garage) {
         try {
             PreparedStatement pstmt = ParkingJdbcServiceImpl
                     .getConnection(DATABASE_URL + dbName + SSL_CONNECTION_FALSE, login, password)
@@ -82,13 +83,16 @@ public class GarageServiceJdbcRepositoryImp implements GaragerServiceJdbcReposit
             }
             pstmt.setFloat(3, garage.getSquare());
             pstmt.executeUpdate();
+            logger.info("Garage is saved to db successfully.");
         } catch (SQLException e) {
+            logger.warn(e);
+        } catch (Exception e) {
             logger.error(e);
         }
     }
 
     @Override
-    public void update(String dbName, String login, String password, int garageId, Garage garage) {
+    public void update(int garageId, Garage garage) {
 
         try {
             PreparedStatement pstmt = ParkingJdbcServiceImpl
@@ -108,26 +112,32 @@ public class GarageServiceJdbcRepositoryImp implements GaragerServiceJdbcReposit
             pstmt.setFloat(2, garage.getSquare());
             pstmt.setInt(3, garageId);
             pstmt.executeUpdate();
+            logger.info("Garage " + garageId + " updated successfully.");
         } catch (SQLException e) {
+            logger.warn(e);
+        } catch (Exception e) {
             logger.error(e);
         }
 
     }
 
     @Override
-    public void delete(String dbName, String login, String password, int garageId) {
+    public void delete(int garageId) {
         try {
             PreparedStatement pstmt = ParkingJdbcServiceImpl
                     .getConnection(DATABASE_URL + dbName + SSL_CONNECTION_FALSE, login, password)
                     .prepareStatement(DELETE_GRAGE);
             pstmt.setInt(1, garageId);
             pstmt.executeUpdate();
+            logger.info("Garage with " + garageId + " id removed from db successfully.");
         } catch (SQLException e) {
+            logger.warn(e);
+        } catch (Exception e) {
             logger.error(e);
         }
     }
 
-    public Set<Garage> getAllGaragesByType(String dbName, String login, String password, GarageType garageType) {
+    public Set<Garage> getAllGaragesByType(GarageType garageType) {
         Set<Garage> garageSet = new HashSet<>();
         try {
             PreparedStatement pstmt = ParkingJdbcServiceImpl
@@ -162,13 +172,15 @@ public class GarageServiceJdbcRepositoryImp implements GaragerServiceJdbcReposit
                 garageSet.add(garage);
             }
         } catch (SQLException e) {
+            logger.warn(e);
+        } catch (Exception e) {
             logger.error(e);
         }
 
         return garageSet;
     }
 
-    public void addParkingIdToGarage(String dbName, String login, String password, int parkingId, int garageId) {
+    public void addParkingIdToGarage(int parkingId, int garageId) {
         try {
             PreparedStatement pstmt = ParkingJdbcServiceImpl
                     .getConnection(DATABASE_URL + dbName + SSL_CONNECTION_FALSE, login, password)
@@ -177,10 +189,9 @@ public class GarageServiceJdbcRepositoryImp implements GaragerServiceJdbcReposit
             pstmt.setInt(2, garageId);
             pstmt.executeUpdate();
         } catch (SQLException e) {
-            logger.error(e);
+            logger.warn(e);
         }
 
     }
-
 
 }

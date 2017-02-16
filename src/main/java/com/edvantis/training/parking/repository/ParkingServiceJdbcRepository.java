@@ -8,11 +8,11 @@ import com.edvantis.training.parking.models.Parking;
 public interface ParkingServiceJdbcRepository {
 
 
-    Parking getById(String dbName, String login, String password, int parkingId);
+    Parking getById(int parkingId);
 
-    void insert(String dbName, String login, String password, Parking parking);
+    void insert(Parking parking);
 
-    void update(String dbName, String login, String password, int parkingId, Parking parking);
+    void update(int parkingId, Parking parking);
 
-    void delete(String dbName, String login, String password, int parkingId);
+    void delete(int parkingId);
 }

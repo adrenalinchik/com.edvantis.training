@@ -2,10 +2,12 @@ package com.edvantis.training.parking.jdbc;
 
 import com.edvantis.training.parking.models.Garage;
 import com.edvantis.training.parking.models.Owner;
+import com.edvantis.training.parking.models.Parking;
 import com.edvantis.training.parking.models.Vehicle;
-import com.edvantis.training.parking.repository.GarageServiceJdbcRepositoryImp;
-import com.edvantis.training.parking.repository.OwnerServiceJdbcRepositoryImp;
-import com.edvantis.training.parking.repository.VehicleServiceJdbcRepositoryImp;
+import com.edvantis.training.parking.repository.impl.GarageServiceJdbcRepositoryImp;
+import com.edvantis.training.parking.repository.impl.OwnerServiceJdbcRepositoryImp;
+import com.edvantis.training.parking.repository.impl.ParkingServiceJdbcRepositoryImp;
+import com.edvantis.training.parking.repository.impl.VehicleServiceJdbcRepositoryImp;
 import org.apache.log4j.Logger;
 
 import java.sql.*;
@@ -18,51 +20,65 @@ import static com.edvantis.training.parking.jdbc.Constants.*;
  */
 public class ParkingJdbcServiceImpl implements ParkingJdbcService {
 
+    private String dbName;
+    private String login;
+    private String password;
+
     private Statement statement = null;
     private ResultSet resultSet = null;
     private PreparedStatement pstmt = null;
     private final static Logger logger = Logger.getLogger(ParkingJdbcServiceImpl.class);
 
-    @Override
-    public void createDb(String dbName, String login, String password) {
-        Connection connection = getConnection(DATABASE_URL + SSL_CONNECTION_FALSE, login, password);
-        createDatabase(dbName, connection);
-        disconnectFromDB(connection);
+    public ParkingJdbcServiceImpl(String dbName, String login, String password) {
+        this.dbName = dbName;
+        this.login = login;
+        this.password = password;
     }
 
     @Override
-    public void populateDb(String dbName, String login, String password, ArrayList<Object> arrayList) {
-        Connection connection = getConnection(DATABASE_URL + dbName + SSL_CONNECTION_FALSE, login, password);
-        if (arrayList.get(0) instanceof Owner) {
-            for (Object i : arrayList) {
-                generateOwners(dbName, login, password, (Owner) i);
-            }
+    public void createDb() {
+        Connection connection = getConnection(DATABASE_URL + SSL_CONNECTION_FALSE, login, password);
+        createDatabase(dbName, connection);
+        disconnectFromDB(connection);
 
-        } else if (arrayList.get(0) instanceof Vehicle) {
-            for (Object i : arrayList) {
-                generateVehicles(dbName, login, password, (Vehicle) i);
-            }
-        } else if (arrayList.get(0) instanceof Garage) {
-            for (Object i : arrayList) {
-                generateGarages(dbName, login, password, (Garage) i);
+    }
+
+    @Override
+    public void populateDb(ArrayList<Object> arrayList) {
+        Connection connection = getConnection(DATABASE_URL + dbName + SSL_CONNECTION_FALSE, login, password);
+        for (Object obj : arrayList) {
+            if (obj instanceof Owner) {
+                saveOwner((Owner) obj);
+
+            } else if (obj instanceof Vehicle) {
+                saveVehicle((Vehicle) obj);
+
+            } else if (obj instanceof Garage) {
+                saveGarage((Garage) obj);
+
+            } else if (obj instanceof Parking) {
+                saveParking((Parking) obj);
             }
         }
 
         disconnectFromDB(connection);
+
     }
 
     @Override
-    public void clearDb(String dbName, String login, String password, String tableName) {
+    public void clearDb(String tableName) {
         Connection connection = getConnection(DATABASE_URL + dbName + SSL_CONNECTION_FALSE, login, password);
         cleanTable(tableName, connection);
         disconnectFromDB(connection);
+        logger.info(tableName + " table is cleared successfully.");
     }
 
     @Override
-    public void dropDb(String dbName, String login, String password, String databaseName) {
+    public void dropDb(String databaseName) {
         Connection connection = getConnection(DATABASE_URL + dbName + SSL_CONNECTION_FALSE, login, password);
         dropDatabase(databaseName, connection);
         disconnectFromDB(connection);
+        logger.info(dbName + " database is deleted successfully.");
     }
 
     public static Connection getConnection(String dbName, String login, String password) {
@@ -70,30 +86,32 @@ public class ParkingJdbcServiceImpl implements ParkingJdbcService {
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
             connection = DriverManager.getConnection(dbName, login, password);
+            logger.info("Connection with " + dbName + " database is established.");
         } catch (SQLException e) {
-            logger.error(e);
+            logger.warn(e);
         } catch (ClassNotFoundException e) {
             logger.error(e);
         }
         return connection;
     }
 
-    private void generateVehicles(String dbName, String login, String password, Vehicle vehicle) {
-
-        VehicleServiceJdbcRepositoryImp.getInstance().insert(dbName, login, password, vehicle);
-
+    private void saveVehicle(Vehicle vehicle) {
+        new VehicleServiceJdbcRepositoryImp(dbName, login, password).insert(vehicle);
 
     }
 
-    private void generateOwners(String dbName, String login, String password, Owner owner) {
-
-        OwnerServiceJdbcRepositoryImp.getInstance().insert(dbName, login, password, owner);
+    private void saveOwner(Owner owner) {
+        new OwnerServiceJdbcRepositoryImp(dbName, login, password).insert(owner);
 
     }
 
-    private void generateGarages(String dbName, String login, String password, Garage garage) {
+    private void saveGarage(Garage garage) {
+        new GarageServiceJdbcRepositoryImp(dbName, login, password).insert(garage);
 
-        GarageServiceJdbcRepositoryImp.getInstance().insert(dbName, login, password, garage);
+    }
+
+    private void saveParking(Parking parking) {
+        new ParkingServiceJdbcRepositoryImp(dbName, login, password).insert(parking);
 
     }
 
@@ -104,8 +122,11 @@ public class ParkingJdbcServiceImpl implements ParkingJdbcService {
             connection.setCatalog(dbName);
             checkTables(connection);
         } catch (SQLException e) {
+            logger.warn(e);
+        } catch (Exception e) {
             logger.error(e);
         }
+
     }
 
     private void checkTables(Connection connection) {
@@ -113,19 +134,24 @@ public class ParkingJdbcServiceImpl implements ParkingJdbcService {
             DatabaseMetaData meta = connection.getMetaData();
             if (!existVehicleTable(meta)) {
                 createVehicleTable(connection);
+                logger.info("Vehicle table is created.");
             }
             if (!existOwnerTable(meta)) {
                 createOwnerTable(connection);
+                logger.info("Owner table is created.");
             }
             if (!existGarageTable(meta)) {
                 createGarageTable(connection);
+                logger.info("Garage table is created.");
             }
             if (!existParkingTable(meta)) {
                 createParkingTable(connection);
+                logger.info("parking table is created.");
             }
         } catch (SQLException e) {
-            logger.error(e);
+            logger.warn(e);
         }
+
     }
 
     private boolean existVehicleTable(DatabaseMetaData meta) throws SQLException {
@@ -137,6 +163,7 @@ public class ParkingJdbcServiceImpl implements ParkingJdbcService {
             }
         }
         return false;
+
     }
 
     private boolean existGarageTable(DatabaseMetaData meta) throws SQLException {
@@ -148,6 +175,7 @@ public class ParkingJdbcServiceImpl implements ParkingJdbcService {
             }
         }
         return false;
+
     }
 
     private boolean existOwnerTable(DatabaseMetaData meta) throws SQLException {
@@ -159,6 +187,7 @@ public class ParkingJdbcServiceImpl implements ParkingJdbcService {
             }
         }
         return false;
+
     }
 
     private boolean existParkingTable(DatabaseMetaData meta) throws SQLException {
@@ -170,6 +199,7 @@ public class ParkingJdbcServiceImpl implements ParkingJdbcService {
             }
         }
         return false;
+
     }
 
     private void createVehicleTable(Connection connection) throws SQLException {
@@ -197,7 +227,7 @@ public class ParkingJdbcServiceImpl implements ParkingJdbcService {
             pstmt = connection.prepareStatement(CLEAN_TABLE + tableName);
             pstmt.executeUpdate();
         } catch (SQLException e) {
-            logger.error(e);
+            logger.warn(e);
         }
 
     }
@@ -207,7 +237,7 @@ public class ParkingJdbcServiceImpl implements ParkingJdbcService {
             pstmt = connection.prepareStatement(DROP_DATABASE + databaseName);
             pstmt.executeUpdate();
         } catch (SQLException e) {
-            logger.error(e);
+            logger.warn(e);
         }
 
     }

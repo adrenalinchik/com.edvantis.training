@@ -11,17 +11,17 @@ import java.util.Set;
  */
 public interface ParkingService {
 
-    void addNewOwner(String dbName, String login, String password, Owner owner);
+    void addNewOwner(Owner owner);
 
-    Set<Owner> getAllOwners(String dbName, String login, String password);
+    Set<Owner> getAllOwners();
 
-    Owner getOwnerByLastName(String dbName, String login, String password, String ownerLastName);
+    Owner getOwnerByLastName(String ownerLastName);
 
-    Vehicle getVehicleByNumber(String dbName, String login, String password, String vehicleNumber);
+    Vehicle getVehicleByNumber(String vehicleNumber);
 
-    Owner getOwnerByVehicleNumber(String dbName, String login, String password, String vehicleNumber);
+    Owner getOwnerByVehicleNumber(String vehicleNumber);
 
-    Set<Vehicle> getAllVehicleByType(String dbName, String login, String password, VehicleType vehicleType);
+    Set<Vehicle> getAllVehicleByType(VehicleType vehicleType);
 
-    void addVehicleToOwner(String dbName, String login, String password, Owner owner, Vehicle vehicle);
+    void addVehicleToOwner(Owner owner, Vehicle vehicle);
 }

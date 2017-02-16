@@ -1,7 +1,8 @@
-package com.edvantis.training.parking.repository;
+package com.edvantis.training.parking.repository.impl;
 
 import com.edvantis.training.parking.jdbc.ParkingJdbcServiceImpl;
 import com.edvantis.training.parking.models.Parking;
+import com.edvantis.training.parking.repository.ParkingServiceJdbcRepository;
 import org.apache.log4j.Logger;
 
 import java.sql.PreparedStatement;
@@ -16,23 +17,20 @@ import static com.edvantis.training.parking.jdbc.Constants.*;
  */
 public class ParkingServiceJdbcRepositoryImp implements ParkingServiceJdbcRepository {
 
-    private final static Logger logger = Logger.getLogger(ParkingServiceJdbcRepositoryImp.class);
+    private final Logger logger = Logger.getLogger(ParkingServiceJdbcRepositoryImp.class);
 
-    private static ParkingServiceJdbcRepositoryImp instance = null;
+    private String dbName;
+    private String login;
+    private String password;
 
-    private ParkingServiceJdbcRepositoryImp() {
+    public ParkingServiceJdbcRepositoryImp(String dbName, String login, String password) {
+        this.dbName = dbName;
+        this.login = login;
+        this.password = password;
     }
-
-    public static ParkingServiceJdbcRepositoryImp getInstance() {
-        if (instance == null) {
-            instance = new ParkingServiceJdbcRepositoryImp();
-        }
-        return instance;
-    }
-
 
     @Override
-    public Parking getById(String dbName, String login, String password, int parkingId) {
+    public Parking getById(int parkingId) {
         Parking parking = null;
         try {
             PreparedStatement pstmt = ParkingJdbcServiceImpl
@@ -46,6 +44,8 @@ public class ParkingServiceJdbcRepositoryImp implements ParkingServiceJdbcReposi
                 parking.setFreeGarages(rs.getInt(3));
 
         } catch (SQLException e) {
+            logger.warn(e);
+        } catch (Exception e) {
             logger.error(e);
         }
 
@@ -53,7 +53,7 @@ public class ParkingServiceJdbcRepositoryImp implements ParkingServiceJdbcReposi
     }
 
     @Override
-    public void insert(String dbName, String login, String password, Parking parking) {
+    public void insert(Parking parking) {
         try {
             PreparedStatement pstmt = ParkingJdbcServiceImpl
                     .getConnection(DATABASE_URL + dbName + SSL_CONNECTION_FALSE, login, password)
@@ -65,14 +65,17 @@ public class ParkingServiceJdbcRepositoryImp implements ParkingServiceJdbcReposi
             } else pstmt.setNull(3, Types.INTEGER);
 
             pstmt.executeUpdate();
+            logger.info("Parking saved to db successfully.");
         } catch (SQLException e) {
+            logger.warn(e);
+        } catch (Exception e) {
             logger.error(e);
         }
 
     }
 
     @Override
-    public void update(String dbName, String login, String password, int parkingId, Parking parking) {
+    public void update(int parkingId, Parking parking) {
         try {
             PreparedStatement pstmt = ParkingJdbcServiceImpl
                     .getConnection(DATABASE_URL + dbName + SSL_CONNECTION_FALSE, login, password)
@@ -81,21 +84,26 @@ public class ParkingServiceJdbcRepositoryImp implements ParkingServiceJdbcReposi
             pstmt.setInt(3, parking.getFreeGarages());
             pstmt.setInt(4, parkingId);
             pstmt.executeUpdate();
+            logger.info("Parking with " + parkingId + " id updated successfully.");
         } catch (SQLException e) {
+            logger.warn(e);
+        } catch (Exception e) {
             logger.error(e);
         }
-
     }
 
     @Override
-    public void delete(String dbName, String login, String password, int parkingId) {
+    public void delete(int parkingId) {
         try {
             PreparedStatement pstmt = ParkingJdbcServiceImpl
                     .getConnection(DATABASE_URL + dbName + SSL_CONNECTION_FALSE, login, password)
                     .prepareStatement(DELETE_PARKING);
             pstmt.setInt(1, parkingId);
             pstmt.executeUpdate();
+            logger.info("Parking with " + parkingId + " id removed from db successfully.");
         } catch (SQLException e) {
+            logger.warn(e);
+        } catch (Exception e) {
             logger.error(e);
         }
 

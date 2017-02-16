@@ -7,8 +7,8 @@ import java.util.ArrayList;
  */
 public interface ParkingJdbcService {
 
-    void createDb(String dbName, String login, String password);
-    void populateDb(String dbName, String login, String password, ArrayList<Object> arrayList);
-    void clearDb(String dbName, String login, String password, String tableName);
-    void dropDb(String dbName, String login, String password, String databaseName);
+    void createDb();
+    void populateDb(ArrayList<Object> arrayList);
+    void clearDb(String tableName);
+    void dropDb(String databaseName);
 }

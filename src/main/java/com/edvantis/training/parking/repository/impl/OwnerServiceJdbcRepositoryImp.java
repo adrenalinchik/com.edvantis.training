@@ -1,8 +1,9 @@
-package com.edvantis.training.parking.repository;
+package com.edvantis.training.parking.repository.impl;
 
 import com.edvantis.training.parking.jdbc.ParkingJdbcServiceImpl;
 import com.edvantis.training.parking.models.Gender;
 import com.edvantis.training.parking.models.Owner;
+import com.edvantis.training.parking.repository.OwnerServiceJdbcRepository;
 import org.apache.log4j.Logger;
 
 import java.sql.PreparedStatement;
@@ -19,22 +20,20 @@ import static com.edvantis.training.parking.jdbc.Constants.*;
  */
 public class OwnerServiceJdbcRepositoryImp implements OwnerServiceJdbcRepository {
 
-    private final static Logger logger = Logger.getLogger(OwnerServiceJdbcRepositoryImp.class);
+    private final Logger logger = Logger.getLogger(OwnerServiceJdbcRepositoryImp.class);
 
-    private static OwnerServiceJdbcRepositoryImp instance = null;
+    private String dbName;
+    private String login;
+    private String password;
 
-    private OwnerServiceJdbcRepositoryImp() {
-    }
-
-    public static OwnerServiceJdbcRepositoryImp getInstance() {
-        if (instance == null) {
-            instance = new OwnerServiceJdbcRepositoryImp();
-        }
-        return instance;
+    public OwnerServiceJdbcRepositoryImp(String dbName, String login, String password) {
+        this.dbName = dbName;
+        this.login = login;
+        this.password = password;
     }
 
     @Override
-    public Owner getById(String dbName, String login, String password, int id) {
+    public Owner getById(int id) {
         Owner owner = null;
         try {
             PreparedStatement pstmt = ParkingJdbcServiceImpl
@@ -50,13 +49,15 @@ public class OwnerServiceJdbcRepositoryImp implements OwnerServiceJdbcRepository
             else owner.setGender(Gender.FEMALE);
             owner.setDOB(convertDateToOwnerAttribute(rs.getDate(5)));
         } catch (SQLException e) {
+            logger.warn(e);
+        }catch (Exception e) {
             logger.error(e);
         }
         return owner;
     }
 
     @Override
-    public void insert(String dbName, String login, String password, Owner owner) {
+    public void insert(Owner owner) {
         try {
             PreparedStatement pstmt = ParkingJdbcServiceImpl
                     .getConnection(DATABASE_URL + dbName + SSL_CONNECTION_FALSE, login, password)
@@ -68,13 +69,16 @@ public class OwnerServiceJdbcRepositoryImp implements OwnerServiceJdbcRepository
             } else pstmt.setInt(3, 2);
             pstmt.setDate(4, convertDateToDatabaseColumn(owner.getDOB()));
             pstmt.executeUpdate();
+            logger.info("Owner "+owner.getFirstName()+" "+owner.getFirstName()+" saved to db successfully.");
         } catch (SQLException e) {
+            logger.warn(e);
+        }catch (Exception e) {
             logger.error(e);
         }
     }
 
     @Override
-    public void update(String dbName, String login, String password, int ownerId, Owner owner) {
+    public void update(int ownerId, Owner owner) {
         try {
             PreparedStatement pstmt = ParkingJdbcServiceImpl
                     .getConnection(DATABASE_URL + dbName + SSL_CONNECTION_FALSE, login, password)
@@ -87,25 +91,31 @@ public class OwnerServiceJdbcRepositoryImp implements OwnerServiceJdbcRepository
             pstmt.setDate(4, convertDateToDatabaseColumn(owner.getDOB()));
             pstmt.setInt(5, ownerId);
             pstmt.executeUpdate();
+            logger.info("Owner with "+ownerId+" id updated successfully.");
         } catch (SQLException e) {
+            logger.warn(e);
+        }catch (Exception e) {
             logger.error(e);
         }
     }
 
     @Override
-    public void delete(String dbName, String login, String password, int ownerId) {
+    public void delete(int ownerId) {
         try {
             PreparedStatement pstmt = ParkingJdbcServiceImpl
                     .getConnection(DATABASE_URL + dbName + SSL_CONNECTION_FALSE, login, password)
                     .prepareStatement(DELETE_OWNER);
             pstmt.setInt(1, ownerId);
             pstmt.executeUpdate();
+            logger.info("Owner with "+ownerId+" id removed from db successfully.");
         } catch (SQLException e) {
+            logger.warn(e);
+        }catch (Exception e) {
             logger.error(e);
         }
     }
 
-    public Set<Owner> getAllOwnersFromDb(String dbName, String login, String password) {
+    public Set<Owner> getAllOwnersFromDb() {
         Set<Owner> ownerSet = new HashSet<>();
         try {
             PreparedStatement pstmt = ParkingJdbcServiceImpl
@@ -123,13 +133,15 @@ public class OwnerServiceJdbcRepositoryImp implements OwnerServiceJdbcRepository
                 ownerSet.add(owner);
             }
         } catch (SQLException e) {
+            logger.warn(e);
+        }catch (Exception e) {
             logger.error(e);
         }
 
         return ownerSet;
     }
 
-    public Owner getOwnerByLastName(String dbName, String login, String password, String lastName) {
+    public Owner getOwnerByLastName(String lastName) {
         Owner owner = null;
         try {
             PreparedStatement pstmt = ParkingJdbcServiceImpl
@@ -146,18 +158,20 @@ public class OwnerServiceJdbcRepositoryImp implements OwnerServiceJdbcRepository
             else owner.setGender(Gender.FEMALE);
             owner.setDOB(convertDateToOwnerAttribute(rs.getDate(5)));
         } catch (SQLException e) {
+            logger.warn(e);
+        }catch (Exception e) {
             logger.error(e);
         }
         return owner;
     }
 
-    public Owner getOwnerByVehicleNymber(String dbName, String login, String password, String vehicleNumber) {
+    public Owner getOwnerByVehicleNymber(String vehicleNumber) {
 
-        return getById(dbName, login, password,getOwnerIdFromVehicleByNumber(dbName, login, password, vehicleNumber));
+        return getById(getOwnerIdFromVehicleByNumber(vehicleNumber));
 
     }
 
-    public int getOwnerIdByLastName(String dbName, String login, String password, String ownerLastName) {
+    public int getOwnerIdByLastName(String ownerLastName) {
         int ownerId = 0;
         try {
             PreparedStatement pstmt = ParkingJdbcServiceImpl
@@ -168,12 +182,14 @@ public class OwnerServiceJdbcRepositoryImp implements OwnerServiceJdbcRepository
             rs.next();
             ownerId = rs.getInt(1);
         } catch (SQLException e) {
+            logger.warn(e);
+        }catch (Exception e) {
             logger.error(e);
         }
         return ownerId;
     }
 
-    private int getOwnerIdFromVehicleByNumber(String dbName, String login, String password, String vehicleNumber) {
+    private int getOwnerIdFromVehicleByNumber(String vehicleNumber) {
         int ownerId = 0;
         try {
             PreparedStatement pstmt = ParkingJdbcServiceImpl
@@ -184,6 +200,8 @@ public class OwnerServiceJdbcRepositoryImp implements OwnerServiceJdbcRepository
             rs.next();
             ownerId = rs.getInt(2);
         } catch (SQLException e) {
+            logger.warn(e);
+        }catch (Exception e) {
             logger.error(e);
         }
         return ownerId;
