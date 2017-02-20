@@ -8,7 +8,7 @@ import java.util.Set;
 /**
  * Created by taras.fihurnyak on 2/9/2017.
  */
-public interface VehicleServiceJdbcRepository {
+public interface VehicleJdbcRepository {
 
     Vehicle getById(int vehicleId);
 

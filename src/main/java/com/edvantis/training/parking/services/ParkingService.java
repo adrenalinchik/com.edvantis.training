@@ -4,12 +4,15 @@ import com.edvantis.training.parking.models.Owner;
 import com.edvantis.training.parking.models.Vehicle;
 import com.edvantis.training.parking.models.VehicleType;
 
+import java.util.ArrayList;
 import java.util.Set;
 
 /**
  * Created by taras.fihurnyak on 2/11/2017.
  */
 public interface ParkingService {
+
+    void populateWithMockObjects(ArrayList<Object> arrayList);
 
     void addNewOwner(Owner owner);
 

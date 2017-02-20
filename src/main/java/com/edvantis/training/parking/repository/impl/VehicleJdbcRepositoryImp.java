@@ -1,9 +1,9 @@
 package com.edvantis.training.parking.repository.impl;
 
-import com.edvantis.training.parking.jdbc.ParkingJdbcServiceImpl;
+import com.edvantis.training.parking.jdbc.DataBaseJdbcUtil;
 import com.edvantis.training.parking.models.Vehicle;
 import com.edvantis.training.parking.models.VehicleType;
-import com.edvantis.training.parking.repository.VehicleServiceJdbcRepository;
+import com.edvantis.training.parking.repository.VehicleJdbcRepository;
 import org.apache.log4j.Logger;
 
 import java.sql.PreparedStatement;
@@ -19,15 +19,15 @@ import static com.edvantis.training.parking.models.VehicleType.*;
 /**
  * Created by taras.fihurnyak on 2/9/2017.
  */
-public class VehicleServiceJdbcRepositoryImp implements VehicleServiceJdbcRepository {
+public class VehicleJdbcRepositoryImp implements VehicleJdbcRepository {
 
-    private final Logger logger = Logger.getLogger(VehicleServiceJdbcRepositoryImp.class);
+    private final Logger logger = Logger.getLogger(VehicleJdbcRepositoryImp.class);
 
     private String dbName;
     private String login;
     private String password;
 
-    public VehicleServiceJdbcRepositoryImp(String dbName, String login, String password) {
+    public VehicleJdbcRepositoryImp(String dbName, String login, String password) {
         this.dbName = dbName;
         this.login = login;
         this.password = password;
@@ -37,7 +37,7 @@ public class VehicleServiceJdbcRepositoryImp implements VehicleServiceJdbcReposi
     public Vehicle getById(int vehicleId) {
         Vehicle vehicle = null;
         try {
-            PreparedStatement pstmt = ParkingJdbcServiceImpl
+            PreparedStatement pstmt = DataBaseJdbcUtil
                     .getConnection(DATABASE_URL + dbName + SSL_CONNECTION_FALSE, login, password)
                     .prepareStatement(GET_VEHICLE_BY_ID + vehicleId);
             ResultSet rs = pstmt.executeQuery();
@@ -73,7 +73,7 @@ public class VehicleServiceJdbcRepositoryImp implements VehicleServiceJdbcReposi
     @Override
     public void insert(Vehicle vehicle) {
         try {
-            PreparedStatement pstmt = ParkingJdbcServiceImpl
+            PreparedStatement pstmt = DataBaseJdbcUtil
                     .getConnection(DATABASE_URL + dbName + SSL_CONNECTION_FALSE, login, password)
                     .prepareStatement(CREATE_VEHICLE);
             pstmt.setNull(1, Types.INTEGER);
@@ -106,7 +106,7 @@ public class VehicleServiceJdbcRepositoryImp implements VehicleServiceJdbcReposi
     @Override
     public void update(int vehicleId, Vehicle vehicle) {
         try {
-            PreparedStatement pstmt = ParkingJdbcServiceImpl
+            PreparedStatement pstmt = DataBaseJdbcUtil
                     .getConnection(DATABASE_URL + dbName + SSL_CONNECTION_FALSE, login, password)
                     .prepareStatement(UPDATE_VEHICLE);
             switch (vehicle.getCarType()) {
@@ -139,7 +139,7 @@ public class VehicleServiceJdbcRepositoryImp implements VehicleServiceJdbcReposi
     @Override
     public void delete(int vehicleId) {
         try {
-            PreparedStatement pstmt = ParkingJdbcServiceImpl
+            PreparedStatement pstmt = DataBaseJdbcUtil
                     .getConnection(DATABASE_URL + dbName + SSL_CONNECTION_FALSE, login, password)
                     .prepareStatement(DELETE_VEHICLE);
             pstmt.setInt(1, vehicleId);
@@ -156,7 +156,7 @@ public class VehicleServiceJdbcRepositoryImp implements VehicleServiceJdbcReposi
     public Set<Vehicle> getAllVehiclesByType(VehicleType vehicleType) {
         Set<Vehicle> vehicleSet = new HashSet<>();
         try {
-            PreparedStatement pstmt = ParkingJdbcServiceImpl
+            PreparedStatement pstmt = DataBaseJdbcUtil
                     .getConnection(DATABASE_URL + dbName + SSL_CONNECTION_FALSE, login, password)
                     .prepareStatement(GET_ALL_VEHICLES_BY_TYPE);
             switch (vehicleType) {
@@ -206,7 +206,7 @@ public class VehicleServiceJdbcRepositoryImp implements VehicleServiceJdbcReposi
     public Vehicle getVehicleByNumber(String vehicleNumber) {
         Vehicle vehicle = null;
         try {
-            PreparedStatement pstmt = ParkingJdbcServiceImpl
+            PreparedStatement pstmt = DataBaseJdbcUtil
                     .getConnection(DATABASE_URL + dbName + SSL_CONNECTION_FALSE, login, password)
                     .prepareStatement(GET_VEHICLE_BY_NUMBER);
             pstmt.setString(1, vehicleNumber);
@@ -242,7 +242,7 @@ public class VehicleServiceJdbcRepositoryImp implements VehicleServiceJdbcReposi
 
     public void addOwnerIdToVehicle(int ownerId, int vehicleId) {
         try {
-            PreparedStatement pstmt = ParkingJdbcServiceImpl
+            PreparedStatement pstmt = DataBaseJdbcUtil
                     .getConnection(DATABASE_URL + dbName + SSL_CONNECTION_FALSE, login, password)
                     .prepareStatement(UPDATE_VEHICLE_OWNER);
             pstmt.setInt(1, ownerId);
@@ -259,7 +259,7 @@ public class VehicleServiceJdbcRepositoryImp implements VehicleServiceJdbcReposi
     public int getVehicleIdByNumber(String vehicleNumber) {
         int vehicleId = 0;
         try {
-            PreparedStatement pstmt = ParkingJdbcServiceImpl
+            PreparedStatement pstmt = DataBaseJdbcUtil
                     .getConnection(DATABASE_URL + dbName + SSL_CONNECTION_FALSE, login, password)
                     .prepareStatement(GET_VEHICLE_BY_NUMBER);
             pstmt.setString(1, vehicleNumber);

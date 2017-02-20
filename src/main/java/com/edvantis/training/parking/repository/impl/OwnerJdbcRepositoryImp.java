@@ -1,9 +1,9 @@
 package com.edvantis.training.parking.repository.impl;
 
-import com.edvantis.training.parking.jdbc.ParkingJdbcServiceImpl;
+import com.edvantis.training.parking.jdbc.DataBaseJdbcUtil;
 import com.edvantis.training.parking.models.Gender;
 import com.edvantis.training.parking.models.Owner;
-import com.edvantis.training.parking.repository.OwnerServiceJdbcRepository;
+import com.edvantis.training.parking.repository.OwnerJdbcRepository;
 import org.apache.log4j.Logger;
 
 import java.sql.PreparedStatement;
@@ -18,15 +18,15 @@ import static com.edvantis.training.parking.jdbc.Constants.*;
 /**
  * Created by taras.fihurnyak on 2/9/2017.
  */
-public class OwnerServiceJdbcRepositoryImp implements OwnerServiceJdbcRepository {
+public class OwnerJdbcRepositoryImp implements OwnerJdbcRepository {
 
-    private final Logger logger = Logger.getLogger(OwnerServiceJdbcRepositoryImp.class);
+    private final Logger logger = Logger.getLogger(OwnerJdbcRepositoryImp.class);
 
     private String dbName;
     private String login;
     private String password;
 
-    public OwnerServiceJdbcRepositoryImp(String dbName, String login, String password) {
+    public OwnerJdbcRepositoryImp(String dbName, String login, String password) {
         this.dbName = dbName;
         this.login = login;
         this.password = password;
@@ -36,7 +36,7 @@ public class OwnerServiceJdbcRepositoryImp implements OwnerServiceJdbcRepository
     public Owner getById(int id) {
         Owner owner = null;
         try {
-            PreparedStatement pstmt = ParkingJdbcServiceImpl
+            PreparedStatement pstmt = DataBaseJdbcUtil
                     .getConnection(DATABASE_URL + dbName + SSL_CONNECTION_FALSE, login, password)
                     .prepareStatement(GET_OWNER_BY_ID + id);
             ResultSet rs = pstmt.executeQuery();
@@ -59,7 +59,7 @@ public class OwnerServiceJdbcRepositoryImp implements OwnerServiceJdbcRepository
     @Override
     public void insert(Owner owner) {
         try {
-            PreparedStatement pstmt = ParkingJdbcServiceImpl
+            PreparedStatement pstmt = DataBaseJdbcUtil
                     .getConnection(DATABASE_URL + dbName + SSL_CONNECTION_FALSE, login, password)
                     .prepareStatement(CREATE_OWNER);
             pstmt.setString(1, owner.getFirstName());
@@ -80,7 +80,7 @@ public class OwnerServiceJdbcRepositoryImp implements OwnerServiceJdbcRepository
     @Override
     public void update(int ownerId, Owner owner) {
         try {
-            PreparedStatement pstmt = ParkingJdbcServiceImpl
+            PreparedStatement pstmt = DataBaseJdbcUtil
                     .getConnection(DATABASE_URL + dbName + SSL_CONNECTION_FALSE, login, password)
                     .prepareStatement(UPDATE_OWNER);
             pstmt.setString(1, owner.getFirstName());
@@ -102,7 +102,7 @@ public class OwnerServiceJdbcRepositoryImp implements OwnerServiceJdbcRepository
     @Override
     public void delete(int ownerId) {
         try {
-            PreparedStatement pstmt = ParkingJdbcServiceImpl
+            PreparedStatement pstmt = DataBaseJdbcUtil
                     .getConnection(DATABASE_URL + dbName + SSL_CONNECTION_FALSE, login, password)
                     .prepareStatement(DELETE_OWNER);
             pstmt.setInt(1, ownerId);
@@ -118,7 +118,7 @@ public class OwnerServiceJdbcRepositoryImp implements OwnerServiceJdbcRepository
     public Set<Owner> getAllOwnersFromDb() {
         Set<Owner> ownerSet = new HashSet<>();
         try {
-            PreparedStatement pstmt = ParkingJdbcServiceImpl
+            PreparedStatement pstmt = DataBaseJdbcUtil
                     .getConnection(DATABASE_URL + dbName + SSL_CONNECTION_FALSE, login, password)
                     .prepareStatement(GET_ALL_OWNERS);
             ResultSet rs = pstmt.executeQuery();
@@ -144,7 +144,7 @@ public class OwnerServiceJdbcRepositoryImp implements OwnerServiceJdbcRepository
     public Owner getOwnerByLastName(String lastName) {
         Owner owner = null;
         try {
-            PreparedStatement pstmt = ParkingJdbcServiceImpl
+            PreparedStatement pstmt = DataBaseJdbcUtil
                     .getConnection(DATABASE_URL + dbName + SSL_CONNECTION_FALSE, login, password)
                     .prepareStatement(GET_OWNER_BY_LASTNAME);
             pstmt.setString(1, lastName);
@@ -174,7 +174,7 @@ public class OwnerServiceJdbcRepositoryImp implements OwnerServiceJdbcRepository
     public int getOwnerIdByLastName(String ownerLastName) {
         int ownerId = 0;
         try {
-            PreparedStatement pstmt = ParkingJdbcServiceImpl
+            PreparedStatement pstmt = DataBaseJdbcUtil
                     .getConnection(DATABASE_URL + dbName + SSL_CONNECTION_FALSE, login, password)
                     .prepareStatement(GET_OWNER_BY_LASTNAME);
             pstmt.setString(1, ownerLastName);
@@ -192,7 +192,7 @@ public class OwnerServiceJdbcRepositoryImp implements OwnerServiceJdbcRepository
     private int getOwnerIdFromVehicleByNumber(String vehicleNumber) {
         int ownerId = 0;
         try {
-            PreparedStatement pstmt = ParkingJdbcServiceImpl
+            PreparedStatement pstmt = DataBaseJdbcUtil
                     .getConnection(DATABASE_URL + dbName + SSL_CONNECTION_FALSE, login, password)
                     .prepareStatement(GET_VEHICLE_BY_NUMBER);
             pstmt.setString(1, vehicleNumber);

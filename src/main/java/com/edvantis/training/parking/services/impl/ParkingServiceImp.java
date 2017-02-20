@@ -1,12 +1,14 @@
-package com.edvantis.training.parking.services;
+package com.edvantis.training.parking.services.impl;
 
-import com.edvantis.training.parking.models.Owner;
-import com.edvantis.training.parking.models.Vehicle;
-import com.edvantis.training.parking.models.VehicleType;
-import com.edvantis.training.parking.repository.OwnerServiceJdbcRepository;
-import com.edvantis.training.parking.repository.VehicleServiceJdbcRepository;
+import com.edvantis.training.parking.models.*;
+import com.edvantis.training.parking.repository.GarageJdbcRepository;
+import com.edvantis.training.parking.repository.OwnerJdbcRepository;
+import com.edvantis.training.parking.repository.ParkingJdbcRepository;
+import com.edvantis.training.parking.repository.VehicleJdbcRepository;
+import com.edvantis.training.parking.services.ParkingService;
 import org.apache.log4j.Logger;
 
+import java.util.ArrayList;
 import java.util.Set;
 
 /**
@@ -14,16 +16,39 @@ import java.util.Set;
  */
 public class ParkingServiceImp implements ParkingService {
 
-    private OwnerServiceJdbcRepository ownerRepo;
-    private VehicleServiceJdbcRepository vehicleRepo;
+    private OwnerJdbcRepository ownerRepo;
+    private VehicleJdbcRepository vehicleRepo;
+    private GarageJdbcRepository garageRepo;
+    private ParkingJdbcRepository parkingRepo;
 
-    public ParkingServiceImp(OwnerServiceJdbcRepository ownerRepo, VehicleServiceJdbcRepository vehicleRepo) {
+    public ParkingServiceImp(OwnerJdbcRepository ownerRepo, VehicleJdbcRepository vehicleRepo, GarageJdbcRepository garageRepo, ParkingJdbcRepository parkingRepo) {
         this.ownerRepo = ownerRepo;
         this.vehicleRepo = vehicleRepo;
-
+        this.garageRepo = garageRepo;
+        this.parkingRepo = parkingRepo;
     }
 
     private final Logger logger = Logger.getLogger(ParkingServiceImp.class);
+
+    @Override
+    public void populateWithMockObjects(ArrayList<Object> arrayList) {
+
+        for (Object obj : arrayList) {
+            if (obj instanceof Owner) {
+                ownerRepo.insert((Owner) obj);
+
+            } else if (obj instanceof Vehicle) {
+                vehicleRepo.insert((Vehicle) obj);
+
+            } else if (obj instanceof Garage) {
+                garageRepo.insert((Garage) obj);
+
+            } else if (obj instanceof Parking) {
+               parkingRepo.insert((Parking)obj);
+            }
+        }
+
+    }
 
     @Override
     public void addNewOwner(Owner owner) {

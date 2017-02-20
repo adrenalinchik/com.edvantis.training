@@ -11,6 +11,7 @@ public class Parking {
     private int freeGarages;
     private Set<Garage> garages;
 
+
     public Parking() {
     }
 

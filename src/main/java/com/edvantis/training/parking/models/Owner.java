@@ -18,6 +18,13 @@ public class Owner {
     public Owner() {
     }
 
+    public Owner(String firstName, String lastName, Gender gender, LocalDate dob) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.gender = gender;
+        this.dob = dob;
+    }
+
     public String getFirstName() {
         return firstName;
     }

@@ -7,7 +7,7 @@ import java.util.Set;
 /**
  * Created by taras.fihurnyak on 2/9/2017.
  */
-public interface OwnerServiceJdbcRepository {
+public interface OwnerJdbcRepository {
 
     Owner getById(int id);
 
