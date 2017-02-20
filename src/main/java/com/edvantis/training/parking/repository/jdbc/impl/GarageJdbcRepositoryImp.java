@@ -1,9 +1,9 @@
-package com.edvantis.training.parking.repository.impl;
+package com.edvantis.training.parking.repository.jdbc.impl;
 
-import com.edvantis.training.parking.jdbc.DataBaseJdbcUtil;
 import com.edvantis.training.parking.models.Garage;
 import com.edvantis.training.parking.models.GarageType;
 import com.edvantis.training.parking.repository.GarageJdbcRepository;
+import com.edvantis.training.parking.repository.jdbc.AbstractJdbcRepository;
 import org.apache.log4j.Logger;
 
 import java.sql.PreparedStatement;
@@ -18,17 +18,12 @@ import static com.edvantis.training.parking.jdbc.Constants.*;
 /**
  * Created by taras.fihurnyak on 2/13/2017.
  */
-public class GarageJdbcRepositoryImp implements GarageJdbcRepository {
+public class GarageJdbcRepositoryImp extends AbstractJdbcRepository implements GarageJdbcRepository {
 
     private final Logger logger = Logger.getLogger(GarageJdbcRepositoryImp.class);
-    private String dbName;
-    private String login;
-    private String password;
 
     public GarageJdbcRepositoryImp(String dbName, String login, String password) {
-        this.dbName = dbName;
-        this.login = login;
-        this.password = password;
+        super(dbName, login, password);
     }
 
     @Override
@@ -36,9 +31,7 @@ public class GarageJdbcRepositoryImp implements GarageJdbcRepository {
         Garage garage = null;
 
         try {
-            PreparedStatement pstmt = DataBaseJdbcUtil
-                    .getConnection(DATABASE_URL + dbName + SSL_CONNECTION_FALSE, login, password)
-                    .prepareStatement(GET_GARAGE_BY_ID + id);
+            PreparedStatement pstmt = getConnection().prepareStatement(GET_GARAGE_BY_ID + id);
             ResultSet rs = pstmt.executeQuery();
             garage = new Garage();
             rs.next();
@@ -66,9 +59,7 @@ public class GarageJdbcRepositoryImp implements GarageJdbcRepository {
     @Override
     public void insert(Garage garage) {
         try {
-            PreparedStatement pstmt = DataBaseJdbcUtil
-                    .getConnection(DATABASE_URL + dbName + SSL_CONNECTION_FALSE, login, password)
-                    .prepareStatement(CREATE_GARAGE);
+            PreparedStatement pstmt = getConnection().prepareStatement(CREATE_GARAGE);
             pstmt.setNull(1, Types.INTEGER);
             switch (garage.getGarageType()) {
                 case SMALL:
@@ -95,9 +86,7 @@ public class GarageJdbcRepositoryImp implements GarageJdbcRepository {
     public void update(int garageId, Garage garage) {
 
         try {
-            PreparedStatement pstmt = DataBaseJdbcUtil
-                    .getConnection(DATABASE_URL + dbName + SSL_CONNECTION_FALSE, login, password)
-                    .prepareStatement(UPDATE_GARAGE);
+            PreparedStatement pstmt = getConnection().prepareStatement(UPDATE_GARAGE);
             switch (garage.getGarageType()) {
                 case SMALL:
                     pstmt.setInt(1, 1);
@@ -124,9 +113,7 @@ public class GarageJdbcRepositoryImp implements GarageJdbcRepository {
     @Override
     public void delete(int garageId) {
         try {
-            PreparedStatement pstmt = DataBaseJdbcUtil
-                    .getConnection(DATABASE_URL + dbName + SSL_CONNECTION_FALSE, login, password)
-                    .prepareStatement(DELETE_GRAGE);
+            PreparedStatement pstmt = getConnection().prepareStatement(DELETE_GRAGE);
             pstmt.setInt(1, garageId);
             pstmt.executeUpdate();
             logger.info("Garage with " + garageId + " id removed from db successfully.");
@@ -140,9 +127,7 @@ public class GarageJdbcRepositoryImp implements GarageJdbcRepository {
     public Set<Garage> getAllGaragesByType(GarageType garageType) {
         Set<Garage> garageSet = new HashSet<>();
         try {
-            PreparedStatement pstmt = DataBaseJdbcUtil
-                    .getConnection(DATABASE_URL + dbName + SSL_CONNECTION_FALSE, login, password)
-                    .prepareStatement(GET_ALL_GARAGES_BY_TYPE);
+            PreparedStatement pstmt = getConnection().prepareStatement(GET_ALL_GARAGES_BY_TYPE);
             switch (garageType) {
                 case SMALL:
                     pstmt.setInt(1, 1);
@@ -182,9 +167,7 @@ public class GarageJdbcRepositoryImp implements GarageJdbcRepository {
 
     public void addParkingIdToGarage(int parkingId, int garageId) {
         try {
-            PreparedStatement pstmt = DataBaseJdbcUtil
-                    .getConnection(DATABASE_URL + dbName + SSL_CONNECTION_FALSE, login, password)
-                    .prepareStatement(UPDATE_GARAGE_PARKING);
+            PreparedStatement pstmt = getConnection().prepareStatement(UPDATE_GARAGE_PARKING);
             pstmt.setInt(1, parkingId);
             pstmt.setInt(2, garageId);
             pstmt.executeUpdate();

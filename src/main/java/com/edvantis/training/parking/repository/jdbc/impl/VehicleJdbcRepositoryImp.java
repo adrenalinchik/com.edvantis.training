@@ -1,9 +1,9 @@
-package com.edvantis.training.parking.repository.impl;
+package com.edvantis.training.parking.repository.jdbc.impl;
 
-import com.edvantis.training.parking.jdbc.DataBaseJdbcUtil;
 import com.edvantis.training.parking.models.Vehicle;
 import com.edvantis.training.parking.models.VehicleType;
 import com.edvantis.training.parking.repository.VehicleJdbcRepository;
+import com.edvantis.training.parking.repository.jdbc.AbstractJdbcRepository;
 import org.apache.log4j.Logger;
 
 import java.sql.PreparedStatement;
@@ -19,27 +19,20 @@ import static com.edvantis.training.parking.models.VehicleType.*;
 /**
  * Created by taras.fihurnyak on 2/9/2017.
  */
-public class VehicleJdbcRepositoryImp implements VehicleJdbcRepository {
+public class VehicleJdbcRepositoryImp extends AbstractJdbcRepository implements VehicleJdbcRepository {
 
     private final Logger logger = Logger.getLogger(VehicleJdbcRepositoryImp.class);
 
-    private String dbName;
-    private String login;
-    private String password;
 
     public VehicleJdbcRepositoryImp(String dbName, String login, String password) {
-        this.dbName = dbName;
-        this.login = login;
-        this.password = password;
+        super(dbName, login, password);
     }
 
     @Override
     public Vehicle getById(int vehicleId) {
         Vehicle vehicle = null;
         try {
-            PreparedStatement pstmt = DataBaseJdbcUtil
-                    .getConnection(DATABASE_URL + dbName + SSL_CONNECTION_FALSE, login, password)
-                    .prepareStatement(GET_VEHICLE_BY_ID + vehicleId);
+            PreparedStatement pstmt = getConnection().prepareStatement(GET_VEHICLE_BY_ID + vehicleId);
             ResultSet rs = pstmt.executeQuery();
             rs.next();
             vehicle = new Vehicle();
@@ -63,7 +56,7 @@ public class VehicleJdbcRepositoryImp implements VehicleJdbcRepository {
 
         } catch (SQLException e) {
             logger.warn(e);
-        }catch (Exception e) {
+        } catch (Exception e) {
             logger.error(e);
         }
 
@@ -73,9 +66,7 @@ public class VehicleJdbcRepositoryImp implements VehicleJdbcRepository {
     @Override
     public void insert(Vehicle vehicle) {
         try {
-            PreparedStatement pstmt = DataBaseJdbcUtil
-                    .getConnection(DATABASE_URL + dbName + SSL_CONNECTION_FALSE, login, password)
-                    .prepareStatement(CREATE_VEHICLE);
+            PreparedStatement pstmt = getConnection().prepareStatement(CREATE_VEHICLE);
             pstmt.setNull(1, Types.INTEGER);
             switch (vehicle.getCarType()) {
                 case ELECTRO:
@@ -94,10 +85,10 @@ public class VehicleJdbcRepositoryImp implements VehicleJdbcRepository {
             pstmt.setString(3, vehicle.getNumber());
             pstmt.setString(4, vehicle.getModel());
             pstmt.executeUpdate();
-            logger.info("Vehicle with "+vehicle.getNumber()+" number is saved successfully.");
+            logger.info("Vehicle with " + vehicle.getNumber() + " number is saved successfully.");
         } catch (SQLException e) {
             logger.warn(e);
-        }catch (Exception e) {
+        } catch (Exception e) {
             logger.error(e);
         }
 
@@ -106,9 +97,7 @@ public class VehicleJdbcRepositoryImp implements VehicleJdbcRepository {
     @Override
     public void update(int vehicleId, Vehicle vehicle) {
         try {
-            PreparedStatement pstmt = DataBaseJdbcUtil
-                    .getConnection(DATABASE_URL + dbName + SSL_CONNECTION_FALSE, login, password)
-                    .prepareStatement(UPDATE_VEHICLE);
+            PreparedStatement pstmt = getConnection().prepareStatement(UPDATE_VEHICLE);
             switch (vehicle.getCarType()) {
                 case ELECTRO:
                     pstmt.setInt(1, 1);
@@ -127,10 +116,10 @@ public class VehicleJdbcRepositoryImp implements VehicleJdbcRepository {
             pstmt.setString(3, vehicle.getModel());
             pstmt.setInt(4, vehicleId);
             pstmt.executeUpdate();
-            logger.info("Vehicle with "+vehicleId+" id updated successfully.");
+            logger.info("Vehicle with " + vehicleId + " id updated successfully.");
         } catch (SQLException e) {
             logger.warn(e);
-        }catch (Exception e) {
+        } catch (Exception e) {
             logger.error(e);
         }
 
@@ -139,15 +128,13 @@ public class VehicleJdbcRepositoryImp implements VehicleJdbcRepository {
     @Override
     public void delete(int vehicleId) {
         try {
-            PreparedStatement pstmt = DataBaseJdbcUtil
-                    .getConnection(DATABASE_URL + dbName + SSL_CONNECTION_FALSE, login, password)
-                    .prepareStatement(DELETE_VEHICLE);
+            PreparedStatement pstmt = getConnection().prepareStatement(DELETE_VEHICLE);
             pstmt.setInt(1, vehicleId);
             pstmt.executeUpdate();
-            logger.info("Vehicle with "+vehicleId+" id removed from db successfully.");
+            logger.info("Vehicle with " + vehicleId + " id removed from db successfully.");
         } catch (SQLException e) {
             logger.warn(e);
-        }catch (Exception e) {
+        } catch (Exception e) {
             logger.error(e);
         }
 
@@ -156,9 +143,7 @@ public class VehicleJdbcRepositoryImp implements VehicleJdbcRepository {
     public Set<Vehicle> getAllVehiclesByType(VehicleType vehicleType) {
         Set<Vehicle> vehicleSet = new HashSet<>();
         try {
-            PreparedStatement pstmt = DataBaseJdbcUtil
-                    .getConnection(DATABASE_URL + dbName + SSL_CONNECTION_FALSE, login, password)
-                    .prepareStatement(GET_ALL_VEHICLES_BY_TYPE);
+            PreparedStatement pstmt = getConnection().prepareStatement(GET_ALL_VEHICLES_BY_TYPE);
             switch (vehicleType) {
                 case ELECTRO:
                     pstmt.setInt(1, 1);
@@ -196,7 +181,7 @@ public class VehicleJdbcRepositoryImp implements VehicleJdbcRepository {
             }
         } catch (SQLException e) {
             logger.warn(e);
-        }catch (Exception e) {
+        } catch (Exception e) {
             logger.error(e);
         }
 
@@ -206,9 +191,7 @@ public class VehicleJdbcRepositoryImp implements VehicleJdbcRepository {
     public Vehicle getVehicleByNumber(String vehicleNumber) {
         Vehicle vehicle = null;
         try {
-            PreparedStatement pstmt = DataBaseJdbcUtil
-                    .getConnection(DATABASE_URL + dbName + SSL_CONNECTION_FALSE, login, password)
-                    .prepareStatement(GET_VEHICLE_BY_NUMBER);
+            PreparedStatement pstmt = getConnection().prepareStatement(GET_VEHICLE_BY_NUMBER);
             pstmt.setString(1, vehicleNumber);
             ResultSet rs = pstmt.executeQuery();
             rs.next();
@@ -233,7 +216,7 @@ public class VehicleJdbcRepositoryImp implements VehicleJdbcRepository {
 
         } catch (SQLException e) {
             logger.warn(e);
-        }catch (Exception e) {
+        } catch (Exception e) {
             logger.error(e);
         }
 
@@ -242,15 +225,13 @@ public class VehicleJdbcRepositoryImp implements VehicleJdbcRepository {
 
     public void addOwnerIdToVehicle(int ownerId, int vehicleId) {
         try {
-            PreparedStatement pstmt = DataBaseJdbcUtil
-                    .getConnection(DATABASE_URL + dbName + SSL_CONNECTION_FALSE, login, password)
-                    .prepareStatement(UPDATE_VEHICLE_OWNER);
+            PreparedStatement pstmt = getConnection().prepareStatement(UPDATE_VEHICLE_OWNER);
             pstmt.setInt(1, ownerId);
             pstmt.setInt(2, vehicleId);
             pstmt.executeUpdate();
         } catch (SQLException e) {
             logger.warn(e);
-        }catch (Exception e) {
+        } catch (Exception e) {
             logger.error(e);
         }
 
@@ -259,16 +240,14 @@ public class VehicleJdbcRepositoryImp implements VehicleJdbcRepository {
     public int getVehicleIdByNumber(String vehicleNumber) {
         int vehicleId = 0;
         try {
-            PreparedStatement pstmt = DataBaseJdbcUtil
-                    .getConnection(DATABASE_URL + dbName + SSL_CONNECTION_FALSE, login, password)
-                    .prepareStatement(GET_VEHICLE_BY_NUMBER);
+            PreparedStatement pstmt = getConnection().prepareStatement(GET_VEHICLE_BY_NUMBER);
             pstmt.setString(1, vehicleNumber);
             ResultSet rs = pstmt.executeQuery();
             rs.next();
             vehicleId = rs.getInt(1);
         } catch (SQLException e) {
             logger.warn(e);
-        }catch (Exception e) {
+        } catch (Exception e) {
             logger.error(e);
         }
         return vehicleId;

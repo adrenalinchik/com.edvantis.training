@@ -1,9 +1,9 @@
-package com.edvantis.training.parking.repository.impl;
+package com.edvantis.training.parking.repository.jdbc.impl;
 
-import com.edvantis.training.parking.jdbc.DataBaseJdbcUtil;
 import com.edvantis.training.parking.models.Gender;
 import com.edvantis.training.parking.models.Owner;
 import com.edvantis.training.parking.repository.OwnerJdbcRepository;
+import com.edvantis.training.parking.repository.jdbc.AbstractJdbcRepository;
 import org.apache.log4j.Logger;
 
 import java.sql.PreparedStatement;
@@ -18,27 +18,19 @@ import static com.edvantis.training.parking.jdbc.Constants.*;
 /**
  * Created by taras.fihurnyak on 2/9/2017.
  */
-public class OwnerJdbcRepositoryImp implements OwnerJdbcRepository {
+public class OwnerJdbcRepositoryImp extends AbstractJdbcRepository implements OwnerJdbcRepository {
 
     private final Logger logger = Logger.getLogger(OwnerJdbcRepositoryImp.class);
 
-    private String dbName;
-    private String login;
-    private String password;
-
     public OwnerJdbcRepositoryImp(String dbName, String login, String password) {
-        this.dbName = dbName;
-        this.login = login;
-        this.password = password;
+        super(dbName, login, password);
     }
 
     @Override
     public Owner getById(int id) {
         Owner owner = null;
         try {
-            PreparedStatement pstmt = DataBaseJdbcUtil
-                    .getConnection(DATABASE_URL + dbName + SSL_CONNECTION_FALSE, login, password)
-                    .prepareStatement(GET_OWNER_BY_ID + id);
+            PreparedStatement pstmt = getConnection().prepareStatement(GET_OWNER_BY_ID + id);
             ResultSet rs = pstmt.executeQuery();
             owner = new Owner();
             rs.next();
@@ -50,7 +42,7 @@ public class OwnerJdbcRepositoryImp implements OwnerJdbcRepository {
             owner.setDOB(convertDateToOwnerAttribute(rs.getDate(5)));
         } catch (SQLException e) {
             logger.warn(e);
-        }catch (Exception e) {
+        } catch (Exception e) {
             logger.error(e);
         }
         return owner;
@@ -59,9 +51,7 @@ public class OwnerJdbcRepositoryImp implements OwnerJdbcRepository {
     @Override
     public void insert(Owner owner) {
         try {
-            PreparedStatement pstmt = DataBaseJdbcUtil
-                    .getConnection(DATABASE_URL + dbName + SSL_CONNECTION_FALSE, login, password)
-                    .prepareStatement(CREATE_OWNER);
+            PreparedStatement pstmt = getConnection().prepareStatement(CREATE_OWNER);
             pstmt.setString(1, owner.getFirstName());
             pstmt.setString(2, owner.getLastName());
             if (owner.getGender().toString().toLowerCase().equals("male")) {
@@ -69,10 +59,10 @@ public class OwnerJdbcRepositoryImp implements OwnerJdbcRepository {
             } else pstmt.setInt(3, 2);
             pstmt.setDate(4, convertDateToDatabaseColumn(owner.getDOB()));
             pstmt.executeUpdate();
-            logger.info("Owner "+owner.getFirstName()+" "+owner.getFirstName()+" saved to db successfully.");
+            logger.info("Owner " + owner.getFirstName() + " " + owner.getFirstName() + " saved to db successfully.");
         } catch (SQLException e) {
             logger.warn(e);
-        }catch (Exception e) {
+        } catch (Exception e) {
             logger.error(e);
         }
     }
@@ -80,9 +70,7 @@ public class OwnerJdbcRepositoryImp implements OwnerJdbcRepository {
     @Override
     public void update(int ownerId, Owner owner) {
         try {
-            PreparedStatement pstmt = DataBaseJdbcUtil
-                    .getConnection(DATABASE_URL + dbName + SSL_CONNECTION_FALSE, login, password)
-                    .prepareStatement(UPDATE_OWNER);
+            PreparedStatement pstmt = getConnection().prepareStatement(UPDATE_OWNER);
             pstmt.setString(1, owner.getFirstName());
             pstmt.setString(2, owner.getLastName());
             if (owner.getGender().equals(Gender.MALE)) {
@@ -91,10 +79,10 @@ public class OwnerJdbcRepositoryImp implements OwnerJdbcRepository {
             pstmt.setDate(4, convertDateToDatabaseColumn(owner.getDOB()));
             pstmt.setInt(5, ownerId);
             pstmt.executeUpdate();
-            logger.info("Owner with "+ownerId+" id updated successfully.");
+            logger.info("Owner with " + ownerId + " id updated successfully.");
         } catch (SQLException e) {
             logger.warn(e);
-        }catch (Exception e) {
+        } catch (Exception e) {
             logger.error(e);
         }
     }
@@ -102,15 +90,14 @@ public class OwnerJdbcRepositoryImp implements OwnerJdbcRepository {
     @Override
     public void delete(int ownerId) {
         try {
-            PreparedStatement pstmt = DataBaseJdbcUtil
-                    .getConnection(DATABASE_URL + dbName + SSL_CONNECTION_FALSE, login, password)
+            PreparedStatement pstmt = getConnection()
                     .prepareStatement(DELETE_OWNER);
             pstmt.setInt(1, ownerId);
             pstmt.executeUpdate();
-            logger.info("Owner with "+ownerId+" id removed from db successfully.");
+            logger.info("Owner with " + ownerId + " id removed from db successfully.");
         } catch (SQLException e) {
             logger.warn(e);
-        }catch (Exception e) {
+        } catch (Exception e) {
             logger.error(e);
         }
     }
@@ -118,9 +105,7 @@ public class OwnerJdbcRepositoryImp implements OwnerJdbcRepository {
     public Set<Owner> getAllOwnersFromDb() {
         Set<Owner> ownerSet = new HashSet<>();
         try {
-            PreparedStatement pstmt = DataBaseJdbcUtil
-                    .getConnection(DATABASE_URL + dbName + SSL_CONNECTION_FALSE, login, password)
-                    .prepareStatement(GET_ALL_OWNERS);
+            PreparedStatement pstmt = getConnection().prepareStatement(GET_ALL_OWNERS);
             ResultSet rs = pstmt.executeQuery();
             while (rs.next()) {
                 Owner owner = new Owner();
@@ -134,7 +119,7 @@ public class OwnerJdbcRepositoryImp implements OwnerJdbcRepository {
             }
         } catch (SQLException e) {
             logger.warn(e);
-        }catch (Exception e) {
+        } catch (Exception e) {
             logger.error(e);
         }
 
@@ -144,9 +129,7 @@ public class OwnerJdbcRepositoryImp implements OwnerJdbcRepository {
     public Owner getOwnerByLastName(String lastName) {
         Owner owner = null;
         try {
-            PreparedStatement pstmt = DataBaseJdbcUtil
-                    .getConnection(DATABASE_URL + dbName + SSL_CONNECTION_FALSE, login, password)
-                    .prepareStatement(GET_OWNER_BY_LASTNAME);
+            PreparedStatement pstmt = getConnection().prepareStatement(GET_OWNER_BY_LASTNAME);
             pstmt.setString(1, lastName);
             ResultSet rs = pstmt.executeQuery();
             owner = new Owner();
@@ -159,7 +142,7 @@ public class OwnerJdbcRepositoryImp implements OwnerJdbcRepository {
             owner.setDOB(convertDateToOwnerAttribute(rs.getDate(5)));
         } catch (SQLException e) {
             logger.warn(e);
-        }catch (Exception e) {
+        } catch (Exception e) {
             logger.error(e);
         }
         return owner;
@@ -174,16 +157,14 @@ public class OwnerJdbcRepositoryImp implements OwnerJdbcRepository {
     public int getOwnerIdByLastName(String ownerLastName) {
         int ownerId = 0;
         try {
-            PreparedStatement pstmt = DataBaseJdbcUtil
-                    .getConnection(DATABASE_URL + dbName + SSL_CONNECTION_FALSE, login, password)
-                    .prepareStatement(GET_OWNER_BY_LASTNAME);
+            PreparedStatement pstmt = getConnection().prepareStatement(GET_OWNER_BY_LASTNAME);
             pstmt.setString(1, ownerLastName);
             ResultSet rs = pstmt.executeQuery();
             rs.next();
             ownerId = rs.getInt(1);
         } catch (SQLException e) {
             logger.warn(e);
-        }catch (Exception e) {
+        } catch (Exception e) {
             logger.error(e);
         }
         return ownerId;
@@ -192,16 +173,14 @@ public class OwnerJdbcRepositoryImp implements OwnerJdbcRepository {
     private int getOwnerIdFromVehicleByNumber(String vehicleNumber) {
         int ownerId = 0;
         try {
-            PreparedStatement pstmt = DataBaseJdbcUtil
-                    .getConnection(DATABASE_URL + dbName + SSL_CONNECTION_FALSE, login, password)
-                    .prepareStatement(GET_VEHICLE_BY_NUMBER);
+            PreparedStatement pstmt = getConnection().prepareStatement(GET_VEHICLE_BY_NUMBER);
             pstmt.setString(1, vehicleNumber);
             ResultSet rs = pstmt.executeQuery();
             rs.next();
             ownerId = rs.getInt(2);
         } catch (SQLException e) {
             logger.warn(e);
-        }catch (Exception e) {
+        } catch (Exception e) {
             logger.error(e);
         }
         return ownerId;

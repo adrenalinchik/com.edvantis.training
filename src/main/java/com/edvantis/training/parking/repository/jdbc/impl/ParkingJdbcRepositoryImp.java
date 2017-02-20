@@ -1,8 +1,8 @@
-package com.edvantis.training.parking.repository.impl;
+package com.edvantis.training.parking.repository.jdbc.impl;
 
-import com.edvantis.training.parking.jdbc.DataBaseJdbcUtil;
 import com.edvantis.training.parking.models.Parking;
 import com.edvantis.training.parking.repository.ParkingJdbcRepository;
+import com.edvantis.training.parking.repository.jdbc.AbstractJdbcRepository;
 import org.apache.log4j.Logger;
 
 import java.sql.PreparedStatement;
@@ -15,27 +15,20 @@ import static com.edvantis.training.parking.jdbc.Constants.*;
 /**
  * Created by taras.fihurnyak on 2/14/2017.
  */
-public class ParkingJdbcRepositoryImp implements ParkingJdbcRepository {
+public class ParkingJdbcRepositoryImp extends AbstractJdbcRepository implements ParkingJdbcRepository {
 
     private final Logger logger = Logger.getLogger(ParkingJdbcRepositoryImp.class);
 
-    private String dbName;
-    private String login;
-    private String password;
 
     public ParkingJdbcRepositoryImp(String dbName, String login, String password) {
-        this.dbName = dbName;
-        this.login = login;
-        this.password = password;
+        super(dbName, login, password);
     }
 
     @Override
     public Parking getById(int parkingId) {
         Parking parking = null;
         try {
-            PreparedStatement pstmt = DataBaseJdbcUtil
-                    .getConnection(DATABASE_URL + dbName + SSL_CONNECTION_FALSE, login, password)
-                    .prepareStatement(GET_PARKING_BY_ID + parkingId);
+            PreparedStatement pstmt = getConnection().prepareStatement(GET_PARKING_BY_ID + parkingId);
             ResultSet rs = pstmt.executeQuery();
             rs.next();
             parking = new Parking();
@@ -55,9 +48,7 @@ public class ParkingJdbcRepositoryImp implements ParkingJdbcRepository {
     @Override
     public void insert(Parking parking) {
         try {
-            PreparedStatement pstmt = DataBaseJdbcUtil
-                    .getConnection(DATABASE_URL + dbName + SSL_CONNECTION_FALSE, login, password)
-                    .prepareStatement(CREATE_PARKING);
+            PreparedStatement pstmt = getConnection().prepareStatement(CREATE_PARKING);
             pstmt.setNull(1, Types.INTEGER);
             pstmt.setString(2, parking.getAddress());
             if (parking.getFreeGarages() != 0) {
@@ -77,9 +68,7 @@ public class ParkingJdbcRepositoryImp implements ParkingJdbcRepository {
     @Override
     public void update(int parkingId, Parking parking) {
         try {
-            PreparedStatement pstmt = DataBaseJdbcUtil
-                    .getConnection(DATABASE_URL + dbName + SSL_CONNECTION_FALSE, login, password)
-                    .prepareStatement(UPDATE_PARKING);
+            PreparedStatement pstmt = getConnection().prepareStatement(UPDATE_PARKING);
             pstmt.setString(2, parking.getAddress());
             pstmt.setInt(3, parking.getFreeGarages());
             pstmt.setInt(4, parkingId);
@@ -95,9 +84,7 @@ public class ParkingJdbcRepositoryImp implements ParkingJdbcRepository {
     @Override
     public void delete(int parkingId) {
         try {
-            PreparedStatement pstmt = DataBaseJdbcUtil
-                    .getConnection(DATABASE_URL + dbName + SSL_CONNECTION_FALSE, login, password)
-                    .prepareStatement(DELETE_PARKING);
+            PreparedStatement pstmt = getConnection().prepareStatement(DELETE_PARKING);
             pstmt.setInt(1, parkingId);
             pstmt.executeUpdate();
             logger.info("Parking with " + parkingId + " id removed from db successfully.");

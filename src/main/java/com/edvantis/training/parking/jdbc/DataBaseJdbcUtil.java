@@ -60,7 +60,7 @@ public class DataBaseJdbcUtil {
     public static Connection getConnection(String dbName, String login, String password) {
         Connection connection = null;
         try {
-            Class.forName("com.mysql.cj.jdbc.Driver");
+            Class.forName(DRIVER_NAME);
             connection = DriverManager.getConnection(dbName, login, password);
             logger.info("Connection with " + dbName + " database is established.");
         } catch (SQLException e) {

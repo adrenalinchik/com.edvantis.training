@@ -4,10 +4,10 @@ import com.edvantis.training.parking.repository.GarageJdbcRepository;
 import com.edvantis.training.parking.repository.OwnerJdbcRepository;
 import com.edvantis.training.parking.repository.ParkingJdbcRepository;
 import com.edvantis.training.parking.repository.VehicleJdbcRepository;
-import com.edvantis.training.parking.repository.impl.GarageJdbcRepositoryImp;
-import com.edvantis.training.parking.repository.impl.OwnerJdbcRepositoryImp;
-import com.edvantis.training.parking.repository.impl.ParkingJdbcRepositoryImp;
-import com.edvantis.training.parking.repository.impl.VehicleJdbcRepositoryImp;
+import com.edvantis.training.parking.repository.jdbc.impl.GarageJdbcRepositoryImp;
+import com.edvantis.training.parking.repository.jdbc.impl.OwnerJdbcRepositoryImp;
+import com.edvantis.training.parking.repository.jdbc.impl.ParkingJdbcRepositoryImp;
+import com.edvantis.training.parking.repository.jdbc.impl.VehicleJdbcRepositoryImp;
 import com.edvantis.training.parking.services.ParkingService;
 import com.edvantis.training.parking.services.impl.ParkingServiceImp;
 
