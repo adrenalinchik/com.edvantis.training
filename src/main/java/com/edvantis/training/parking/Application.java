@@ -7,6 +7,8 @@ import com.edvantis.training.parking.repository.GarageJdbcRepository;
 import com.edvantis.training.parking.repository.OwnerJdbcRepository;
 import com.edvantis.training.parking.repository.ParkingJdbcRepository;
 import com.edvantis.training.parking.repository.VehicleJdbcRepository;
+import com.edvantis.training.parking.repository.jpa.GarageJpaRepositoryEntityManagerExample;
+import com.edvantis.training.parking.repository.jpa.GarageJpaRepositorySessionExample;
 import com.edvantis.training.parking.services.ParkingService;
 
 import java.time.LocalDate;
@@ -20,7 +22,7 @@ import java.util.Set;
 public class Application {
     public static void main(String[] args) {
         ApplicationConfigJdbcFactory factory = new ApplicationConfigJdbcFactory();
-
+//
 //        String dbName = "test";
 //        String login = "root";
 //        String password = "root";
@@ -30,20 +32,53 @@ public class Application {
 //        ParkingJdbcRepository parkingJdbcRepository = factory.getParkingRepository(dbName, login, password);
 //        GarageJdbcRepository garageJdbcRepository = factory.getGarageRepository(dbName, login, password);
 //        ParkingService parkingService = factory.getParkingService(ownerRepo, vehicleRepo, garageJdbcRepository, parkingJdbcRepository);
-//
-//
-//        DataBaseJdbcUtil.createDb(dbName, login, password);
-//        parkingService.populateWithMockObjects(generateObjects());
-//        DataBaseJdbcUtil.clearDb(dbName, login, password, tableList());
-//        DataBaseJdbcUtil.dropDb(dbName,login,password);
-//
-//        //add new owner to db
-//        Owner owner = new Owner();
-//        owner.setFirstName("ownerFirstName_NEW");
-//        owner.setLastName("ownerLastName_NEW");
-//        owner.setDOB(LocalDate.now());
-//        owner.setGender(Gender.FEMALE);
 
+        //DataBaseJdbcUtil.createDb(dbName, login, password);
+        //parkingService.populateWithMockObjects(generateObjects());
+//
+//        GarageJpaRepositoryEntityManagerExample entityManagerExample = new GarageJpaRepositoryEntityManagerExample();
+//        Garage garage = new Garage();
+//        garage.setSquare(8888);
+//        garage.setGarageType(GarageType.MEDIUM);
+//        garage.setParking_id(1);
+
+        // entityManagerExample.insert(garage);
+
+//        Garage garage1 = entityManagerExample.getById(2);
+//        System.out.println(garage1.getSquare() + " " + garage1.getGarageType() + " " + garage1.getId() + " " + garage1.getParking_id());
+
+//        garage1.setGarageType(GarageType.MEDIUM);
+//        garage1.setSquare(777997);
+//        garage1.setParking_id(5);
+
+        //entityManagerExample.update(garage1);
+        //System.out.println(garage1.getSquare() + " " + garage1.getGarageType() + " " + garage1.getId() + " " + garage1.getParking_id());
+
+        // entityManagerExample.delete(1);
+
+
+        //   Set<Garage> setEntity = entityManagerExample.getAllGaragesByType(GarageType.BIG);
+//
+//        for (Garage g : setEntity) {
+//            System.out.println(g.getSquare() + " " + g.getGarageType() + " " + g.getId() + " " + g.getParking_id());
+//        }
+//
+//        GarageJpaRepositorySessionExample jpaRepositorySessionExample = new GarageJpaRepositorySessionExample();
+//        Garage garage = garageRepo.getById(10);
+//        garage.setGarageType(GarageType.MEDIUM);
+//        garage.setSquare(7777);
+//        garage.setParking_id(5);
+//        //garageRepo.insert(garage);
+//        garageRepo.update(garage);
+        //garageRepo.delete(garage);
+//        Garage garageUpdated = garageRepo.getById(11);
+//        System.out.println(garageUpdated.getSquare()+" "+garageUpdated.getGarageType()+" "+garageUpdated.getId()+" "+garageUpdated.getParking_id());
+
+//        Set<Garage> setSession = jpaRepositorySessionExample.getAllGaragesByType(GarageType.BIG);
+//
+//        for (Garage g : setSession) {
+//            System.out.println(g.getSquare() + " " + g.getGarageType() + " " + g.getId() + " " + g.getParking_id());
+//        }
 
         if (args.length > 0) {
             String dbName = args[0];
@@ -58,8 +93,52 @@ public class Application {
 
             DataBaseJdbcUtil.createDb(dbName, login, password);
             parkingService.populateWithMockObjects(generateObjects());
-            DataBaseJdbcUtil.clearDb(dbName, login, password, tablesList());
-            DataBaseJdbcUtil.dropDb(dbName, login, password);
+
+            GarageJpaRepositoryEntityManagerExample entityManagerExample = new GarageJpaRepositoryEntityManagerExample();
+//            Garage garage = new Garage();
+//            garage.setSquare(8888);
+//            garage.setGarageType(GarageType.MEDIUM);
+//            garage.setParking_id(1);
+//
+//            entityManagerExample.insert(garage);
+//
+//            Garage garage1 = entityManagerExample.getById(2);
+//            System.out.println(garage1.getSquare() + " " + garage1.getGarageType() + " " + garage1.getId() + " " + garage1.getParking_id());
+
+//        garage1.setGarageType(GarageType.MEDIUM);
+//        garage1.setSquare(777997);
+//        garage1.setParking_id(5);
+
+            //entityManagerExample.update(garage1);
+            //System.out.println(garage1.getSquare() + " " + garage1.getGarageType() + " " + garage1.getId() + " " + garage1.getParking_id());
+
+            // entityManagerExample.delete(1);
+
+
+            Set<Garage> setEntity = entityManagerExample.getAllGaragesByType(GarageType.BIG);
+
+            for (Garage g : setEntity) {
+                System.out.println(g.getSquare() + " " + g.getGarageType() + " " + g.getId() + " " + g.getParking_id());
+            }
+
+            GarageJpaRepositorySessionExample jpaRepositorySessionExample = new GarageJpaRepositorySessionExample();
+//        Garage garage = garageRepo.getById(10);
+//        garage.setGarageType(GarageType.MEDIUM);
+//        garage.setSquare(7777);
+//        garage.setParking_id(5);
+//        //garageRepo.insert(garage);
+//        garageRepo.update(garage);
+            //garageRepo.delete(garage);
+//        Garage garageUpdated = garageRepo.getById(11);
+//        System.out.println(garageUpdated.getSquare()+" "+garageUpdated.getGarageType()+" "+garageUpdated.getId()+" "+garageUpdated.getParking_id());
+
+            Set<Garage> setSession = jpaRepositorySessionExample.getAllGaragesByType(GarageType.BIG);
+
+            for (Garage g : setSession) {
+                System.out.println(g.getSquare() + " " + g.getGarageType() + " " + g.getId() + " " + g.getParking_id());
+            }
+
+
         }
 
 
@@ -102,8 +181,8 @@ public class Application {
         return arrayList;
     }
 
-    private static String [] tablesList(){
-        return new String[]{"owner","vehicle","garage","parking"};
+    private static String[] tablesList() {
+        return new String[]{"owner", "vehicle", "garage", "parking"};
     }
 
 

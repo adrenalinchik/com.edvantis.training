@@ -9,7 +9,6 @@ import org.apache.log4j.Logger;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Types;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -35,14 +34,14 @@ public class GarageJdbcRepositoryImp extends AbstractJdbcRepository implements G
             ResultSet rs = pstmt.executeQuery();
             garage = new Garage();
             rs.next();
-            switch (rs.getInt(2)) {
-                case 1:
+            switch (rs.getString(2)) {
+                case "SMALL":
                     garage.setGarageType(GarageType.SMALL);
                     break;
-                case 2:
+                case "MEDIUM":
                     garage.setGarageType(GarageType.MEDIUM);
                     break;
-                case 3:
+                case "BIG":
                     garage.setGarageType(GarageType.BIG);
                     break;
             }
@@ -60,16 +59,16 @@ public class GarageJdbcRepositoryImp extends AbstractJdbcRepository implements G
     public void insert(Garage garage) {
         try {
             PreparedStatement pstmt = getConnection().prepareStatement(CREATE_GARAGE);
-            pstmt.setNull(1, Types.INTEGER);
+            pstmt.setInt(1, 1);
             switch (garage.getGarageType()) {
                 case SMALL:
-                    pstmt.setInt(2, 1);
+                    pstmt.setString(2, GarageType.SMALL.toString());
                     break;
                 case MEDIUM:
-                    pstmt.setInt(2, 2);
+                    pstmt.setString(2, GarageType.MEDIUM.toString());
                     break;
                 case BIG:
-                    pstmt.setInt(2, 3);
+                    pstmt.setString(2, GarageType.BIG.toString());
                     break;
             }
             pstmt.setFloat(3, garage.getSquare());
