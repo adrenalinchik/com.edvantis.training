@@ -5,7 +5,7 @@ import com.edvantis.training.parking.models.Garage;
 /**
  * Created by taras.fihurnyak on 2/13/2017.
  */
-public interface GarageJdbcRepository {
+public interface GarageRepository {
 
     Garage getById(int id);
 

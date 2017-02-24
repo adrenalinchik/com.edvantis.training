@@ -1,5 +1,8 @@
 package com.edvantis.training.parking.models;
 
+import org.hibernate.annotations.GenericGenerator;
+
+import javax.persistence.*;
 import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
@@ -7,22 +10,42 @@ import java.util.Set;
 /**
  * Created by taras.fihurnyak on 2/2/2017.
  */
+
+@Entity
+@Table(name = "OWNER")
 public class Owner {
 
+    @Id
+    @GeneratedValue(generator = "increment")
+    @GenericGenerator(name = "increment", strategy = "increment")
+    @Column(name = "ID", unique = true, nullable = false)
+    private int id;
+
+    @Column(name = "FIRSTNAME")
     private String firstName;
+
+    @Column(name = "LASTNAME")
     private String lastName;
+
+    @Column(name = "GENDER")
+    @Enumerated(EnumType.STRING)
     private Gender gender;
+
+    @Column(name = "DOB")
     private LocalDate dob;
-    private Set<Vehicle> vehicleSet = new HashSet<>();
+
+    @OneToMany(cascade = CascadeType.ALL, mappedBy="owner", fetch = FetchType.EAGER)
+    private Set<Vehicle> userVehicles = new HashSet<>();
 
     public Owner() {
     }
 
-    public Owner(String firstName, String lastName, Gender gender, LocalDate dob) {
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.gender = gender;
-        this.dob = dob;
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String getFirstName() {
@@ -59,14 +82,26 @@ public class Owner {
 
     public Vehicle getVehicleByNumber(String vehicleType) {
         Vehicle vehicle = null;
-        for (Vehicle v : vehicleSet) {
+        for (Vehicle v : userVehicles) {
             if (v.getNumber().equals(vehicleType))
                 vehicle = v;
         }
         return vehicle;
     }
 
-    public void addVehicleToOwner(Vehicle vehicle){
-        vehicleSet.add(vehicle);
+    public void addVehicleToOwner(Vehicle vehicle) {
+        userVehicles.add(vehicle);
+    }
+
+    @Override
+    public String toString() {
+        return "Owner{" +
+                "id=" + id +
+                ", firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                ", gender=" + gender +
+                ", dob=" + dob +
+                ", userVehicles=" + userVehicles +
+                '}';
     }
 }

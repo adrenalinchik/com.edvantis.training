@@ -2,7 +2,7 @@ package com.edvantis.training.parking.repository.jdbc.impl;
 
 import com.edvantis.training.parking.models.Vehicle;
 import com.edvantis.training.parking.models.VehicleType;
-import com.edvantis.training.parking.repository.VehicleJdbcRepository;
+import com.edvantis.training.parking.repository.VehicleRepository;
 import com.edvantis.training.parking.repository.jdbc.AbstractJdbcRepository;
 import org.apache.log4j.Logger;
 
@@ -19,7 +19,7 @@ import static com.edvantis.training.parking.models.VehicleType.*;
 /**
  * Created by taras.fihurnyak on 2/9/2017.
  */
-public class VehicleJdbcRepositoryImp extends AbstractJdbcRepository implements VehicleJdbcRepository {
+public class VehicleJdbcRepositoryImp extends AbstractJdbcRepository implements VehicleRepository {
 
     private final Logger logger = Logger.getLogger(VehicleJdbcRepositoryImp.class);
 
@@ -221,20 +221,6 @@ public class VehicleJdbcRepositoryImp extends AbstractJdbcRepository implements 
         }
 
         return vehicle;
-    }
-
-    public void addOwnerIdToVehicle(int ownerId, int vehicleId) {
-        try {
-            PreparedStatement pstmt = getConnection().prepareStatement(UPDATE_VEHICLE_OWNER);
-            pstmt.setInt(1, ownerId);
-            pstmt.setInt(2, vehicleId);
-            pstmt.executeUpdate();
-        } catch (SQLException e) {
-            logger.warn(e);
-        } catch (Exception e) {
-            logger.error(e);
-        }
-
     }
 
     public int getVehicleIdByNumber(String vehicleNumber) {

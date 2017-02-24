@@ -2,7 +2,7 @@ package com.edvantis.training.parking.repository.jdbc.impl;
 
 import com.edvantis.training.parking.models.Gender;
 import com.edvantis.training.parking.models.Owner;
-import com.edvantis.training.parking.repository.OwnerJdbcRepository;
+import com.edvantis.training.parking.repository.OwnerRepository;
 import com.edvantis.training.parking.repository.jdbc.AbstractJdbcRepository;
 import org.apache.log4j.Logger;
 
@@ -18,7 +18,7 @@ import static com.edvantis.training.parking.jdbc.Constants.*;
 /**
  * Created by taras.fihurnyak on 2/9/2017.
  */
-public class OwnerJdbcRepositoryImp extends AbstractJdbcRepository implements OwnerJdbcRepository {
+public class OwnerJdbcRepositoryImp extends AbstractJdbcRepository implements OwnerRepository {
 
     private final Logger logger = Logger.getLogger(OwnerJdbcRepositoryImp.class);
 
@@ -148,7 +148,7 @@ public class OwnerJdbcRepositoryImp extends AbstractJdbcRepository implements Ow
         return owner;
     }
 
-    public Owner getOwnerByVehicleNymber(String vehicleNumber) {
+    public Owner getOwnerByVehicleNumber(String vehicleNumber) {
 
         return getById(getOwnerIdFromVehicleByNumber(vehicleNumber));
 

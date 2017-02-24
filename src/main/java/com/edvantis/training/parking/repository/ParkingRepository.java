@@ -5,7 +5,7 @@ import com.edvantis.training.parking.models.Parking;
 /**
  * Created by taras.fihurnyak on 2/14/2017.
  */
-public interface ParkingJdbcRepository {
+public interface ParkingRepository {
 
 
     Parking getById(int parkingId);

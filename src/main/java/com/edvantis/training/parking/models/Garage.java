@@ -7,8 +7,8 @@ import javax.persistence.*;
 /**
  * Created by taras.fihurnyak on 2/13/2017.
  */
-@Entity(name="GARAGE")
-@Table(name = "GARAGE", catalog = "test")
+@Entity
+@Table(name = "GARAGE")
 public class Garage {
 
     @Id
@@ -17,8 +17,9 @@ public class Garage {
     @Column(name = "ID", unique = true, nullable = false)
     private int id;
 
-    @Column(name = "PARKING_ID")
-    private int parking_id;
+    @ManyToOne
+    @JoinColumn(name = "PARKING_ID")
+    private Parking parking;
 
     @Column(name = "TYPE")
     @Enumerated(EnumType.STRING)
@@ -50,16 +51,17 @@ public class Garage {
         return square;
     }
 
+    public Parking getParking() {
+        return parking;
+    }
+
+    public void setParking(Parking parking) {
+        this.parking = parking;
+    }
+
     public void setSquare(float square) {
         this.square = square;
     }
 
-    public int getParking_id() {
-        return parking_id;
-    }
-
-    public void setParking_id(int parking_id) {
-        this.parking_id = parking_id;
-    }
 
 }

@@ -1,7 +1,7 @@
 package com.edvantis.training.parking.repository.jdbc.impl;
 
 import com.edvantis.training.parking.models.Parking;
-import com.edvantis.training.parking.repository.ParkingJdbcRepository;
+import com.edvantis.training.parking.repository.ParkingRepository;
 import com.edvantis.training.parking.repository.jdbc.AbstractJdbcRepository;
 import org.apache.log4j.Logger;
 
@@ -15,7 +15,7 @@ import static com.edvantis.training.parking.jdbc.Constants.*;
 /**
  * Created by taras.fihurnyak on 2/14/2017.
  */
-public class ParkingJdbcRepositoryImp extends AbstractJdbcRepository implements ParkingJdbcRepository {
+public class ParkingJdbcRepositoryImp extends AbstractJdbcRepository implements ParkingRepository {
 
     private final Logger logger = Logger.getLogger(ParkingJdbcRepositoryImp.class);
 
@@ -34,7 +34,7 @@ public class ParkingJdbcRepositoryImp extends AbstractJdbcRepository implements 
             parking = new Parking();
             parking.setAddress(rs.getString(2));
             if (rs.getInt(3) != 0)
-                parking.setFreeGarages(rs.getInt(3));
+                parking.setFreeGaragesNumber(rs.getInt(3));
 
         } catch (SQLException e) {
             logger.warn(e);
@@ -51,8 +51,8 @@ public class ParkingJdbcRepositoryImp extends AbstractJdbcRepository implements 
             PreparedStatement pstmt = getConnection().prepareStatement(CREATE_PARKING);
             pstmt.setNull(1, Types.INTEGER);
             pstmt.setString(2, parking.getAddress());
-            if (parking.getFreeGarages() != 0) {
-                pstmt.setInt(3, parking.getFreeGarages());
+            if (parking.getFreeGaragesNumber() != 0) {
+                pstmt.setInt(3, parking.getFreeGaragesNumber());
             } else pstmt.setNull(3, Types.INTEGER);
 
             pstmt.executeUpdate();
@@ -70,7 +70,7 @@ public class ParkingJdbcRepositoryImp extends AbstractJdbcRepository implements 
         try {
             PreparedStatement pstmt = getConnection().prepareStatement(UPDATE_PARKING);
             pstmt.setString(2, parking.getAddress());
-            pstmt.setInt(3, parking.getFreeGarages());
+            pstmt.setInt(3, parking.getFreeGaragesNumber());
             pstmt.setInt(4, parkingId);
             pstmt.executeUpdate();
             logger.info("Parking with " + parkingId + " id updated successfully.");

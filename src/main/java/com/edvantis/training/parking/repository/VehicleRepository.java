@@ -8,7 +8,7 @@ import java.util.Set;
 /**
  * Created by taras.fihurnyak on 2/9/2017.
  */
-public interface VehicleJdbcRepository {
+public interface VehicleRepository {
 
     Vehicle getById(int vehicleId);
 
@@ -21,8 +21,6 @@ public interface VehicleJdbcRepository {
     Set<Vehicle> getAllVehiclesByType(VehicleType vehicleType);
 
     Vehicle getVehicleByNumber(String vehicleNumber);
-
-    void addOwnerIdToVehicle(int ownerId, int vehicleId);
 
     int getVehicleIdByNumber(String vehicleNumber);
 }

@@ -2,7 +2,7 @@ package com.edvantis.training.parking.repository.jdbc.impl;
 
 import com.edvantis.training.parking.models.Garage;
 import com.edvantis.training.parking.models.GarageType;
-import com.edvantis.training.parking.repository.GarageJdbcRepository;
+import com.edvantis.training.parking.repository.GarageRepository;
 import com.edvantis.training.parking.repository.jdbc.AbstractJdbcRepository;
 import org.apache.log4j.Logger;
 
@@ -17,7 +17,7 @@ import static com.edvantis.training.parking.jdbc.Constants.*;
 /**
  * Created by taras.fihurnyak on 2/13/2017.
  */
-public class GarageJdbcRepositoryImp extends AbstractJdbcRepository implements GarageJdbcRepository {
+public class GarageJdbcRepositoryImp extends AbstractJdbcRepository implements GarageRepository {
 
     private final Logger logger = Logger.getLogger(GarageJdbcRepositoryImp.class);
 

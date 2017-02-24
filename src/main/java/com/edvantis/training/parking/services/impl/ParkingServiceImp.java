@@ -1,10 +1,10 @@
 package com.edvantis.training.parking.services.impl;
 
 import com.edvantis.training.parking.models.*;
-import com.edvantis.training.parking.repository.GarageJdbcRepository;
-import com.edvantis.training.parking.repository.OwnerJdbcRepository;
-import com.edvantis.training.parking.repository.ParkingJdbcRepository;
-import com.edvantis.training.parking.repository.VehicleJdbcRepository;
+import com.edvantis.training.parking.repository.GarageRepository;
+import com.edvantis.training.parking.repository.OwnerRepository;
+import com.edvantis.training.parking.repository.ParkingRepository;
+import com.edvantis.training.parking.repository.VehicleRepository;
 import com.edvantis.training.parking.services.ParkingService;
 import org.apache.log4j.Logger;
 
@@ -16,12 +16,12 @@ import java.util.Set;
  */
 public class ParkingServiceImp implements ParkingService {
 
-    private OwnerJdbcRepository ownerRepo;
-    private VehicleJdbcRepository vehicleRepo;
-    private GarageJdbcRepository garageRepo;
-    private ParkingJdbcRepository parkingRepo;
+    private OwnerRepository ownerRepo;
+    private VehicleRepository vehicleRepo;
+    private GarageRepository garageRepo;
+    private ParkingRepository parkingRepo;
 
-    public ParkingServiceImp(OwnerJdbcRepository ownerRepo, VehicleJdbcRepository vehicleRepo, GarageJdbcRepository garageRepo, ParkingJdbcRepository parkingRepo) {
+    public ParkingServiceImp(OwnerRepository ownerRepo, VehicleRepository vehicleRepo, GarageRepository garageRepo, ParkingRepository parkingRepo) {
         this.ownerRepo = ownerRepo;
         this.vehicleRepo = vehicleRepo;
         this.garageRepo = garageRepo;
@@ -75,7 +75,7 @@ public class ParkingServiceImp implements ParkingService {
 
     @Override
     public Owner getOwnerByVehicleNumber(String vehicleNumber) {
-        return ownerRepo.getOwnerByVehicleNymber(vehicleNumber);
+        return ownerRepo.getOwnerByVehicleNumber(vehicleNumber);
 
     }
 

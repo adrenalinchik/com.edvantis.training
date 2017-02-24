@@ -51,7 +51,7 @@ public class DataBaseJdbcUtil {
             Statement statement = connection.createStatement();
             statement.executeUpdate(CREATE_DB + dbName);
             connection.setCatalog(dbName);
-            checkTables(connection);
+            //checkTables(connection);
         } catch (Exception e) {
             logger.warn(e);
         }

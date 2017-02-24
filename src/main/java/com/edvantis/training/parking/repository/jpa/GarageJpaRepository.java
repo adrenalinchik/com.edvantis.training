@@ -4,7 +4,7 @@ import com.edvantis.training.parking.jpa.JpaUtility;
 import com.edvantis.training.parking.models.Garage;
 import com.edvantis.training.parking.models.GarageType;
 import com.edvantis.training.parking.models.Garage_;
-import com.edvantis.training.parking.repository.GarageJdbcRepository;
+import com.edvantis.training.parking.repository.GarageRepository;
 import org.apache.log4j.Logger;
 
 import javax.persistence.EntityManager;
@@ -17,9 +17,9 @@ import java.util.Set;
 /**
  * Created by taras.fihurnyak on 2/22/2017.
  */
-public class GarageJpaRepositoryEntityManagerExample implements GarageJdbcRepository {
+public class GarageJpaRepository implements GarageRepository {
 
-    private final Logger logger = Logger.getLogger(GarageJpaRepositoryEntityManagerExample.class);
+    private final Logger logger = Logger.getLogger(GarageJpaRepository.class);
 
     @Override
     public Garage getById(int id) {
@@ -46,6 +46,7 @@ public class GarageJpaRepositoryEntityManagerExample implements GarageJdbcReposi
             em.getTransaction().begin();
             em.persist(garage);
             em.getTransaction().commit();
+            logger.info("Garage "+garage.getId()+" is saved to db successfully.");
         } catch (Exception e) {
             logger.warn(e);
         } finally {
@@ -57,6 +58,20 @@ public class GarageJpaRepositoryEntityManagerExample implements GarageJdbcReposi
 
     @Override
     public void update(int garageId, Garage garage) {
+        EntityManager em = null;
+        try {
+            em = JpaUtility.getEntityManager();
+            em.getTransaction().begin();
+            em.merge(garage);
+            em.getTransaction().commit();
+            logger.info("Garage "+garage.getId()+" updated successfully.");
+        } catch (Exception e) {
+            logger.warn(e);
+        } finally {
+            if (em != null && em.isOpen()) {
+                em.close();
+            }
+        }
 
     }
 
@@ -67,6 +82,7 @@ public class GarageJpaRepositoryEntityManagerExample implements GarageJdbcReposi
             em.getTransaction().begin();
             em.merge(garage);
             em.getTransaction().commit();
+            logger.info("Garage "+garage.getId()+" updated successfully.");
         } catch (Exception e) {
             logger.warn(e);
         } finally {
@@ -84,6 +100,7 @@ public class GarageJpaRepositoryEntityManagerExample implements GarageJdbcReposi
             em.getTransaction().begin();
             em.remove(em.find(Garage.class, garageId));
             em.getTransaction().commit();
+            logger.info("Garage "+garageId+" deleted successfully.");
         } catch (Exception e) {
             logger.warn(e);
         } finally {
@@ -93,6 +110,7 @@ public class GarageJpaRepositoryEntityManagerExample implements GarageJdbcReposi
         }
 
     }
+
     public void delete(Garage garage) {
         EntityManager em = null;
         try {
@@ -100,6 +118,7 @@ public class GarageJpaRepositoryEntityManagerExample implements GarageJdbcReposi
             em.getTransaction().begin();
             em.remove(em.find(Garage.class,garage.getId()));
             em.getTransaction().commit();
+            logger.info("Garage "+garage.getId()+" deleted successfully.");
         } catch (Exception e) {
             logger.warn(e);
         } finally {

@@ -1,13 +1,13 @@
 package com.edvantis.training.parking.factory;
 
-import com.edvantis.training.parking.repository.GarageJdbcRepository;
-import com.edvantis.training.parking.repository.OwnerJdbcRepository;
-import com.edvantis.training.parking.repository.ParkingJdbcRepository;
-import com.edvantis.training.parking.repository.VehicleJdbcRepository;
-import com.edvantis.training.parking.repository.jdbc.impl.GarageJdbcRepositoryImp;
-import com.edvantis.training.parking.repository.jdbc.impl.OwnerJdbcRepositoryImp;
-import com.edvantis.training.parking.repository.jdbc.impl.ParkingJdbcRepositoryImp;
-import com.edvantis.training.parking.repository.jdbc.impl.VehicleJdbcRepositoryImp;
+import com.edvantis.training.parking.repository.GarageRepository;
+import com.edvantis.training.parking.repository.OwnerRepository;
+import com.edvantis.training.parking.repository.ParkingRepository;
+import com.edvantis.training.parking.repository.VehicleRepository;
+import com.edvantis.training.parking.repository.jpa.GarageJpaRepository;
+import com.edvantis.training.parking.repository.jpa.OwnerJpaRepository;
+import com.edvantis.training.parking.repository.jpa.ParkingJpaRepository;
+import com.edvantis.training.parking.repository.jpa.VehicleJpaRepository;
 import com.edvantis.training.parking.services.ParkingService;
 import com.edvantis.training.parking.services.impl.ParkingServiceImp;
 
@@ -19,24 +19,24 @@ public class ApplicationConfigJdbcFactory {
     public ApplicationConfigJdbcFactory() {
     }
 
-    public OwnerJdbcRepository getOwnerRepository(String dbName, String login, String password) {
-        return new OwnerJdbcRepositoryImp(dbName, login, password);
+    public OwnerRepository getOwnerRepository() {
+        return new OwnerJpaRepository();
     }
 
-    public VehicleJdbcRepository getVehicleRepository(String dbName, String login, String password) {
-        return new VehicleJdbcRepositoryImp(dbName, login, password);
+    public VehicleRepository getVehicleRepository() {
+        return new VehicleJpaRepository();
     }
 
-    public ParkingJdbcRepository getParkingRepository(String dbName, String login, String password) {
-        return new ParkingJdbcRepositoryImp(dbName, login, password);
+    public ParkingRepository getParkingRepository() {
+        return new ParkingJpaRepository();
     }
 
-    public GarageJdbcRepository getGarageRepository(String dbName, String login, String password) {
-        return new GarageJdbcRepositoryImp(dbName, login, password);
+    public GarageRepository getGarageRepository() {
+        return new GarageJpaRepository();
     }
 
-    public ParkingService getParkingService(OwnerJdbcRepository ownerJdbcRepository, VehicleJdbcRepository vehicleJdbcRepository,GarageJdbcRepository garageJdbcRepository, ParkingJdbcRepository parkingJdbcRepository ) {
-        return new ParkingServiceImp(ownerJdbcRepository, vehicleJdbcRepository,garageJdbcRepository,parkingJdbcRepository);
+    public ParkingService getParkingService(OwnerRepository ownerRepository, VehicleRepository vehicleRepository,GarageRepository garageRepository, ParkingRepository parkingRepository ) {
+        return new ParkingServiceImp(ownerRepository, vehicleRepository,garageRepository,parkingRepository);
     }
 
 }

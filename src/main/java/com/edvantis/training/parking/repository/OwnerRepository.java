@@ -7,7 +7,7 @@ import java.util.Set;
 /**
  * Created by taras.fihurnyak on 2/9/2017.
  */
-public interface OwnerJdbcRepository {
+public interface OwnerRepository {
 
     Owner getById(int id);
 
@@ -21,7 +21,7 @@ public interface OwnerJdbcRepository {
 
     Owner getOwnerByLastName(String lastName);
 
-    Owner getOwnerByVehicleNymber(String vehicleNumber);
+    Owner getOwnerByVehicleNumber(String vehicleNumber);
 
     int getOwnerIdByLastName(String ownerLastName);
 
