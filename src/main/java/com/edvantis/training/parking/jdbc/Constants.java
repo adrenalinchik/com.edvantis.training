@@ -18,7 +18,7 @@ public class Constants {
     public static final String CREATE_VEHICLE = "INSERT INTO VEHICLE(OWNER_ID,TYPE, NUMBER, MODEL) VALUES(?,?,?,?)";
     public static final String CREATE_GARAGE = "INSERT INTO GARAGE(PARKING_ID, TYPE, SQUARE) VALUES(?,?,?)";
     public static final String CREATE_PARKING = "INSERT INTO PARKING(MANAGER_ID, ADDRESS, FREE_GARAGES) VALUES(?,?,?)";
-    public static final String GET_MAX_ROW_NUMBER = "SELECT COUNT(*) FROM ";
+    public static final String SET_FOREIGN_KEY_CHECKS = "SET FOREIGN_KEY_CHECKS =";
     public static final String CLEAN_TABLE = "TRUNCATE ";
     public static final String DROP_DATABASE = "DROP DATABASE IF EXISTS ";
     public static final String GET_OWNER_BY_ID = "SELECT * FROM OWNER WHERE ID=";
@@ -29,7 +29,7 @@ public class Constants {
     public static final String UPDATE_VEHICLE = "UPDATE VEHICLE SET TYPE = ?, NUMBER = ?, MODEL = ? WHERE ID=?";
     public static final String UPDATE_GARAGE = "UPDATE GARAGE SET TYPE = ?, SQUARE = ? WHERE ID=?";
     public static final String UPDATE_PARKING = "UPDATE GARAGE SET ADDRESS = ?, FREE_GARAGES = ? WHERE ID=?";
-    public static final String UPDATE_VEHICLE_OWNER = "UPDATE VEHICLE SET OWNER_ID = ? WHERE ID=?";
+
     public static final String UPDATE_GARAGE_PARKING = "UPDATE GARAGE SET PARKING_ID = ? WHERE ID=?";
     public static final String DELETE_OWNER = "DELETE FROM OWNER WHERE ID=?";
     public static final String DELETE_VEHICLE = "DELETE FROM VEHICLE WHERE ID=?";

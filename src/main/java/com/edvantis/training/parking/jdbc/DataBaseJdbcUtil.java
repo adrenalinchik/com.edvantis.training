@@ -28,9 +28,11 @@ public class DataBaseJdbcUtil {
 
     public static void clearDb(String dbName, String login, String password, String [] tableList) {
         try (Connection conn = getConnection(DATABASE_URL + dbName + SSL_CONNECTION_FALSE, login, password)) {
+            setForeignKeyChecks(0,conn);
             for (int i=0;i<tableList.length;i++) {
                 cleanTable(tableList[i], conn);
             }
+            setForeignKeyChecks(1,conn);
             logger.info(dbName + " database is cleared.");
         } catch (SQLException e) {
             logger.warn(e);
@@ -130,6 +132,15 @@ public class DataBaseJdbcUtil {
             logger.warn(e);
         }
 
+    }
+
+    private static void setForeignKeyChecks(int checks, Connection connection){
+        try {
+            PreparedStatement pstmt = connection.prepareStatement(SET_FOREIGN_KEY_CHECKS + checks);
+            pstmt.executeUpdate();
+        } catch (SQLException e) {
+            logger.warn(e);
+        }
     }
 
 }

@@ -1,6 +1,6 @@
 package com.edvantis.training.parking;
 
-import com.edvantis.training.parking.factory.ApplicationConfigJdbcFactory;
+import com.edvantis.training.parking.factory.ApplicationConfigJpaFactory;
 import com.edvantis.training.parking.jdbc.DataBaseJdbcUtil;
 import com.edvantis.training.parking.models.*;
 import com.edvantis.training.parking.repository.GarageRepository;
@@ -23,7 +23,7 @@ public class ApplicationTest {
     private String login = "root";
     private String password = "root";
 
-    private ApplicationConfigJdbcFactory factory = new ApplicationConfigJdbcFactory();
+    private ApplicationConfigJpaFactory factory = new ApplicationConfigJpaFactory();
 
     private OwnerRepository ownerRepo = factory.getOwnerRepository();
     private VehicleRepository vehicleRepo = factory.getVehicleRepository();
@@ -39,7 +39,6 @@ public class ApplicationTest {
 
     @Test
     public void clearAllTables() {
-        //doesn't work properly. java.sql.SQLSyntaxErrorException: Cannot truncate a table referenced in a foreign key constraint
         DataBaseJdbcUtil.clearDb(dbName, login, password, tablesList());
     }
 
@@ -66,7 +65,6 @@ public class ApplicationTest {
 
     @Test
     public void getOwnerByLastName() {
-
         Owner owner = parkingService.getOwnerByLastName("ownerLastName_9");
         System.out.println(owner.toString());
     }
@@ -111,7 +109,7 @@ public class ApplicationTest {
     }
 
     private String[] tablesList() {
-        return new String[]{"owner", "vehicle", "garage", "parking"};
+        return new String[]{"vehicle", "owner", "parking", "garage"};
     }
 
 }

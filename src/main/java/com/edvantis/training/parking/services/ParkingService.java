@@ -26,5 +26,4 @@ public interface ParkingService {
 
     Set<Vehicle> getAllVehicleByType(VehicleType vehicleType);
 
-    void addVehicleToOwner(Owner owner, Vehicle vehicle);
 }

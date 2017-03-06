@@ -85,13 +85,4 @@ public class ParkingServiceImp implements ParkingService {
 
     }
 
-    @Override
-    public void addVehicleToOwner(Owner owner, Vehicle vehicle) {
-        int ownerId = ownerRepo.getOwnerIdByLastName(owner.getLastName());
-        int vehicleId = vehicleRepo.getVehicleIdByNumber(vehicle.getNumber());
-        vehicleRepo.addOwnerIdToVehicle(ownerId, vehicleId);
-        owner.addVehicleToOwner(vehicle);
-
-        logger.info("Vechicle " + vehicle.getNumber() + " is added to " + owner.getFirstName() + " " + owner.getLastName() + " owner successfully.");
-    }
 }

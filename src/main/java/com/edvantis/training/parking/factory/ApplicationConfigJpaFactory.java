@@ -14,9 +14,9 @@ import com.edvantis.training.parking.services.impl.ParkingServiceImp;
 /**
  * Created by taras.fihurnyak on 2/16/2017.
  */
-public class ApplicationConfigJdbcFactory {
+public class ApplicationConfigJpaFactory {
 
-    public ApplicationConfigJdbcFactory() {
+    public ApplicationConfigJpaFactory() {
     }
 
     public OwnerRepository getOwnerRepository() {
