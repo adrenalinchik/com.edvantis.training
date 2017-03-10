@@ -7,7 +7,7 @@ import com.edvantis.training.parking.models.Garage;
  */
 public interface GarageRepository {
 
-    Garage getById(int id);
+    Garage getById(long id);
 
     void insert(Garage garage);
 

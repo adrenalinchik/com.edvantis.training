@@ -15,7 +15,7 @@ public class Garage {
     @GeneratedValue(generator = "increment")
     @GenericGenerator(name = "increment", strategy = "increment")
     @Column(name = "ID", unique = true, nullable = false)
-    private int id;
+    private long id;
 
     @ManyToOne
     @JoinColumn(name = "PARKING_ID")
@@ -31,11 +31,11 @@ public class Garage {
     public Garage() {
     }
 
-    public int getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(long id) {
         this.id = id;
     }
 

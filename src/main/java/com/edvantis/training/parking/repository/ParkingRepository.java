@@ -15,4 +15,6 @@ public interface ParkingRepository {
     void update(int parkingId, Parking parking);
 
     void delete(int parkingId);
+
+    void getAllGarages(Parking parking);
 }

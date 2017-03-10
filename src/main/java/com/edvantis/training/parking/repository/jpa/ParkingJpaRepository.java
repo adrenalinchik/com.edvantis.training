@@ -7,6 +7,7 @@ import com.edvantis.training.parking.repository.ParkingRepository;
 import org.apache.log4j.Logger;
 
 import javax.persistence.EntityManager;
+import java.util.Set;
 
 /**
  * Created by taras.fihurnyak on 2/24/2017.
@@ -121,5 +122,10 @@ public class ParkingJpaRepository implements ParkingRepository {
                 em.close();
             }
         }
+    }
+
+    public void getAllGarages(Parking parking) {
+        Set<Garage> allParkingGarages = parking.getGarages();
+
     }
 }

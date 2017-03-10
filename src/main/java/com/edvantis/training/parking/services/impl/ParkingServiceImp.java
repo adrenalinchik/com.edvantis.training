@@ -1,10 +1,7 @@
 package com.edvantis.training.parking.services.impl;
 
 import com.edvantis.training.parking.models.*;
-import com.edvantis.training.parking.repository.GarageRepository;
-import com.edvantis.training.parking.repository.OwnerRepository;
-import com.edvantis.training.parking.repository.ParkingRepository;
-import com.edvantis.training.parking.repository.VehicleRepository;
+import com.edvantis.training.parking.repository.*;
 import com.edvantis.training.parking.services.ParkingService;
 import org.apache.log4j.Logger;
 
@@ -20,12 +17,14 @@ public class ParkingServiceImp implements ParkingService {
     private VehicleRepository vehicleRepo;
     private GarageRepository garageRepo;
     private ParkingRepository parkingRepo;
+    private ReservationRepository reservationRepo;
 
-    public ParkingServiceImp(OwnerRepository ownerRepo, VehicleRepository vehicleRepo, GarageRepository garageRepo, ParkingRepository parkingRepo) {
+    public ParkingServiceImp(OwnerRepository ownerRepo, VehicleRepository vehicleRepo, GarageRepository garageRepo, ParkingRepository parkingRepo, ReservationRepository reservationRepo) {
         this.ownerRepo = ownerRepo;
         this.vehicleRepo = vehicleRepo;
         this.garageRepo = garageRepo;
         this.parkingRepo = parkingRepo;
+        this.reservationRepo = reservationRepo;
     }
 
     private final Logger logger = Logger.getLogger(ParkingServiceImp.class);
@@ -45,6 +44,9 @@ public class ParkingServiceImp implements ParkingService {
 
             } else if (obj instanceof Parking) {
                parkingRepo.insert((Parking)obj);
+            }
+            else if (obj instanceof Reservation) {
+                reservationRepo.insert((Reservation)obj);
             }
         }
 

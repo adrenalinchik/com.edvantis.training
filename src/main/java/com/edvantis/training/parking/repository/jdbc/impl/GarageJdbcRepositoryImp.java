@@ -26,7 +26,7 @@ public class GarageJdbcRepositoryImp extends AbstractJdbcRepository implements G
     }
 
     @Override
-    public Garage getById(int id) {
+    public Garage getById(long id) {
         Garage garage = null;
 
         try {

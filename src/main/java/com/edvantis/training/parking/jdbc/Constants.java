@@ -29,7 +29,6 @@ public class Constants {
     public static final String UPDATE_VEHICLE = "UPDATE VEHICLE SET TYPE = ?, NUMBER = ?, MODEL = ? WHERE ID=?";
     public static final String UPDATE_GARAGE = "UPDATE GARAGE SET TYPE = ?, SQUARE = ? WHERE ID=?";
     public static final String UPDATE_PARKING = "UPDATE GARAGE SET ADDRESS = ?, FREE_GARAGES = ? WHERE ID=?";
-
     public static final String UPDATE_GARAGE_PARKING = "UPDATE GARAGE SET PARKING_ID = ? WHERE ID=?";
     public static final String DELETE_OWNER = "DELETE FROM OWNER WHERE ID=?";
     public static final String DELETE_VEHICLE = "DELETE FROM VEHICLE WHERE ID=?";

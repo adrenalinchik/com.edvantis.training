@@ -22,7 +22,7 @@ public class GarageJpaRepository implements GarageRepository {
     private final Logger logger = Logger.getLogger(GarageJpaRepository.class);
 
     @Override
-    public Garage getById(int id) {
+    public Garage getById(long id) {
         EntityManager em = null;
         Garage garage = null;
         try {

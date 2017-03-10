@@ -95,4 +95,9 @@ public class ParkingJdbcRepositoryImp extends AbstractJdbcRepository implements 
         }
 
     }
+
+    @Override
+    public void getAllGarages(Parking parking) {
+
+    }
 }

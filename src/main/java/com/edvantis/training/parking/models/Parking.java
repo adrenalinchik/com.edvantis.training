@@ -56,7 +56,7 @@ public class Parking {
         this.freeGarages = freeGarages;
     }
 
-    public Set<Garage> getGarage(int garage) {
+    public Set<Garage> getGarages() {
         return garages;
     }
 
