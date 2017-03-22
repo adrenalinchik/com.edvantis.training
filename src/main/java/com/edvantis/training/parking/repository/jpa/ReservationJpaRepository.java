@@ -1,18 +1,24 @@
 package com.edvantis.training.parking.repository.jpa;
 
-import com.edvantis.training.parking.jpa.JpaUtility;
+import com.edvantis.training.parking.factory.ApplicationConfig;
 import com.edvantis.training.parking.models.Garage;
 import com.edvantis.training.parking.models.GarageType;
 import com.edvantis.training.parking.models.Reservation;
 import com.edvantis.training.parking.models.Reservation_;
+import com.edvantis.training.parking.repository.GarageRepository;
 import com.edvantis.training.parking.repository.ReservationRepository;
 import org.apache.log4j.Logger;
 
 import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
-import java.util.*;
+import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  * Created by taras.fihurnyak on 3/7/2017.
@@ -21,13 +27,19 @@ public class ReservationJpaRepository implements ReservationRepository {
 
     private final Logger logger = Logger.getLogger(ReservationJpaRepository.class);
 
+    private EntityManagerFactory emFactory;
+
+    public ReservationJpaRepository(EntityManagerFactory entityManagerFactory) {
+        emFactory = entityManagerFactory;
+    }
+
     @Override
-    public Reservation getById(int id) {
+    public Reservation getById(Integer id) {
         EntityManager em = null;
         Reservation reservation = null;
         try {
-            em = JpaUtility.getEntityManager();
-            reservation = em.find(Reservation.class, id);
+            em = emFactory.createEntityManager();
+            reservation = em.find(Reservation.class, id.longValue());
         } catch (Exception e) {
             logger.warn(e);
         } finally {
@@ -42,11 +54,11 @@ public class ReservationJpaRepository implements ReservationRepository {
     public void insert(Reservation reservation) {
         EntityManager em = null;
         try {
-            em = JpaUtility.getEntityManager();
+            em = emFactory.createEntityManager();
             em.getTransaction().begin();
             em.persist(reservation);
             em.getTransaction().commit();
-            logger.info("Reservation " + reservation.getId() + " is saved to db successfully.");
+            logger.info("Reservation " + reservation.getId() + " is saved to db successfully." + " gargeId: " + reservation.getGarageId() + " parkingId: " + reservation.getParkingId());
         } catch (Exception e) {
             logger.warn(e);
         } finally {
@@ -61,7 +73,7 @@ public class ReservationJpaRepository implements ReservationRepository {
     public void update(int reservationId, Reservation reservation) {
         EntityManager em = null;
         try {
-            em = JpaUtility.getEntityManager();
+            em = emFactory.createEntityManager();
             em.getTransaction().begin();
             em.merge(reservation);
             em.getTransaction().commit();
@@ -79,7 +91,7 @@ public class ReservationJpaRepository implements ReservationRepository {
     public void update(Reservation reservation) {
         EntityManager em = null;
         try {
-            em = JpaUtility.getEntityManager();
+            em = emFactory.createEntityManager();
             em.getTransaction().begin();
             em.merge(reservation);
             em.getTransaction().commit();
@@ -97,7 +109,7 @@ public class ReservationJpaRepository implements ReservationRepository {
     public void delete(int reservationId) {
         EntityManager em = null;
         try {
-            em = JpaUtility.getEntityManager();
+            em = emFactory.createEntityManager();
             em.getTransaction().begin();
             em.remove(em.find(Garage.class, reservationId));
             em.getTransaction().commit();
@@ -112,10 +124,30 @@ public class ReservationJpaRepository implements ReservationRepository {
 
     }
 
+    public Reservation getLastReservation() {
+        Reservation lastReservation = null;
+        EntityManager em = null;
+        try {
+            em = emFactory.createEntityManager();
+            String makeQuery = "SELECT r FROM Reservation r order by r.id DESC";
+            lastReservation = (Reservation) em.createQuery(makeQuery)
+                    .setMaxResults(1)
+                    .getSingleResult();
+        } catch (Exception e) {
+            logger.warn(e);
+        } finally {
+            if (em != null && em.isOpen()) {
+                em.close();
+            }
+        }
+
+        return lastReservation;
+    }
+
     public void delete(Reservation reservation) {
         EntityManager em = null;
         try {
-            em = JpaUtility.getEntityManager();
+            em = emFactory.createEntityManager();
             em.getTransaction().begin();
             em.remove(em.find(Garage.class, reservation.getId()));
             em.getTransaction().commit();
@@ -129,21 +161,21 @@ public class ReservationJpaRepository implements ReservationRepository {
         }
     }
 
-    //get all garages that don't exist in reservation table
+
+    //get all garages by parking id that don't exist in reservation table
     public Set<Garage> getGaragesByParkingId(long parkingId) {
         Set<Garage> garages = new HashSet<>();
         EntityManager em = null;
         try {
-            em = JpaUtility.getEntityManager();
-            String makeQuery = "SELECT t1.ID\n" +
-                    "FROM test.garage as t1\n" +
-                    "LEFT JOIN test.reservation as t2 ON t2.GARAGE_ID = t1.ID\n" +
+            em = emFactory.createEntityManager();
+            String makeQuery = "SELECT t1.ID " +
+                    "FROM test.garage as t1 " +
+                    "LEFT JOIN test.reservation as t2 ON t2.GARAGE_ID = t1.ID " +
                     "WHERE t2.GARAGE_ID IS NULL and t1.PARKING_ID = " + parkingId;
-            ArrayList<Integer> garageIdList = new ArrayList<>(em.createNativeQuery(makeQuery).getResultList());
-            int[] garagesId = garageIdList.stream().mapToInt(i -> i).toArray();
-            GarageJpaRepository garageJpaRepository = new GarageJpaRepository();
-            for (int i = 0; i < garagesId.length; i++) {
-                garages.add(garageJpaRepository.getById(garagesId[i]));
+            List<? extends BigInteger> garageIdList = em.createNativeQuery(makeQuery).getResultList();
+            GarageRepository garageJpaRepository = new ApplicationConfig().getGarageRepository();
+            for (BigInteger i : garageIdList) {
+                garages.add(garageJpaRepository.getById(i.longValue()));
             }
         } catch (Exception e) {
             logger.warn(e);
@@ -155,11 +187,41 @@ public class ReservationJpaRepository implements ReservationRepository {
         return garages;
     }
 
+    //get all garages by garage type that don't exist in reservation table
+    public Set<Garage> getGaragesByType(GarageType garageType) {
+        Set<Garage> garages = new HashSet<>();
+        EntityManager em = null;
+        try {
+            em = emFactory.createEntityManager();
+            String makeQuery = "SELECT t1.ID " +
+                    "FROM test.garage as t1 " +
+                    "LEFT JOIN test.reservation as t2 ON t2.GARAGE_ID = t1.ID " +
+                    "WHERE t2.GARAGE_ID IS NULL and t1.TYPE = ?1";
+            List<? extends BigInteger> garageIdList = em.createNativeQuery(makeQuery)
+                    .setParameter(1, garageType.toString())
+                    .getResultList();
+            if (garageIdList.size() > 0) {
+                GarageRepository garageJpaRepository = new ApplicationConfig().getGarageRepository();
+                for (BigInteger i : garageIdList) {
+                    garages.add(garageJpaRepository.getById(i.longValue()));
+                }
+            }
+        } catch (Exception e) {
+            logger.warn(e);
+        } finally {
+            if (em != null && em.isOpen()) {
+                em.close();
+            }
+        }
+        return garages;
+    }
+
+
     public Set<Reservation> getAllReservationsByParking(long parkingId) {
         EntityManager em = null;
         Set<Reservation> reservationsSet = null;
         try {
-            em = JpaUtility.getEntityManager();
+            em = emFactory.createEntityManager();
             CriteriaBuilder builder = em.getCriteriaBuilder();
             CriteriaQuery<Reservation> cq = builder.createQuery(Reservation.class);
             Root<Reservation> reservationRoot = cq.from(Reservation.class);
@@ -173,19 +235,41 @@ public class ReservationJpaRepository implements ReservationRepository {
             }
         }
         return reservationsSet;
-
     }
 
-    //Todo:3/10/2017 - makeReservation method is not finished. Finish makeReservation method
-    private void makeReservation(Date from, Date to, GarageType type) {
+    public Set<Reservation> getAllReservationsByGarageType(GarageType garageType) {
         EntityManager em = null;
+        Set<Reservation> reservationsSet = new HashSet<>();
         try {
-            em = JpaUtility.getEntityManager();
-            em.getTransaction().begin();
-            String makeReservationQuery = "";
-            em.createQuery(makeReservationQuery);
-            em.getTransaction().commit();
-            // logger.info("Garage "+reservation.getId()+" deleted successfully.");
+            em = emFactory.createEntityManager();
+            List garageIdListFinal = new ArrayList<>();
+            String makeQueryToReservation = "SELECT GARAGE_ID FROM test.reservation";
+            List garageIdList = em.createNativeQuery(makeQueryToReservation).getResultList();
+            if (garageIdList.size() > 0) {
+                for (Object i : garageIdList) {
+                    String makeQueryToGarage = "select t1.ID from test.garage as t1 " +
+                            "where t1.ID=?1 and t1.TYPE=?2";
+                    List list = em.createNativeQuery(makeQueryToGarage)
+                            .setParameter(1, i)
+                            .setParameter(2, garageType.toString())
+                            .getResultList();
+                    if (!list.isEmpty()) {
+                        garageIdListFinal.add(list.get(0));
+                    } else continue;
+                }
+            }
+            Set<String> garageIdSetFinal = new HashSet<>();
+            garageIdListFinal.forEach((i) -> garageIdSetFinal.add(i.toString()));
+            CriteriaBuilder builder = emFactory.createEntityManager().getCriteriaBuilder();
+            CriteriaQuery<Reservation> cq = builder.createQuery(Reservation.class);
+            Root<Reservation> reservationRoot = cq.from(Reservation.class);
+            if (garageIdListFinal.size() > 0) {
+                for (Object i : garageIdSetFinal) {
+                    cq.where(builder.equal(reservationRoot.get(Reservation_.garageId), i));
+                    List list = em.createQuery(cq).getResultList();
+                    list.forEach((k) -> reservationsSet.add((Reservation) k));
+                }
+            }
         } catch (Exception e) {
             logger.warn(e);
         } finally {
@@ -193,45 +277,7 @@ public class ReservationJpaRepository implements ReservationRepository {
                 em.close();
             }
         }
-    }
-
-    public Set<Garage> getAvailableGarages(Date from, Date to, long parkingId) {
-        Set<Garage> garagesSet = new HashSet<>();
-        HashMap<Reservation, Boolean> reservations = new HashMap<>();
-        Set<Reservation> reservationsList = getAllReservationsByParking(parkingId);
-        for (Reservation i : reservationsList) {
-            Date reservBegine = i.getBegin();
-            Date reservEnd = i.getEnd();
-            if (from.before(reservBegine) && (to.before(reservBegine) || to.equals(reservBegine))) {
-                reservations.put(i, true);
-            } else reservations.put(i, false);
-            if (to.after(reservEnd) && (from.after(reservEnd) || from.equals(reservEnd))) {
-                reservations.put(i, true);
-            } else reservations.put(i, false);
-        }
-        reservations = deleteDublicates(reservations);
-        reservations.forEach((k, v) -> {
-            if (v) garagesSet.add(new GarageJpaRepository().getById(k.getGarageId()));
-        });
-        garagesSet.addAll(getGaragesByParkingId(parkingId));
-        return garagesSet;
-    }
-
-    private HashMap<Reservation, Boolean> deleteDublicates(HashMap<Reservation, Boolean> mapReservations) {
-        Map<Reservation, Boolean> reservationsFalseValue = new HashMap<>();
-        mapReservations.forEach((k, v) -> {
-            if (!v) reservationsFalseValue.put(k, v);
-        });
-        reservationsFalseValue.forEach((k, v) -> {
-            long garageId = k.getGarageId();
-            for (Iterator<Map.Entry<Reservation, Boolean>> it = mapReservations.entrySet().iterator(); it.hasNext(); ) {
-                Map.Entry<Reservation, Boolean> entry = it.next();
-                if (entry.getKey().getGarageId() == garageId && entry.getValue()) {
-                    it.remove();
-                }
-            }
-        });
-        return mapReservations;
+        return reservationsSet;
     }
 
 }

@@ -26,13 +26,13 @@ public class DataBaseJdbcUtil {
         }
     }
 
-    public static void clearDb(String dbName, String login, String password, String [] tableList) {
+    public static void clearDb(String dbName, String login, String password, String[] tableList) {
         try (Connection conn = getConnection(DATABASE_URL + dbName + SSL_CONNECTION_FALSE, login, password)) {
-            setForeignKeyChecks(0,conn);
-            for (int i=0;i<tableList.length;i++) {
+            setForeignKeyChecks(0, conn);
+            for (int i = 0; i < tableList.length; i++) {
                 cleanTable(tableList[i], conn);
             }
-            setForeignKeyChecks(1,conn);
+            setForeignKeyChecks(1, conn);
             logger.info(dbName + " database is cleared.");
         } catch (SQLException e) {
             logger.warn(e);
@@ -53,6 +53,7 @@ public class DataBaseJdbcUtil {
             Statement statement = connection.createStatement();
             statement.executeUpdate(CREATE_DB + dbName);
             connection.setCatalog(dbName);
+            logger.info("Database " + dbName + " is created.");
             //checkTables(connection);
         } catch (Exception e) {
             logger.warn(e);
@@ -73,45 +74,62 @@ public class DataBaseJdbcUtil {
         return connection;
     }
 
-    private static void checkTables(Connection connection) {
-        try {
-            DatabaseMetaData meta = connection.getMetaData();
-            if (!isTableExist(meta, "vehicle")) {
-                createTable(connection, CREATE_VEHICLE_TABLE);
-                logger.info("Vehicle table is created.");
-            }
-            if (!isTableExist(meta, "owner")) {
-                createTable(connection, CREATE_OWNER_TABLE);
-                logger.info("Owner table is created.");
-            }
-            if (!isTableExist(meta, "garage")) {
-                createTable(connection, CREATE_GARAGE_TABLE);
-                logger.info("Garage table is created.");
-            }
-            if (!isTableExist(meta, "parking")) {
-                createTable(connection, CREATE_PARKING_TABLE);
-                logger.info("parking table is created.");
-            }
+    public static DatabaseMetaData getDatabaseMetaData(String dbName, String login, String password) {
+        DatabaseMetaData meta = null;
+        try (Connection connection = getConnection(DATABASE_URL + dbName + SSL_CONNECTION_FALSE, login, password)) {
+            meta = connection.getMetaData();
         } catch (SQLException e) {
             logger.warn(e);
         }
-
+        return meta;
     }
 
-    private static boolean isTableExist(DatabaseMetaData meta, String tableName) throws SQLException {
-        ResultSet resultSet = meta.getTables(null, null, tableName.toUpperCase(), null);
-        while (resultSet.next()) {
-            String name = resultSet.getString("TABLE_NAME");
-            if (name.toLowerCase().equals(tableName.toLowerCase())) {
-                return true;
+    public static boolean isDbCreated(String dbName, String login, String password) {
+        boolean isCreated = false;
+        try (Connection connection = getConnection(DATABASE_URL + dbName + SSL_CONNECTION_FALSE, login, password)) {
+            if (connection != null) {
+                DatabaseMetaData meta = connection.getMetaData();
+                String dbUrl = meta.getURL();
+                isCreated = dbUrl.contains(dbName);
             }
+        } catch (SQLNonTransientConnectionException e) {
+            return isCreated;
+        } catch (SQLException e) {
+            return isCreated;
+        }
+        return isCreated;
+    }
+
+    public static boolean isTableExist(String dbName, String login, String password, String[] tableList) {
+        try (Connection connection = getConnection(DATABASE_URL + dbName + SSL_CONNECTION_FALSE, login, password)) {
+            ResultSet resultSet = connection.getMetaData().getTables(null, null, "%", null);
+            while (resultSet.next()) {
+                for (String s : tableList) {
+                    String name = resultSet.getString("TABLE_NAME");
+                    if (name.toLowerCase().equals(s.toLowerCase())) {
+                        return true;
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            return false;
         }
         return false;
     }
 
-    private static void createTable(Connection connection, String sqlCreate) throws SQLException {
-        PreparedStatement pstmt = connection.prepareStatement(sqlCreate);
-        pstmt.executeUpdate();
+    public static boolean isTableExist(String dbName, String login, String password, String tableName) {
+        try (Connection connection = getConnection(DATABASE_URL + dbName + SSL_CONNECTION_FALSE, login, password)) {
+            ResultSet resultSet = connection.getMetaData().getTables(null, null, tableName, null);
+            while (resultSet.next()) {
+                String name = resultSet.getString("TABLE_NAME");
+                if (name.toLowerCase().equals(tableName.toLowerCase())) {
+                    return true;
+                }
+            }
+        } catch (SQLException e) {
+            return false;
+        }
+        return false;
     }
 
     private static void cleanTable(String tableName, Connection connection) {
@@ -134,7 +152,7 @@ public class DataBaseJdbcUtil {
 
     }
 
-    private static void setForeignKeyChecks(int checks, Connection connection){
+    private static void setForeignKeyChecks(int checks, Connection connection) {
         try {
             PreparedStatement pstmt = connection.prepareStatement(SET_FOREIGN_KEY_CHECKS + checks);
             pstmt.executeUpdate();

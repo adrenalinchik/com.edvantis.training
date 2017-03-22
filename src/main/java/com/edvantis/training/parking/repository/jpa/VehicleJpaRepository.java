@@ -1,6 +1,5 @@
 package com.edvantis.training.parking.repository.jpa;
 
-import com.edvantis.training.parking.jpa.JpaUtility;
 import com.edvantis.training.parking.models.Garage;
 import com.edvantis.training.parking.models.Vehicle;
 import com.edvantis.training.parking.models.VehicleType;
@@ -8,6 +7,7 @@ import com.edvantis.training.parking.repository.VehicleRepository;
 import org.apache.log4j.Logger;
 
 import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
 import java.util.Set;
 
 /**
@@ -17,12 +17,18 @@ public class VehicleJpaRepository implements VehicleRepository {
 
     private final Logger logger = Logger.getLogger(ParkingJpaRepository.class);
 
+    private EntityManagerFactory emFactory;
+
+    public VehicleJpaRepository(EntityManagerFactory entityManagerFactory) {
+        emFactory = entityManagerFactory;
+    }
+
     @Override
     public Vehicle getById(int vehicleId) {
         EntityManager em = null;
         Vehicle vehicle = null;
         try {
-            em = JpaUtility.getEntityManager();
+            em = emFactory.createEntityManager();
             vehicle = em.find(Vehicle.class, vehicleId);
         } catch (Exception e) {
             logger.warn(e);
@@ -38,7 +44,7 @@ public class VehicleJpaRepository implements VehicleRepository {
     public void insert(Vehicle vehicle) {
         EntityManager em = null;
         try {
-            em = JpaUtility.getEntityManager();
+            em = emFactory.createEntityManager();
             em.getTransaction().begin();
             em.persist(vehicle);
             em.getTransaction().commit();
@@ -55,7 +61,7 @@ public class VehicleJpaRepository implements VehicleRepository {
     public void update(int vehicleId, Vehicle vehicle) {
         EntityManager em = null;
         try {
-            em = JpaUtility.getEntityManager();
+            em = emFactory.createEntityManager();
             em.getTransaction().begin();
             em.merge(vehicle);
             em.getTransaction().commit();
@@ -72,7 +78,7 @@ public class VehicleJpaRepository implements VehicleRepository {
     public void update(Vehicle vehicle) {
         EntityManager em = null;
         try {
-            em = JpaUtility.getEntityManager();
+            em = emFactory.createEntityManager();
             em.getTransaction().begin();
             em.merge(vehicle);
             em.getTransaction().commit();
@@ -89,7 +95,7 @@ public class VehicleJpaRepository implements VehicleRepository {
     public void delete(int vehicleId) {
         EntityManager em = null;
         try {
-            em = JpaUtility.getEntityManager();
+            em = emFactory.createEntityManager();
             em.getTransaction().begin();
             em.remove(em.find(Garage.class, vehicleId));
             em.getTransaction().commit();
@@ -107,7 +113,7 @@ public class VehicleJpaRepository implements VehicleRepository {
     public void delete(Vehicle vehicle) {
         EntityManager em = null;
         try {
-            em = JpaUtility.getEntityManager();
+            em = emFactory.createEntityManager();
             em.getTransaction().begin();
             em.remove(em.find(Garage.class, vehicle.getId()));
             em.getTransaction().commit();

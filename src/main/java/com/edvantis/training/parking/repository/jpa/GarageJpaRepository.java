@@ -1,6 +1,5 @@
 package com.edvantis.training.parking.repository.jpa;
 
-import com.edvantis.training.parking.jpa.JpaUtility;
 import com.edvantis.training.parking.models.Garage;
 import com.edvantis.training.parking.models.GarageType;
 import com.edvantis.training.parking.models.Garage_;
@@ -8,6 +7,7 @@ import com.edvantis.training.parking.repository.GarageRepository;
 import org.apache.log4j.Logger;
 
 import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
@@ -21,12 +21,18 @@ public class GarageJpaRepository implements GarageRepository {
 
     private final Logger logger = Logger.getLogger(GarageJpaRepository.class);
 
+    private EntityManagerFactory emFactory;
+
+    public GarageJpaRepository(EntityManagerFactory entityManagerFactory) {
+        emFactory = entityManagerFactory;
+    }
+
     @Override
     public Garage getById(long id) {
         EntityManager em = null;
         Garage garage = null;
         try {
-            em = JpaUtility.getEntityManager();
+            em = emFactory.createEntityManager();
             garage = em.find(Garage.class, id);
         } catch (Exception e) {
             logger.warn(e);
@@ -42,11 +48,11 @@ public class GarageJpaRepository implements GarageRepository {
     public void insert(Garage garage) {
         EntityManager em = null;
         try {
-            em = JpaUtility.getEntityManager();
+            em = emFactory.createEntityManager();
             em.getTransaction().begin();
             em.persist(garage);
             em.getTransaction().commit();
-            logger.info("Garage "+garage.getId()+" is saved to db successfully.");
+            logger.info("Garage " + garage.getId() + " is saved to db successfully.");
         } catch (Exception e) {
             logger.warn(e);
         } finally {
@@ -60,11 +66,11 @@ public class GarageJpaRepository implements GarageRepository {
     public void update(int garageId, Garage garage) {
         EntityManager em = null;
         try {
-            em = JpaUtility.getEntityManager();
+            em = emFactory.createEntityManager();
             em.getTransaction().begin();
             em.merge(garage);
             em.getTransaction().commit();
-            logger.info("Garage "+garage.getId()+" updated successfully.");
+            logger.info("Garage " + garage.getId() + " updated successfully.");
         } catch (Exception e) {
             logger.warn(e);
         } finally {
@@ -78,11 +84,11 @@ public class GarageJpaRepository implements GarageRepository {
     public void update(Garage garage) {
         EntityManager em = null;
         try {
-            em = JpaUtility.getEntityManager();
+            em = emFactory.createEntityManager();
             em.getTransaction().begin();
             em.merge(garage);
             em.getTransaction().commit();
-            logger.info("Garage "+garage.getId()+" updated successfully.");
+            logger.info("Garage " + garage.getId() + " updated successfully.");
         } catch (Exception e) {
             logger.warn(e);
         } finally {
@@ -96,11 +102,11 @@ public class GarageJpaRepository implements GarageRepository {
     public void delete(int garageId) {
         EntityManager em = null;
         try {
-            em = JpaUtility.getEntityManager();
+            em = emFactory.createEntityManager();
             em.getTransaction().begin();
             em.remove(em.find(Garage.class, garageId));
             em.getTransaction().commit();
-            logger.info("Garage "+garageId+" deleted successfully.");
+            logger.info("Garage " + garageId + " deleted successfully.");
         } catch (Exception e) {
             logger.warn(e);
         } finally {
@@ -114,11 +120,11 @@ public class GarageJpaRepository implements GarageRepository {
     public void delete(Garage garage) {
         EntityManager em = null;
         try {
-            em = JpaUtility.getEntityManager();
+            em = emFactory.createEntityManager();
             em.getTransaction().begin();
-            em.remove(em.find(Garage.class,garage.getId()));
+            em.remove(em.find(Garage.class, garage.getId()));
             em.getTransaction().commit();
-            logger.info("Garage "+garage.getId()+" deleted successfully.");
+            logger.info("Garage " + garage.getId() + " deleted successfully.");
         } catch (Exception e) {
             logger.warn(e);
         } finally {
@@ -132,7 +138,7 @@ public class GarageJpaRepository implements GarageRepository {
         Set<Garage> garageSet = null;
         EntityManager em = null;
         try {
-            em = JpaUtility.getEntityManager();
+            em = emFactory.createEntityManager();
             CriteriaBuilder builder = em.getCriteriaBuilder();
             CriteriaQuery<Garage> cq = builder.createQuery(Garage.class);
             Root<Garage> garage = cq.from(Garage.class);

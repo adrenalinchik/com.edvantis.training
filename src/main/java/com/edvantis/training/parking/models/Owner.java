@@ -80,10 +80,10 @@ public class Owner {
         this.dob = age;
     }
 
-    public Vehicle getVehicleByNumber(String vehicleType) {
+    public Vehicle getVehicleByNumber(String vehicleNumber) {
         Vehicle vehicle = null;
         for (Vehicle v : userVehicles) {
-            if (v.getNumber().equals(vehicleType))
+            if (v.getNumber().equals(vehicleNumber))
                 vehicle = v;
         }
         return vehicle;

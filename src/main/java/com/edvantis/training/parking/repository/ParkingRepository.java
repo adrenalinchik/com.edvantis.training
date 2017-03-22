@@ -16,5 +16,4 @@ public interface ParkingRepository {
 
     void delete(int parkingId);
 
-    void getAllGarages(Parking parking);
 }

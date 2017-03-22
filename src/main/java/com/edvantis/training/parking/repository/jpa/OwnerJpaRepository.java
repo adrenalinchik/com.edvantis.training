@@ -1,11 +1,11 @@
 package com.edvantis.training.parking.repository.jpa;
 
-import com.edvantis.training.parking.jpa.JpaUtility;
 import com.edvantis.training.parking.models.*;
 import com.edvantis.training.parking.repository.OwnerRepository;
 import org.apache.log4j.Logger;
 
 import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
 import javax.persistence.criteria.*;
 import java.util.HashSet;
 import java.util.Set;
@@ -16,13 +16,18 @@ import java.util.Set;
 public class OwnerJpaRepository implements OwnerRepository{
 
     private final Logger logger = Logger.getLogger(OwnerJpaRepository.class);
+    private EntityManagerFactory emFactory;
+
+    public OwnerJpaRepository(EntityManagerFactory entityManagerFactory) {
+        emFactory = entityManagerFactory;
+    }
 
     @Override
     public Owner getById(int id) {
         EntityManager em = null;
         Owner owner = null;
         try {
-            em = JpaUtility.getEntityManager();
+            em = emFactory.createEntityManager();
             owner = em.find(Owner.class, id);
         } catch (Exception e) {
             logger.warn(e);
@@ -38,7 +43,7 @@ public class OwnerJpaRepository implements OwnerRepository{
     public void insert(Owner owner) {
         EntityManager em = null;
         try {
-            em = JpaUtility.getEntityManager();
+            em = emFactory.createEntityManager();
             em.getTransaction().begin();
             em.persist(owner);
             em.getTransaction().commit();
@@ -56,7 +61,7 @@ public class OwnerJpaRepository implements OwnerRepository{
     public void update(int ownerId, Owner owner) {
         EntityManager em = null;
         try {
-            em = JpaUtility.getEntityManager();
+            em = emFactory.createEntityManager();
             em.getTransaction().begin();
             em.merge(owner);
             em.getTransaction().commit();
@@ -73,7 +78,7 @@ public class OwnerJpaRepository implements OwnerRepository{
     public void update(Owner owner) {
         EntityManager em = null;
         try {
-            em = JpaUtility.getEntityManager();
+            em = emFactory.createEntityManager();
             em.getTransaction().begin();
             em.merge(owner);
             em.getTransaction().commit();
@@ -91,7 +96,7 @@ public class OwnerJpaRepository implements OwnerRepository{
     public void delete(int ownerId) {
         EntityManager em = null;
         try {
-            em = JpaUtility.getEntityManager();
+            em = emFactory.createEntityManager();
             em.getTransaction().begin();
             em.remove(em.find(Garage.class, ownerId));
             em.getTransaction().commit();
@@ -109,7 +114,7 @@ public class OwnerJpaRepository implements OwnerRepository{
     public void delete(Owner owner) {
         EntityManager em = null;
         try {
-            em = JpaUtility.getEntityManager();
+            em = emFactory.createEntityManager();
             em.getTransaction().begin();
             em.remove(em.find(Garage.class,owner.getId()));
             em.getTransaction().commit();
@@ -128,7 +133,7 @@ public class OwnerJpaRepository implements OwnerRepository{
         Set<Owner> ownerSet = null;
         EntityManager em = null;
         try {
-            em = JpaUtility.getEntityManager();
+            em = emFactory.createEntityManager();
             CriteriaBuilder builder = em.getCriteriaBuilder();
             CriteriaQuery<Owner> cq = builder.createQuery(Owner.class);
             Root<Owner> owner = cq.from(Owner.class);
@@ -149,7 +154,7 @@ public class OwnerJpaRepository implements OwnerRepository{
         Owner owner = null;
         EntityManager em = null;
         try {
-            em = JpaUtility.getEntityManager();
+            em = emFactory.createEntityManager();
             CriteriaBuilder builder = em.getCriteriaBuilder();
             CriteriaQuery<Owner> cq = builder.createQuery(Owner.class);
             Root<Owner> ownerRoot = cq.from(Owner.class);
@@ -170,7 +175,7 @@ public class OwnerJpaRepository implements OwnerRepository{
         Owner owner = null;
         EntityManager em = null;
         try {
-            em = JpaUtility.getEntityManager();
+            em = emFactory.createEntityManager();
             CriteriaBuilder builder = em.getCriteriaBuilder();
             CriteriaQuery<Owner> cq = builder.createQuery(Owner.class);
             Root<Owner> ownerRoot = cq.from(Owner.class);
@@ -192,7 +197,7 @@ public class OwnerJpaRepository implements OwnerRepository{
         int ownerId = 0;
         EntityManager em = null;
         try {
-            em = JpaUtility.getEntityManager();
+            em = emFactory.createEntityManager();
             CriteriaBuilder builder = em.getCriteriaBuilder();
             CriteriaQuery<Vehicle> cq = builder.createQuery(Vehicle.class);
             Root<Vehicle> vehicleRoot = cq.from(Vehicle.class);
@@ -207,8 +212,6 @@ public class OwnerJpaRepository implements OwnerRepository{
         }
         return ownerId;
     }
-
-
 
     @Override
     public int getOwnerIdByLastName(String ownerLastName) {
