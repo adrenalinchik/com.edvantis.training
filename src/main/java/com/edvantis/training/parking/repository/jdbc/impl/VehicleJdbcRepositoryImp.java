@@ -24,15 +24,15 @@ public class VehicleJdbcRepositoryImp extends AbstractJdbcRepository implements 
     private final Logger logger = Logger.getLogger(VehicleJdbcRepositoryImp.class);
 
 
-    public VehicleJdbcRepositoryImp(String dbName, String login, String password) {
-        super(dbName, login, password);
+    public VehicleJdbcRepositoryImp(String dbName) {
+        super(dbName);
     }
 
     @Override
-    public Vehicle getById(int vehicleId) {
+    public Vehicle getById(long id) {
         Vehicle vehicle = null;
         try {
-            PreparedStatement pstmt = getConnection().prepareStatement(GET_VEHICLE_BY_ID + vehicleId);
+            PreparedStatement pstmt = getConnection().prepareStatement(GET_VEHICLE_BY_ID + id);
             ResultSet rs = pstmt.executeQuery();
             rs.next();
             vehicle = new Vehicle();
@@ -61,6 +61,11 @@ public class VehicleJdbcRepositoryImp extends AbstractJdbcRepository implements 
         }
 
         return vehicle;
+    }
+
+    @Override
+    public Set<Vehicle> getAll() {
+        return null;
     }
 
     @Override
@@ -126,12 +131,17 @@ public class VehicleJdbcRepositoryImp extends AbstractJdbcRepository implements 
     }
 
     @Override
-    public void delete(int vehicleId) {
+    public void update(Vehicle vehicle) {
+
+    }
+
+    @Override
+    public void delete(long Id) {
         try {
             PreparedStatement pstmt = getConnection().prepareStatement(DELETE_VEHICLE);
-            pstmt.setInt(1, vehicleId);
+            pstmt.setLong(1, Id);
             pstmt.executeUpdate();
-            logger.info("Vehicle with " + vehicleId + " id removed from db successfully.");
+            logger.info("Vehicle with " + Id + " id removed from db successfully.");
         } catch (SQLException e) {
             logger.warn(e);
         } catch (Exception e) {

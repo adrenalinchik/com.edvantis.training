@@ -1,7 +1,6 @@
 package com.edvantis.training.parking.repository;
 
 import com.edvantis.training.parking.models.Vehicle;
-import com.edvantis.training.parking.models.VehicleType;
 
 import java.util.Set;
 
@@ -10,17 +9,15 @@ import java.util.Set;
  */
 public interface VehicleRepository {
 
-    Vehicle getById(int vehicleId);
+    Vehicle getById(long Id);
+
+    Set<Vehicle> getAll();
 
     void insert(Vehicle vehicle);
 
-    void update(int vehicleId, Vehicle vehicle);
+    void update(int Id, Vehicle vehicle);
 
-    void delete(int vehicleId);
+    void update(Vehicle vehicle);
 
-    Set<Vehicle> getAllVehiclesByType(VehicleType vehicleType);
-
-    Vehicle getVehicleByNumber(String vehicleNumber);
-
-    int getVehicleIdByNumber(String vehicleNumber);
+    void delete(long Id);
 }

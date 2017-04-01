@@ -22,12 +22,12 @@ public class OwnerJdbcRepositoryImp extends AbstractJdbcRepository implements Ow
 
     private final Logger logger = Logger.getLogger(OwnerJdbcRepositoryImp.class);
 
-    public OwnerJdbcRepositoryImp(String dbName, String login, String password) {
-        super(dbName, login, password);
+    public OwnerJdbcRepositoryImp(String dbName) {
+        super(dbName);
     }
 
     @Override
-    public Owner getById(int id) {
+    public Owner getById(long id) {
         Owner owner = null;
         try {
             PreparedStatement pstmt = getConnection().prepareStatement(GET_OWNER_BY_ID + id);
@@ -88,11 +88,16 @@ public class OwnerJdbcRepositoryImp extends AbstractJdbcRepository implements Ow
     }
 
     @Override
-    public void delete(int ownerId) {
+    public void update(Owner owner) {
+
+    }
+
+    @Override
+    public void delete(long ownerId) {
         try {
             PreparedStatement pstmt = getConnection()
                     .prepareStatement(DELETE_OWNER);
-            pstmt.setInt(1, ownerId);
+            pstmt.setLong(1, ownerId);
             pstmt.executeUpdate();
             logger.info("Owner with " + ownerId + " id removed from db successfully.");
         } catch (SQLException e) {
@@ -102,7 +107,7 @@ public class OwnerJdbcRepositoryImp extends AbstractJdbcRepository implements Ow
         }
     }
 
-    public Set<Owner> getAllOwnersFromDb() {
+    public Set<Owner> getAll() {
         Set<Owner> ownerSet = new HashSet<>();
         try {
             PreparedStatement pstmt = getConnection().prepareStatement(GET_ALL_OWNERS);
@@ -126,7 +131,7 @@ public class OwnerJdbcRepositoryImp extends AbstractJdbcRepository implements Ow
         return ownerSet;
     }
 
-    public Owner getOwnerByLastName(String lastName) {
+    public Owner getByLastName(String lastName) {
         Owner owner = null;
         try {
             PreparedStatement pstmt = getConnection().prepareStatement(GET_OWNER_BY_LASTNAME);
@@ -148,7 +153,7 @@ public class OwnerJdbcRepositoryImp extends AbstractJdbcRepository implements Ow
         return owner;
     }
 
-    public Owner getOwnerByVehicleNumber(String vehicleNumber) {
+    public Owner getByVehicleNumber(String vehicleNumber) {
 
         return getById(getOwnerIdFromVehicleByNumber(vehicleNumber));
 
@@ -193,6 +198,5 @@ public class OwnerJdbcRepositoryImp extends AbstractJdbcRepository implements Ow
     private LocalDate convertDateToOwnerAttribute(java.sql.Date databaseValue) {
         return databaseValue.toLocalDate();
     }
-
 
 }

@@ -17,7 +17,7 @@ public class Parking {
     @GeneratedValue(generator = "increment")
     @GenericGenerator(name = "increment", strategy = "increment")
     @Column(name = "ID", unique = true, nullable = false)
-    private int id;
+    private long id;
 
     @Column(name = "ADDRESS")
     private String address;
@@ -25,18 +25,18 @@ public class Parking {
     @Column(name = "FREE_GARAGES")
     private int freeGarages;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "parking", fetch = FetchType.EAGER)
+    @OneToMany(orphanRemoval = true, mappedBy = "parking", fetch = FetchType.EAGER)
     private Set<Garage> garages = new HashSet<>();
 
 
     public Parking() {
     }
 
-    public int getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(long id) {
         this.id = id;
     }
 
@@ -60,7 +60,20 @@ public class Parking {
         return garages;
     }
 
+    public Garage getGarage(long id) {
+        Garage garage = null;
+        for (Garage i : garages) {
+            if (i.getId() == id) garage = i;
+        }
+        return garage;
+    }
+
     public void setGarages(Set<Garage> garages) {
         this.garages = garages;
     }
+
+    public void setGarage(Garage garage) {
+        garages.add(garage);
+    }
+
 }

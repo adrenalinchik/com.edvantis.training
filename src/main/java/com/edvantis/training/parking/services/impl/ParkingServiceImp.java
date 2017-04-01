@@ -1,6 +1,6 @@
 package com.edvantis.training.parking.services.impl;
 
-import com.edvantis.training.parking.factory.ApplicationConfig;
+import com.edvantis.training.parking.config.ApplicationConfig;
 import com.edvantis.training.parking.models.*;
 import com.edvantis.training.parking.repository.*;
 import com.edvantis.training.parking.services.ParkingService;
@@ -27,25 +27,25 @@ public class ParkingServiceImp implements ParkingService {
     }
 
     @Override
-    public void populateWithMockObjects(ArrayList<Object> arrayList) {
-        try {
-            for (Object obj : arrayList) {
-                if (obj instanceof Owner) {
-                    ownerRepo.insert((Owner) obj);
-                } else if (obj instanceof Vehicle) {
-                    vehicleRepo.insert((Vehicle) obj);
-                } else if (obj instanceof Garage) {
-                    garageRepo.insert((Garage) obj);
-                } else if (obj instanceof Parking) {
-                    parkingRepo.insert((Parking) obj);
-                } else if (obj instanceof Reservation) {
-                    reservationRepo.insert((Reservation) obj);
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+    public Owner getOwnerByVehicleNumber(String vehicleNumber) {
+        return ownerRepo.getByVehicleNumber(vehicleNumber);
+    }
 
+    @Override
+    public void populateWithMockObjects(ArrayList<Object> arrayList) {
+        for (Object obj : arrayList) {
+            if (obj instanceof Owner) {
+                ownerRepo.insert((Owner) obj);
+            } else if (obj instanceof Vehicle) {
+                vehicleRepo.insert((Vehicle) obj);
+            } else if (obj instanceof Garage) {
+                garageRepo.insert((Garage) obj);
+            } else if (obj instanceof Parking) {
+                parkingRepo.insert((Parking) obj);
+            } else if (obj instanceof Reservation) {
+                reservationRepo.insert((Reservation) obj);
+            }
+        }
     }
 
     @Override
@@ -55,40 +55,73 @@ public class ParkingServiceImp implements ParkingService {
 
     @Override
     public Set<Owner> getAllOwners() {
-        return ownerRepo.getAllOwnersFromDb();
-
+        return ownerRepo.getAll();
     }
 
     @Override
     public Owner getOwnerByLastName(String ownerLastName) {
-        return ownerRepo.getOwnerByLastName(ownerLastName);
-
+        return ownerRepo.getByLastName(ownerLastName);
     }
 
     @Override
-    public Vehicle getVehicleByNumber(String vehicleNumber) {
-
-        return vehicleRepo.getVehicleByNumber(vehicleNumber);
-    }
-
-    @Override
-    public void makeReservation(Date from, Date to, GarageType type, long ownerId) {
-        Set<Garage> availableGarages = getAvailableGaragesByGarageType(from, to, type);
+    public Reservation makeReservation(Date from, Date to, GarageType type, long ownerId) {
+        Set<Garage> availableGarages = getAvailableGaragesByType(from, to, type);
+        Reservation reserv = null;
         if (availableGarages.size() > 0) {
             Garage garage = availableGarages.stream().findFirst().get();
-            Reservation reserv = new Reservation();
+            reserv = new Reservation();
             reserv.setBegin(from);
             reserv.setEnd(to);
             reserv.setGarageId(garage.getId());
             reserv.setParkingId(garage.getParking().getId());
             reserv.setOwnerId(ownerId);
             reservationRepo.insert(reserv);
+            reserv = reservationRepo.getById(reserv.getId());
         }
-
+        return reserv;
     }
 
     @Override
-    public Set<Garage> getAvailableGaragesByGarageType(Date from, Date to, GarageType garageType) {
+    public Reservation makeReservation(Date from, Date to, long ownerId) {
+        Set<Garage> availableGarages = getAvailableGarages(from, to);
+        Reservation reserv = null;
+        if (availableGarages.size() > 0) {
+            Garage garage = availableGarages.stream().findFirst().get();
+            reserv = new Reservation();
+            reserv.setBegin(from);
+            reserv.setEnd(to);
+            reserv.setGarageId(garage.getId());
+            reserv.setParkingId(garage.getParking().getId());
+            reserv.setOwnerId(ownerId);
+            reservationRepo.insert(reserv);
+            reserv = reservationRepo.getById(reserv.getId());
+        }
+        return reserv;
+    }
+
+    @Override
+    public Set<Garage> getAvailableGarages(Date from, Date to) {
+        Set<Garage> garagesSet = new HashSet<>();
+        HashMap<Reservation, Boolean> reservations = new HashMap<>();
+        Set<Reservation> reservationsList = reservationRepo.getAllReservations();
+        for (Reservation i : reservationsList) {
+            Date reservBegine = i.getBegin();
+            Date reservEnd = i.getEnd();
+            if (from.before(reservBegine) && (to.before(reservBegine) || to.equals(reservBegine))) {
+                reservations.put(i, true);
+            } else if (to.after(reservEnd) && (from.after(reservEnd) || from.equals(reservEnd))) {
+                reservations.put(i, true);
+            } else reservations.put(i, false);
+        }
+        reservations = deleteFalseReservation(reservations);
+        Set<Long> garagesId = getFinalAvailableGarageId(reservations);
+        garagesId.forEach((i) -> garagesSet.add(new ApplicationConfig().getGarageRepository().getById(i)));
+        garagesSet.addAll(reservationRepo.getAllGarages());
+        return garagesSet;
+    }
+
+    @Override
+    public Set<Garage> getAvailableGaragesByType(Date from, Date to, GarageType garageType) {
         Set<Garage> garagesSet = new HashSet<>();
         HashMap<Reservation, Boolean> reservations = new HashMap<>();
         Set<Reservation> reservationsList = reservationRepo.getAllReservationsByGarageType(garageType);
@@ -103,8 +136,7 @@ public class ParkingServiceImp implements ParkingService {
         }
         reservations = deleteFalseReservation(reservations);
         Set<Long> garagesId = getFinalAvailableGarageId(reservations);
-        for (Long i : garagesId)
-            garagesSet.add(new ApplicationConfig().getGarageRepository().getById(i));
+        garagesId.forEach((i)-> garagesSet.add(new ApplicationConfig().getGarageRepository().getById(i)));
         garagesSet.addAll(reservationRepo.getGaragesByType(garageType));
 
         return garagesSet;
@@ -126,22 +158,9 @@ public class ParkingServiceImp implements ParkingService {
         }
         reservations = deleteFalseReservation(reservations);
         Set<Long> garagesId = getFinalAvailableGarageId(reservations);
-        for (Long i : garagesId)
-            garagesSet.add(new ApplicationConfig().getGarageRepository().getById(i));
+        garagesId.forEach((i)-> garagesSet.add(new ApplicationConfig().getGarageRepository().getById(i)));
         garagesSet.addAll(reservationRepo.getGaragesByParkingId(parkingId));
         return garagesSet;
-    }
-
-    @Override
-    public Owner getOwnerByVehicleNumber(String vehicleNumber) {
-        return ownerRepo.getOwnerByVehicleNumber(vehicleNumber);
-
-    }
-
-    @Override
-    public Set<Vehicle> getAllVehicleByType(VehicleType vehicleType) {
-        return vehicleRepo.getAllVehiclesByType(vehicleType);
-
     }
 
     private Set<Long> getFinalAvailableGarageId(HashMap<Reservation, Boolean> mapReservations) {

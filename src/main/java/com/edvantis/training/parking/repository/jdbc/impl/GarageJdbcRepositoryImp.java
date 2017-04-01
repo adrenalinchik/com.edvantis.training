@@ -21,8 +21,8 @@ public class GarageJdbcRepositoryImp extends AbstractJdbcRepository implements G
 
     private final Logger logger = Logger.getLogger(GarageJdbcRepositoryImp.class);
 
-    public GarageJdbcRepositoryImp(String dbName, String login, String password) {
-        super(dbName, login, password);
+    public GarageJdbcRepositoryImp(String dbName) {
+        super(dbName);
     }
 
     @Override
@@ -53,6 +53,11 @@ public class GarageJdbcRepositoryImp extends AbstractJdbcRepository implements G
             logger.error(e);
         }
         return garage;
+    }
+
+    @Override
+    public Set<Garage> getAll() {
+        return null;
     }
 
     @Override
@@ -110,10 +115,15 @@ public class GarageJdbcRepositoryImp extends AbstractJdbcRepository implements G
     }
 
     @Override
-    public void delete(int garageId) {
+    public void update(Garage garage) {
+
+    }
+
+    @Override
+    public void delete(long garageId) {
         try {
-            PreparedStatement pstmt = getConnection().prepareStatement(DELETE_GRAGE);
-            pstmt.setInt(1, garageId);
+            PreparedStatement pstmt = getConnection().prepareStatement(DELETE_GARAGE);
+            pstmt.setLong(1, garageId);
             pstmt.executeUpdate();
             logger.info("Garage with " + garageId + " id removed from db successfully.");
         } catch (SQLException e) {

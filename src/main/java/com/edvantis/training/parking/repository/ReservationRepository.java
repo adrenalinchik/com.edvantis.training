@@ -11,13 +11,17 @@ import java.util.Set;
  */
 public interface ReservationRepository {
 
-    Reservation getById(Integer id);
+    Reservation getById(Long id);
+
+    Set<Reservation> getAll();
 
     void insert(Reservation garage);
 
-    void update(int reservationId, Reservation garage);
+    void update(int Id, Reservation garage);
 
-    void delete(int garageId);
+    void update(Reservation garage);
+
+    void delete(long Id);
 
     Set<Reservation> getAllReservationsByParking(long parkingId);
 
@@ -25,7 +29,11 @@ public interface ReservationRepository {
 
     Set<Reservation> getAllReservationsByGarageType(GarageType garageType);
 
+    Set<Reservation> getAllReservations();
+
     Set<Garage> getGaragesByType(GarageType garageType);
+
+    Set<Garage> getAllGarages();
 
     Reservation getLastReservation();
 

@@ -9,6 +9,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
+import java.util.Set;
 
 import static com.edvantis.training.parking.jdbc.Constants.*;
 
@@ -20,15 +21,15 @@ public class ParkingJdbcRepositoryImp extends AbstractJdbcRepository implements 
     private final Logger logger = Logger.getLogger(ParkingJdbcRepositoryImp.class);
 
 
-    public ParkingJdbcRepositoryImp(String dbName, String login, String password) {
-        super(dbName, login, password);
+    public ParkingJdbcRepositoryImp(String dbName) {
+        super(dbName);
     }
 
     @Override
-    public Parking getById(int parkingId) {
+    public Parking getById(long id) {
         Parking parking = null;
         try {
-            PreparedStatement pstmt = getConnection().prepareStatement(GET_PARKING_BY_ID + parkingId);
+            PreparedStatement pstmt = getConnection().prepareStatement(GET_PARKING_BY_ID + id);
             ResultSet rs = pstmt.executeQuery();
             rs.next();
             parking = new Parking();
@@ -43,6 +44,11 @@ public class ParkingJdbcRepositoryImp extends AbstractJdbcRepository implements 
         }
 
         return parking;
+    }
+
+    @Override
+    public Set<Parking> getAll() {
+        return null;
     }
 
     @Override
@@ -82,10 +88,15 @@ public class ParkingJdbcRepositoryImp extends AbstractJdbcRepository implements 
     }
 
     @Override
-    public void delete(int parkingId) {
+    public void update(Parking parking) {
+
+    }
+
+    @Override
+    public void delete(long parkingId) {
         try {
             PreparedStatement pstmt = getConnection().prepareStatement(DELETE_PARKING);
-            pstmt.setInt(1, parkingId);
+            pstmt.setLong(1, parkingId);
             pstmt.executeUpdate();
             logger.info("Parking with " + parkingId + " id removed from db successfully.");
         } catch (SQLException e) {

@@ -9,21 +9,19 @@ import java.util.Set;
  */
 public interface OwnerRepository {
 
-    Owner getById(int id);
+    Owner getById(long id);
 
     void insert(Owner owner);
 
-    void update(int ownerId, Owner owner);
+    void update(int Id, Owner owner);
 
-    void delete(int ownerId);
+    void update(Owner owner);
 
-    Set<Owner> getAllOwnersFromDb();
+    void delete(long Id);
 
-    Owner getOwnerByLastName(String lastName);
+    Set<Owner> getAll();
 
-    Owner getOwnerByVehicleNumber(String vehicleNumber);
+    Owner getByLastName(String lastName);
 
-    int getOwnerIdByLastName(String ownerLastName);
-
-
+    Owner getByVehicleNumber(String vehicleNumber);
 }

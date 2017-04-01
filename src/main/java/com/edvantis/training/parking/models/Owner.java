@@ -19,7 +19,7 @@ public class Owner {
     @GeneratedValue(generator = "increment")
     @GenericGenerator(name = "increment", strategy = "increment")
     @Column(name = "ID", unique = true, nullable = false)
-    private int id;
+    private long id;
 
     @Column(name = "FIRSTNAME")
     private String firstName;
@@ -34,17 +34,17 @@ public class Owner {
     @Column(name = "DOB")
     private LocalDate dob;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy="owner", fetch = FetchType.EAGER)
+    @OneToMany(orphanRemoval = true, mappedBy="owner", fetch = FetchType.EAGER)
     private Set<Vehicle> userVehicles = new HashSet<>();
 
     public Owner() {
     }
 
-    public int getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(long id) {
         this.id = id;
     }
 

@@ -19,17 +19,17 @@ public interface ParkingService {
 
     Owner getOwnerByLastName(String ownerLastName);
 
-    Vehicle getVehicleByNumber(String vehicleNumber);
-
     Owner getOwnerByVehicleNumber(String vehicleNumber);
 
-    Set<Vehicle> getAllVehicleByType(VehicleType vehicleType);
+    Reservation makeReservation(Date from, Date to, GarageType type, long ownerId);
 
-    void makeReservation(Date from, Date to, GarageType type, long ownerId);
+    Reservation makeReservation(Date from, Date to, long ownerId);
 
-    Set<Garage> getAvailableGaragesByGarageType(Date from, Date to, GarageType garageType);
+    Set<Garage> getAvailableGaragesByType(Date from, Date to, GarageType garageType);
 
     Set<Garage> getAvailableGaragesByParking(Date from, Date to, long parkingId);
+
+    Set<Garage> getAvailableGarages(Date from, Date to);
 
 
 }

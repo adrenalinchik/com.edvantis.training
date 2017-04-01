@@ -17,7 +17,7 @@ public class Vehicle {
     @GeneratedValue(generator = "increment")
     @GenericGenerator(name = "increment", strategy = "increment")
     @Column(name = "ID", unique = true, nullable = false)
-    private int id;
+    private long id;
 
     @ManyToOne
     @JoinColumn(name="OWNER_ID")
@@ -37,11 +37,11 @@ public class Vehicle {
     public Vehicle() {
     }
 
-    public int getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(long id) {
         this.id = id;
     }
 

@@ -1,4 +1,4 @@
-package com.edvantis.training.parking.factory;
+package com.edvantis.training.parking.config;
 
 import com.edvantis.training.parking.repository.*;
 import com.edvantis.training.parking.repository.jpa.*;

@@ -3,6 +3,7 @@ package com.edvantis.training.parking.repository.jpa;
 import com.edvantis.training.parking.models.Garage;
 import com.edvantis.training.parking.models.GarageType;
 import com.edvantis.training.parking.models.Garage_;
+import com.edvantis.training.parking.repository.CrudRepository;
 import com.edvantis.training.parking.repository.GarageRepository;
 import org.apache.log4j.Logger;
 
@@ -17,7 +18,7 @@ import java.util.Set;
 /**
  * Created by taras.fihurnyak on 2/22/2017.
  */
-public class GarageJpaRepository implements GarageRepository {
+public class GarageJpaRepository implements GarageRepository, CrudRepository<Garage> {
 
     private final Logger logger = Logger.getLogger(GarageJpaRepository.class);
 
@@ -29,127 +30,46 @@ public class GarageJpaRepository implements GarageRepository {
 
     @Override
     public Garage getById(long id) {
-        EntityManager em = null;
-        Garage garage = null;
-        try {
-            em = emFactory.createEntityManager();
-            garage = em.find(Garage.class, id);
-        } catch (Exception e) {
-            logger.warn(e);
-        } finally {
-            if (em != null && em.isOpen()) {
-                em.close();
-            }
-        }
-        return garage;
+        return findById(emFactory, Garage.class, id);
+    }
+
+    @Override
+    public Set<Garage> getAll() {
+        return findAll(emFactory, Garage.class);
     }
 
     @Override
     public void insert(Garage garage) {
-        EntityManager em = null;
-        try {
-            em = emFactory.createEntityManager();
-            em.getTransaction().begin();
-            em.persist(garage);
-            em.getTransaction().commit();
-            logger.info("Garage " + garage.getId() + " is saved to db successfully.");
-        } catch (Exception e) {
-            logger.warn(e);
-        } finally {
-            if (em != null && em.isOpen()) {
-                em.close();
-            }
-        }
+        save(emFactory, garage);
+        logger.info(String.format("Garage %s is saved to db successfully.", garage.getId()));
     }
 
     @Override
-    public void update(int garageId, Garage garage) {
-        EntityManager em = null;
-        try {
-            em = emFactory.createEntityManager();
-            em.getTransaction().begin();
-            em.merge(garage);
-            em.getTransaction().commit();
-            logger.info("Garage " + garage.getId() + " updated successfully.");
-        } catch (Exception e) {
-            logger.warn(e);
-        } finally {
-            if (em != null && em.isOpen()) {
-                em.close();
-            }
-        }
-
+    public void update(int id, Garage garage) {
+        edit(emFactory, garage);
+        logger.info(String.format("Garage %s updated successfully.", garage.getId()));
     }
 
     public void update(Garage garage) {
-        EntityManager em = null;
-        try {
-            em = emFactory.createEntityManager();
-            em.getTransaction().begin();
-            em.merge(garage);
-            em.getTransaction().commit();
-            logger.info("Garage " + garage.getId() + " updated successfully.");
-        } catch (Exception e) {
-            logger.warn(e);
-        } finally {
-            if (em != null && em.isOpen()) {
-                em.close();
-            }
-        }
+        edit(emFactory, garage);
+        logger.info(String.format("Garage %s updated successfully.", garage.getId()));
     }
 
     @Override
-    public void delete(int garageId) {
-        EntityManager em = null;
-        try {
-            em = emFactory.createEntityManager();
-            em.getTransaction().begin();
-            em.remove(em.find(Garage.class, garageId));
-            em.getTransaction().commit();
-            logger.info("Garage " + garageId + " deleted successfully.");
-        } catch (Exception e) {
-            logger.warn(e);
-        } finally {
-            if (em != null && em.isOpen()) {
-                em.close();
-            }
-        }
-
-    }
-
-    public void delete(Garage garage) {
-        EntityManager em = null;
-        try {
-            em = emFactory.createEntityManager();
-            em.getTransaction().begin();
-            em.remove(em.find(Garage.class, garage.getId()));
-            em.getTransaction().commit();
-            logger.info("Garage " + garage.getId() + " deleted successfully.");
-        } catch (Exception e) {
-            logger.warn(e);
-        } finally {
-            if (em != null && em.isOpen()) {
-                em.close();
-            }
-        }
+    public void delete(long id) {
+        remove(emFactory, Garage.class, id);
+        logger.info(String.format("Garage %s deleted successfully.", id));
     }
 
     public Set<Garage> getAllGaragesByType(GarageType garageType) {
-        Set<Garage> garageSet = null;
-        EntityManager em = null;
-        try {
-            em = emFactory.createEntityManager();
-            CriteriaBuilder builder = em.getCriteriaBuilder();
-            CriteriaQuery<Garage> cq = builder.createQuery(Garage.class);
-            Root<Garage> garage = cq.from(Garage.class);
-            cq.where(builder.equal(garage.get(Garage_.garageType), garageType));
-            garageSet = new HashSet<>(em.createQuery(cq).getResultList());
-        } catch (Exception e) {
-            logger.warn(e);
-        } finally {
-            if (em != null && em.isOpen()) {
-                em.close();
-            }
+        EntityManager em = emFactory.createEntityManager();
+        CriteriaBuilder builder = em.getCriteriaBuilder();
+        CriteriaQuery<Garage> cq = builder.createQuery(Garage.class);
+        Root<Garage> garage = cq.from(Garage.class);
+        cq.where(builder.equal(garage.get(Garage_.garageType), garageType));
+        Set<Garage> garageSet = new HashSet<>(em.createQuery(cq).getResultList());
+        if (em.isOpen()) {
+            em.close();
         }
         return garageSet;
     }
