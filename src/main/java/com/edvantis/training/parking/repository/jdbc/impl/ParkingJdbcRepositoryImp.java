@@ -3,7 +3,9 @@ package com.edvantis.training.parking.repository.jdbc.impl;
 import com.edvantis.training.parking.models.Parking;
 import com.edvantis.training.parking.repository.ParkingRepository;
 import com.edvantis.training.parking.repository.jdbc.AbstractJdbcRepository;
-import org.apache.log4j.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -18,7 +20,7 @@ import static com.edvantis.training.parking.jdbc.Constants.*;
  */
 public class ParkingJdbcRepositoryImp extends AbstractJdbcRepository implements ParkingRepository {
 
-    private final Logger logger = Logger.getLogger(ParkingJdbcRepositoryImp.class);
+    private final Logger logger = LoggerFactory.getLogger(ParkingJdbcRepositoryImp.class);
 
 
     public ParkingJdbcRepositoryImp(String dbName) {
@@ -36,19 +38,15 @@ public class ParkingJdbcRepositoryImp extends AbstractJdbcRepository implements 
             parking.setAddress(rs.getString(2));
             if (rs.getInt(3) != 0)
                 parking.setFreeGaragesNumber(rs.getInt(3));
-
         } catch (SQLException e) {
-            logger.warn(e);
-        } catch (Exception e) {
-            logger.error(e);
+            logger.warn(e.getMessage());
         }
-
         return parking;
     }
 
     @Override
     public Set<Parking> getAll() {
-        return null;
+        throw new UnsupportedOperationException("Not implemented");
     }
 
     @Override
@@ -60,15 +58,11 @@ public class ParkingJdbcRepositoryImp extends AbstractJdbcRepository implements 
             if (parking.getFreeGaragesNumber() != 0) {
                 pstmt.setInt(3, parking.getFreeGaragesNumber());
             } else pstmt.setNull(3, Types.INTEGER);
-
             pstmt.executeUpdate();
-            logger.info("Parking saved to db successfully.");
+            logger.info("Parking with id={} id saved to db successfully.", parking.getId());
         } catch (SQLException e) {
-            logger.warn(e);
-        } catch (Exception e) {
-            logger.error(e);
+            logger.warn(e.getMessage());
         }
-
     }
 
     @Override
@@ -79,31 +73,26 @@ public class ParkingJdbcRepositoryImp extends AbstractJdbcRepository implements 
             pstmt.setInt(3, parking.getFreeGaragesNumber());
             pstmt.setInt(4, parkingId);
             pstmt.executeUpdate();
-            logger.info("Parking with " + parkingId + " id updated successfully.");
+            logger.info("Parking with id={} id updated successfully.", parking.getId());
         } catch (SQLException e) {
-            logger.warn(e);
-        } catch (Exception e) {
-            logger.error(e);
+            logger.warn(e.getMessage());
         }
     }
 
     @Override
     public void update(Parking parking) {
-
+        throw new UnsupportedOperationException("Not implemented");
     }
 
     @Override
-    public void delete(long parkingId) {
+    public void delete(long id) {
         try {
             PreparedStatement pstmt = getConnection().prepareStatement(DELETE_PARKING);
-            pstmt.setLong(1, parkingId);
+            pstmt.setLong(1, id);
             pstmt.executeUpdate();
-            logger.info("Parking with " + parkingId + " id removed from db successfully.");
+            logger.info("Parking with id={} id removed from db successfully.", id);
         } catch (SQLException e) {
-            logger.warn(e);
-        } catch (Exception e) {
-            logger.error(e);
+            logger.warn(e.getMessage());
         }
-
     }
 }

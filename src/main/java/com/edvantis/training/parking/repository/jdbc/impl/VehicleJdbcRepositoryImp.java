@@ -4,7 +4,9 @@ import com.edvantis.training.parking.models.Vehicle;
 import com.edvantis.training.parking.models.VehicleType;
 import com.edvantis.training.parking.repository.VehicleRepository;
 import com.edvantis.training.parking.repository.jdbc.AbstractJdbcRepository;
-import org.apache.log4j.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -21,8 +23,7 @@ import static com.edvantis.training.parking.models.VehicleType.*;
  */
 public class VehicleJdbcRepositoryImp extends AbstractJdbcRepository implements VehicleRepository {
 
-    private final Logger logger = Logger.getLogger(VehicleJdbcRepositoryImp.class);
-
+    private final Logger logger = LoggerFactory.getLogger(VehicleJdbcRepositoryImp.class);
 
     public VehicleJdbcRepositoryImp(String dbName) {
         super(dbName);
@@ -49,23 +50,18 @@ public class VehicleJdbcRepositoryImp extends AbstractJdbcRepository implements 
                 case 4:
                     vehicle.setCarType(DIESEL);
                     break;
-
             }
             vehicle.setNumber(rs.getString(4));
             vehicle.setModel(rs.getString(5));
-
         } catch (SQLException e) {
-            logger.warn(e);
-        } catch (Exception e) {
-            logger.error(e);
+            logger.warn(e.getMessage());
         }
-
         return vehicle;
     }
 
     @Override
     public Set<Vehicle> getAll() {
-        return null;
+        throw new UnsupportedOperationException("Not implemented");
     }
 
     @Override
@@ -90,13 +86,10 @@ public class VehicleJdbcRepositoryImp extends AbstractJdbcRepository implements 
             pstmt.setString(3, vehicle.getNumber());
             pstmt.setString(4, vehicle.getModel());
             pstmt.executeUpdate();
-            logger.info("Vehicle with " + vehicle.getNumber() + " number is saved successfully.");
+            logger.info("Vehicle id={} is saved to db successfully.", vehicle.getId());
         } catch (SQLException e) {
-            logger.warn(e);
-        } catch (Exception e) {
-            logger.error(e);
+            logger.warn(e.getMessage());
         }
-
     }
 
     @Override
@@ -121,33 +114,27 @@ public class VehicleJdbcRepositoryImp extends AbstractJdbcRepository implements 
             pstmt.setString(3, vehicle.getModel());
             pstmt.setInt(4, vehicleId);
             pstmt.executeUpdate();
-            logger.info("Vehicle with " + vehicleId + " id updated successfully.");
+            logger.info("Vehicle id={} updated successfully.", vehicle.getId());
         } catch (SQLException e) {
-            logger.warn(e);
-        } catch (Exception e) {
-            logger.error(e);
+            logger.warn(e.getMessage());
         }
-
     }
 
     @Override
     public void update(Vehicle vehicle) {
-
+        throw new UnsupportedOperationException("Not implemented");
     }
 
     @Override
-    public void delete(long Id) {
+    public void delete(long id) {
         try {
             PreparedStatement pstmt = getConnection().prepareStatement(DELETE_VEHICLE);
-            pstmt.setLong(1, Id);
+            pstmt.setLong(1, id);
             pstmt.executeUpdate();
-            logger.info("Vehicle with " + Id + " id removed from db successfully.");
+            logger.info("Vehicle id={} deleted successfully.", id);
         } catch (SQLException e) {
-            logger.warn(e);
-        } catch (Exception e) {
-            logger.error(e);
+            logger.warn(e.getMessage());
         }
-
     }
 
     public Set<Vehicle> getAllVehiclesByType(VehicleType vehicleType) {
@@ -190,11 +177,8 @@ public class VehicleJdbcRepositoryImp extends AbstractJdbcRepository implements 
                 vehicleSet.add(vehicle);
             }
         } catch (SQLException e) {
-            logger.warn(e);
-        } catch (Exception e) {
-            logger.error(e);
+            logger.warn(e.getMessage());
         }
-
         return vehicleSet;
     }
 
@@ -225,11 +209,8 @@ public class VehicleJdbcRepositoryImp extends AbstractJdbcRepository implements 
             vehicle.setModel(rs.getString(5));
 
         } catch (SQLException e) {
-            logger.warn(e);
-        } catch (Exception e) {
-            logger.error(e);
+            logger.warn(e.getMessage());
         }
-
         return vehicle;
     }
 
@@ -242,13 +223,8 @@ public class VehicleJdbcRepositoryImp extends AbstractJdbcRepository implements 
             rs.next();
             vehicleId = rs.getInt(1);
         } catch (SQLException e) {
-            logger.warn(e);
-        } catch (Exception e) {
-            logger.error(e);
+            logger.warn(e.getMessage());
         }
         return vehicleId;
     }
-
 }
-
-

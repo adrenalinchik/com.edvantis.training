@@ -124,25 +124,7 @@ public class ApplicationTest {
 
     @AfterClass
     public static void dropDb() {
-//        Set<Garage> garages = garageRepo.getAll();
-//        garages.forEach(i -> garageRepo.delete(i.getId()));
-//        Assert.assertNull(garageRepo.getById(id));
-//        Set<Vehicle> vehicles = vehicleRepo.getAll();
-//        vehicles.forEach(i -> vehicleRepo.delete(i.getId()));
-//        Assert.assertNull(vehicleRepo.getById(id));
-//        Set<Owner> owners = ownerRepo.getAll();
-//        owners.forEach(i -> ownerRepo.delete(i.getId()));
-//        Assert.assertNull(ownerRepo.getById(id));
-//        Set<Parking> parkings = parkingRepo.getAll();
-//        parkings.forEach(i -> parkingRepo.delete(i.getId()));
-//        Assert.assertNull(parkingRepo.getById(id));
-//        Set<Reservation> reservations = reservationRepo.getAll();
-//        reservations.forEach(i -> reservationRepo.delete(i.getId()));
-//        Assert.assertNull(reservationRepo.getById(id));
-
-        DataBaseJdbcUtil.clearDb(TestsHelper.tablesList());
-        DataBaseJdbcUtil.dropAllObjects();
-        DataBaseJdbcUtil.dropDb();
-
+        // DataBaseJdbcUtil.clearDb(TestsHelper.tablesList());
+        DataBaseJdbcUtil.dropDB();
     }
 }

@@ -21,10 +21,6 @@ import java.util.Set;
  */
 public class ParkingServiceTest {
 
-    private static String dbName = "test";
-    private static String login = "sa";
-    private static String password = "";
-
     private static ApplicationConfig factory = new ApplicationConfig();
     private static OwnerRepository ownerRepo = factory.getOwnerRepository();
     private static VehicleRepository vehicleRepo = factory.getVehicleRepository();
@@ -35,6 +31,7 @@ public class ParkingServiceTest {
 
     @BeforeClass
     public static void populateDb() {
+        DataBaseJdbcUtil.createDb();
         parkingService.populateWithMockObjects(TestsHelper.generateObjects());
         Assert.assertNotNull(ownerRepo.getById(1));
         Assert.assertNotNull(vehicleRepo.getById(1));
@@ -44,7 +41,7 @@ public class ParkingServiceTest {
     }
 
     @Test
-    public void testGetAvailableGaragesLowerBoundaryDate(){
+    public void testGetAvailableGaragesLowerBoundaryDate() {
         int parkingId = 1;
         Date from = TestsHelper.parseDate("2017-03-05 19:16:59");
         Date to = TestsHelper.parseDate("2017-03-15 19:16:59");
@@ -172,7 +169,6 @@ public class ParkingServiceTest {
     @AfterClass
     public static void dropDb() {
         DataBaseJdbcUtil.clearDb(TestsHelper.tablesList());
-        DataBaseJdbcUtil.dropAllObjects();
-        DataBaseJdbcUtil.dropDb();
+        DataBaseJdbcUtil.dropDB();
     }
 }

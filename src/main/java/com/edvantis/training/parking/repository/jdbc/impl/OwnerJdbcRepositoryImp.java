@@ -4,7 +4,9 @@ import com.edvantis.training.parking.models.Gender;
 import com.edvantis.training.parking.models.Owner;
 import com.edvantis.training.parking.repository.OwnerRepository;
 import com.edvantis.training.parking.repository.jdbc.AbstractJdbcRepository;
-import org.apache.log4j.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -20,7 +22,7 @@ import static com.edvantis.training.parking.jdbc.Constants.*;
  */
 public class OwnerJdbcRepositoryImp extends AbstractJdbcRepository implements OwnerRepository {
 
-    private final Logger logger = Logger.getLogger(OwnerJdbcRepositoryImp.class);
+    private final Logger logger = LoggerFactory.getLogger(OwnerJdbcRepositoryImp.class);
 
     public OwnerJdbcRepositoryImp(String dbName) {
         super(dbName);
@@ -41,9 +43,7 @@ public class OwnerJdbcRepositoryImp extends AbstractJdbcRepository implements Ow
             else owner.setGender(Gender.FEMALE);
             owner.setDOB(convertDateToOwnerAttribute(rs.getDate(5)));
         } catch (SQLException e) {
-            logger.warn(e);
-        } catch (Exception e) {
-            logger.error(e);
+            logger.warn(e.getMessage());
         }
         return owner;
     }
@@ -59,16 +59,14 @@ public class OwnerJdbcRepositoryImp extends AbstractJdbcRepository implements Ow
             } else pstmt.setInt(3, 2);
             pstmt.setDate(4, convertDateToDatabaseColumn(owner.getDOB()));
             pstmt.executeUpdate();
-            logger.info("Owner " + owner.getFirstName() + " " + owner.getFirstName() + " saved to db successfully.");
+            logger.info("Owner {} {} saved to db successfully.", owner.getFirstName(), owner.getFirstName());
         } catch (SQLException e) {
-            logger.warn(e);
-        } catch (Exception e) {
-            logger.error(e);
+            logger.warn(e.getMessage());
         }
     }
 
     @Override
-    public void update(int ownerId, Owner owner) {
+    public void update(int id, Owner owner) {
         try {
             PreparedStatement pstmt = getConnection().prepareStatement(UPDATE_OWNER);
             pstmt.setString(1, owner.getFirstName());
@@ -77,33 +75,29 @@ public class OwnerJdbcRepositoryImp extends AbstractJdbcRepository implements Ow
                 pstmt.setInt(3, 1);
             } else pstmt.setInt(3, 2);
             pstmt.setDate(4, convertDateToDatabaseColumn(owner.getDOB()));
-            pstmt.setInt(5, ownerId);
+            pstmt.setInt(5, id);
             pstmt.executeUpdate();
-            logger.info("Owner with " + ownerId + " id updated successfully.");
+            logger.info("Owner with id={} id updated successfully.", owner.getId());
         } catch (SQLException e) {
-            logger.warn(e);
-        } catch (Exception e) {
-            logger.error(e);
+            logger.warn(e.getMessage());
         }
     }
 
     @Override
     public void update(Owner owner) {
-
+        throw new UnsupportedOperationException("Not implemented");
     }
 
     @Override
-    public void delete(long ownerId) {
+    public void delete(long id) {
         try {
             PreparedStatement pstmt = getConnection()
                     .prepareStatement(DELETE_OWNER);
-            pstmt.setLong(1, ownerId);
+            pstmt.setLong(1, id);
             pstmt.executeUpdate();
-            logger.info("Owner with " + ownerId + " id removed from db successfully.");
+            logger.info("Owner with id={} id removed from db successfully.",id);
         } catch (SQLException e) {
-            logger.warn(e);
-        } catch (Exception e) {
-            logger.error(e);
+            logger.warn(e.getMessage());
         }
     }
 
@@ -123,11 +117,8 @@ public class OwnerJdbcRepositoryImp extends AbstractJdbcRepository implements Ow
                 ownerSet.add(owner);
             }
         } catch (SQLException e) {
-            logger.warn(e);
-        } catch (Exception e) {
-            logger.error(e);
+            logger.warn(e.getMessage());
         }
-
         return ownerSet;
     }
 
@@ -146,17 +137,13 @@ public class OwnerJdbcRepositoryImp extends AbstractJdbcRepository implements Ow
             else owner.setGender(Gender.FEMALE);
             owner.setDOB(convertDateToOwnerAttribute(rs.getDate(5)));
         } catch (SQLException e) {
-            logger.warn(e);
-        } catch (Exception e) {
-            logger.error(e);
+            logger.warn(e.getMessage());
         }
         return owner;
     }
 
     public Owner getByVehicleNumber(String vehicleNumber) {
-
         return getById(getOwnerIdFromVehicleByNumber(vehicleNumber));
-
     }
 
     public int getOwnerIdByLastName(String ownerLastName) {
@@ -168,9 +155,7 @@ public class OwnerJdbcRepositoryImp extends AbstractJdbcRepository implements Ow
             rs.next();
             ownerId = rs.getInt(1);
         } catch (SQLException e) {
-            logger.warn(e);
-        } catch (Exception e) {
-            logger.error(e);
+            logger.warn(e.getMessage());
         }
         return ownerId;
     }
@@ -184,9 +169,7 @@ public class OwnerJdbcRepositoryImp extends AbstractJdbcRepository implements Ow
             rs.next();
             ownerId = rs.getInt(2);
         } catch (SQLException e) {
-            logger.warn(e);
-        } catch (Exception e) {
-            logger.error(e);
+            logger.warn(e.getMessage());
         }
         return ownerId;
     }

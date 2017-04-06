@@ -1,7 +1,14 @@
 package com.edvantis.training.parking.jdbc;
 
-import org.apache.log4j.Logger;
+import com.edvantis.training.parking.config.ApplicationConfig;
+import com.edvantis.training.parking.config.Util;
+import org.flywaydb.core.Flyway;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStream;
 import java.sql.*;
 import java.util.Properties;
 
@@ -10,7 +17,7 @@ import java.util.Properties;
  */
 public class DataBaseJdbcUtil {
 
-    private final static Logger logger = Logger.getLogger(DataBaseJdbcUtil.class);
+    private final static Logger logger = LoggerFactory.getLogger(DataBaseJdbcUtil.class);
     private static Properties prop = new AppProperty().getApplicationProperties();
     private static String url = prop.getProperty("url");
     private static String dbName = prop.getProperty("dbName");
@@ -20,14 +27,23 @@ public class DataBaseJdbcUtil {
 
     public static void createDb() {
         try (Connection connection = getConnection(url)) {
-            if (url.contains("mysql"))
+            if (url.contains("mysql")) {
                 createDatabase(dbName, connection);
-            else if (url.contains("h2")) {
+                Flyway flyway = new ApplicationConfig().getFlywayInstance(url + dbName, prop.getProperty("login"), prop.getProperty("password"));
+                flyway.setLocations("classpath:db/migration");
+                flyway.clean();
+                flyway.migrate();
+                logger.info("Tables for {} db are created.", dbName);
+            } else if (url.contains("h2")) {
                 url = url.replace("test", "");
-                logger.info("Database " + dbName + " is created.");
+                logger.info("Database {} is created.", dbName);
+                Flyway flyway = new ApplicationConfig().getFlywayInstance(url + dbName, prop.getProperty("login"), prop.getProperty("password"));
+                flyway.setLocations("classpath:db/migration");
+                flyway.clean();
+                flyway.migrate();
             }
         } catch (SQLException e) {
-            logger.warn(e);
+            logger.warn(e.toString());
         }
     }
 
@@ -40,7 +56,7 @@ public class DataBaseJdbcUtil {
             setForeignKeyChecks(1, conn);
             logger.info(dbName + " database is cleared.");
         } catch (SQLException e) {
-            logger.warn(e);
+            logger.warn(e.getMessage());
         }
     }
 
@@ -49,7 +65,18 @@ public class DataBaseJdbcUtil {
             dropDatabase(dbName, connection);
             logger.info(dbName + " database is deleted.");
         } catch (SQLException e) {
-            logger.warn(e);
+            logger.warn(e.getMessage());
+        }
+    }
+
+    public static void dropDB() {
+        try (Connection connection = getConnection(url + dbName)) {
+            InputStream in = new FileInputStream(
+                    new File("src/main/resources/drop_db.sql"));
+            Util.importSQL(connection, in);
+            logger.info(dbName + " database is deleted.");
+        } catch (Exception e) {
+            logger.warn(e.getMessage());
         }
     }
 
@@ -60,21 +87,20 @@ public class DataBaseJdbcUtil {
             connection.setCatalog(dbName);
             logger.info("Database " + dbName + " is created.");
         } catch (Exception e) {
-            logger.warn(e);
+            logger.warn(e.getMessage());
         }
     }
 
     public static Connection getConnection(String dbName) {
         Connection connection = null;
         try {
-            //String dbName = prop.getProperty("dbName");
             Class.forName(prop.getProperty("driver"));
             connection = DriverManager.getConnection(dbName, prop.getProperty("login"), prop.getProperty("password"));
             logger.info("Connection with " + dbName + " database is established.");
         } catch (SQLException e) {
-            logger.warn(e);
+            logger.warn(e.getMessage());
         } catch (ClassNotFoundException e) {
-            logger.error(e);
+            logger.error(e.getMessage());
         }
         return connection;
     }
@@ -84,7 +110,7 @@ public class DataBaseJdbcUtil {
         try (Connection connection = getConnection(url + dbName)) {
             meta = connection.getMetaData();
         } catch (SQLException e) {
-            logger.warn(e);
+            logger.warn(e.getMessage());
         }
         return meta;
     }
@@ -142,7 +168,7 @@ public class DataBaseJdbcUtil {
             PreparedStatement pstmt = connection.prepareStatement(Constants.CLEAN_TABLE + tableName);
             pstmt.executeUpdate();
         } catch (SQLException e) {
-            logger.warn(e);
+            logger.warn(e.getMessage());
         }
 
     }
@@ -153,7 +179,7 @@ public class DataBaseJdbcUtil {
             pstmt.executeUpdate();
             logger.info("All objects are deleted");
         } catch (SQLException e) {
-            logger.warn(e);
+            logger.warn(e.getMessage());
         }
 
     }
@@ -163,7 +189,7 @@ public class DataBaseJdbcUtil {
             PreparedStatement pstmt = connection.prepareStatement(Constants.DROP_DATABASE + databaseName);
             pstmt.executeUpdate();
         } catch (SQLException e) {
-            logger.warn(e);
+            logger.warn(e.getMessage());
         }
 
     }
@@ -173,7 +199,7 @@ public class DataBaseJdbcUtil {
             PreparedStatement pstmt = connection.prepareStatement(Constants.SET_FOREIGN_KEY_CHECKS + checks);
             pstmt.executeUpdate();
         } catch (SQLException e) {
-            logger.warn(e);
+            logger.warn(e.getMessage());
         }
     }
 }

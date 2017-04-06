@@ -4,7 +4,9 @@ import com.edvantis.training.parking.models.Garage;
 import com.edvantis.training.parking.models.GarageType;
 import com.edvantis.training.parking.repository.GarageRepository;
 import com.edvantis.training.parking.repository.jdbc.AbstractJdbcRepository;
-import org.apache.log4j.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -19,7 +21,7 @@ import static com.edvantis.training.parking.jdbc.Constants.*;
  */
 public class GarageJdbcRepositoryImp extends AbstractJdbcRepository implements GarageRepository {
 
-    private final Logger logger = Logger.getLogger(GarageJdbcRepositoryImp.class);
+    private final Logger logger = LoggerFactory.getLogger(GarageJdbcRepositoryImp.class);
 
     public GarageJdbcRepositoryImp(String dbName) {
         super(dbName);
@@ -28,7 +30,6 @@ public class GarageJdbcRepositoryImp extends AbstractJdbcRepository implements G
     @Override
     public Garage getById(long id) {
         Garage garage = null;
-
         try {
             PreparedStatement pstmt = getConnection().prepareStatement(GET_GARAGE_BY_ID + id);
             ResultSet rs = pstmt.executeQuery();
@@ -46,18 +47,15 @@ public class GarageJdbcRepositoryImp extends AbstractJdbcRepository implements G
                     break;
             }
             garage.setSquare(rs.getFloat(3));
-
         } catch (SQLException e) {
-            logger.warn(e);
-        } catch (Exception e) {
-            logger.error(e);
+            logger.warn(e.getMessage());
         }
         return garage;
     }
 
     @Override
     public Set<Garage> getAll() {
-        return null;
+        throw new UnsupportedOperationException("Not implemented");
     }
 
     @Override
@@ -78,17 +76,14 @@ public class GarageJdbcRepositoryImp extends AbstractJdbcRepository implements G
             }
             pstmt.setFloat(3, garage.getSquare());
             pstmt.executeUpdate();
-            logger.info("Garage is saved to db successfully.");
+            logger.info("Garage id={} is saved to db successfully.", garage.getId());
         } catch (SQLException e) {
-            logger.warn(e);
-        } catch (Exception e) {
-            logger.error(e);
+            logger.warn(e.getMessage());
         }
     }
 
     @Override
     public void update(int garageId, Garage garage) {
-
         try {
             PreparedStatement pstmt = getConnection().prepareStatement(UPDATE_GARAGE);
             switch (garage.getGarageType()) {
@@ -105,31 +100,26 @@ public class GarageJdbcRepositoryImp extends AbstractJdbcRepository implements G
             pstmt.setFloat(2, garage.getSquare());
             pstmt.setInt(3, garageId);
             pstmt.executeUpdate();
-            logger.info("Garage " + garageId + " updated successfully.");
+            logger.info("Garage id={} updated successfully.", garage.getId());
         } catch (SQLException e) {
-            logger.warn(e);
-        } catch (Exception e) {
-            logger.error(e);
+            logger.warn(e.getMessage());
         }
-
     }
 
     @Override
     public void update(Garage garage) {
-
+        throw new UnsupportedOperationException("Not implemented");
     }
 
     @Override
-    public void delete(long garageId) {
+    public void delete(long id) {
         try {
             PreparedStatement pstmt = getConnection().prepareStatement(DELETE_GARAGE);
-            pstmt.setLong(1, garageId);
+            pstmt.setLong(1, id);
             pstmt.executeUpdate();
-            logger.info("Garage with " + garageId + " id removed from db successfully.");
+            logger.info("Garage id={} deleted successfully.", id);
         } catch (SQLException e) {
-            logger.warn(e);
-        } catch (Exception e) {
-            logger.error(e);
+            logger.warn(e.getMessage());
         }
     }
 
@@ -166,11 +156,8 @@ public class GarageJdbcRepositoryImp extends AbstractJdbcRepository implements G
                 garageSet.add(garage);
             }
         } catch (SQLException e) {
-            logger.warn(e);
-        } catch (Exception e) {
-            logger.error(e);
+            logger.warn(e.getMessage());
         }
-
         return garageSet;
     }
 
@@ -181,9 +168,7 @@ public class GarageJdbcRepositoryImp extends AbstractJdbcRepository implements G
             pstmt.setInt(2, garageId);
             pstmt.executeUpdate();
         } catch (SQLException e) {
-            logger.warn(e);
+            logger.warn(e.getMessage());
         }
-
     }
-
 }

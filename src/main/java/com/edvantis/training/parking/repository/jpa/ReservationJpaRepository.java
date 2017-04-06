@@ -5,7 +5,9 @@ import com.edvantis.training.parking.models.*;
 import com.edvantis.training.parking.repository.CrudRepository;
 import com.edvantis.training.parking.repository.GarageRepository;
 import com.edvantis.training.parking.repository.ReservationRepository;
-import org.apache.log4j.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -21,11 +23,9 @@ import java.util.Set;
 /**
  * Created by taras.fihurnyak on 3/7/2017.
  */
-public class ReservationJpaRepository implements ReservationRepository, CrudRepository<Reservation> {
+public class ReservationJpaRepository extends CrudRepository<Reservation> implements ReservationRepository{
 
-    private final Logger logger = Logger.getLogger(ReservationJpaRepository.class);
-
-    private EntityManagerFactory emFactory;
+    private final Logger logger = LoggerFactory.getLogger(ReservationJpaRepository.class);
 
     public ReservationJpaRepository(EntityManagerFactory entityManagerFactory) {
         emFactory = entityManagerFactory;
@@ -33,35 +33,35 @@ public class ReservationJpaRepository implements ReservationRepository, CrudRepo
 
     @Override
     public Reservation getById(Long id) {
-        return findById(emFactory, Reservation.class, id);
+        return findById(Reservation.class, id);
     }
 
     @Override
     public Set<Reservation> getAll() {
-        return findAll(emFactory, Reservation.class);
+        return findAll(Reservation.class);
     }
 
     @Override
     public void insert(Reservation reservation) {
-        save(emFactory, reservation);
-        logger.info(String.format("Reservation %s is saved to db successfully.", reservation.getId()));
+        save(reservation);
+        logger.info("Reservation id={} is saved to db successfully.", reservation.getId());
     }
 
     @Override
     public void update(int id, Reservation reservation) {
-        edit(emFactory, reservation);
-        logger.info(String.format("Reservation %s updated successfully.", reservation.getId()));
+        edit(reservation);
+        logger.info("Reservation id={} updated successfully.", reservation.getId());
     }
 
     public void update(Reservation reservation) {
-        edit(emFactory, reservation);
-        logger.info(String.format("Reservation %s updated successfully.", reservation.getId()));
+        edit(reservation);
+        logger.info("Reservation id={} updated successfully.", reservation.getId());
     }
 
     @Override
     public void delete(long id) {
-        remove(emFactory, Reservation.class, id);
-        logger.info(String.format("Reservation %s deleted successfully.", id));
+        remove(Reservation.class, id);
+        logger.info("Reservation id={} deleted successfully.", id);
     }
 
     //get all garages by parking id that don't exist in reservation table

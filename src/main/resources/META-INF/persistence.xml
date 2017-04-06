@@ -15,7 +15,7 @@
             <property name="javax.persistence.jdbc.password" value="root"/>
         </properties>
     </persistence-unit>
-    <!--<persistence-unit name="entityManager1">
+    <persistence-unit name="entityManager1">
         <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
         <class>com.edvantis.training.parking.models</class>
         <properties>
@@ -26,5 +26,5 @@
             <property name="javax.persistence.jdbc.user" value="sa"/>
             <property name="javax.persistence.jdbc.password" value=""/>
         </properties>
-    </persistence-unit>-->
+    </persistence-unit>
 </persistence>

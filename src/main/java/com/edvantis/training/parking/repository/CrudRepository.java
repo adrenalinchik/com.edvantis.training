@@ -1,5 +1,7 @@
 package com.edvantis.training.parking.repository;
 
+import com.edvantis.training.parking.config.ApplicationConfig;
+
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.criteria.CriteriaBuilder;
@@ -9,18 +11,24 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * Created by taras.fihurnyak on 3/27/2017.
+ * Created by taras.fihurnyak on 4/4/2017.
  */
-public interface CrudRepository<T> {
+public abstract class CrudRepository<T> {
 
-    default T findById(EntityManagerFactory emFactory, Class<T> classType, Long id) {
+    protected EntityManagerFactory emFactory;
+
+    public CrudRepository() {
+        emFactory = new ApplicationConfig().getInstance();
+    }
+
+    public T findById(Class<T> classType, Long id) {
         EntityManager em = emFactory.createEntityManager();
         T entity = em.find(classType, id);
         if (em.isOpen()) em.close();
         return entity;
     }
 
-    default Set<T> findAll(EntityManagerFactory emFactory, Class<T> classType) {
+    public Set<T> findAll(Class<T> classType) {
         EntityManager em = emFactory.createEntityManager();
         CriteriaBuilder builder = em.getCriteriaBuilder();
         CriteriaQuery<T> cq = builder.createQuery(classType);
@@ -30,7 +38,7 @@ public interface CrudRepository<T> {
         return reservationsSet;
     }
 
-    default void save(EntityManagerFactory emFactory, T t) {
+    public void save(T t) {
         EntityManager em = emFactory.createEntityManager();
         em.getTransaction().begin();
         em.persist(t);
@@ -38,7 +46,7 @@ public interface CrudRepository<T> {
         if (em.isOpen()) em.close();
     }
 
-    default void edit(EntityManagerFactory emFactory, T t) {
+    public void edit(T t) {
         EntityManager em = emFactory.createEntityManager();
         em.getTransaction().begin();
         em.merge(t);
@@ -46,7 +54,7 @@ public interface CrudRepository<T> {
         if (em.isOpen()) em.close();
     }
 
-    default void remove(EntityManagerFactory emFactory, Class<T> classType, Long id) {
+    public void remove(Class<T> classType, Long id) {
         EntityManager em = emFactory.createEntityManager();
         em.getTransaction().begin();
         em.remove(em.find(classType, id));
