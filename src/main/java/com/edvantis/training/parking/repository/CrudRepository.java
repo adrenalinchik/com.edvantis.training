@@ -17,7 +17,7 @@ public abstract class CrudRepository<T> {
 
     protected EntityManagerFactory emFactory;
 
-    public CrudRepository() {
+    protected CrudRepository() {
         emFactory = new ApplicationConfig().getInstance();
     }
 

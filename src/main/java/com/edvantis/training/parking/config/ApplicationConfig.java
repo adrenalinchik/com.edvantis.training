@@ -37,7 +37,7 @@ public class ApplicationConfig {
     }
 
     private EntityManagerFactory getEntityManagerFactoryInstance() {
-        return Persistence.createEntityManagerFactory("entityManager");
+        return Persistence.createEntityManagerFactory("entityManager1");
     }
 
     public OwnerRepository getOwnerRepository() {
