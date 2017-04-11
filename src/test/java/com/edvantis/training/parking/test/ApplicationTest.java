@@ -11,6 +11,7 @@ import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import java.util.HashMap;
 import java.util.Set;
 
 
@@ -82,6 +83,11 @@ public class ApplicationTest {
 
     @Test
     public void testUpdateVehicle() {
+
+        HashMap<String, String> map = new HashMap<>();
+
+
+
         Vehicle vehicle = vehicleRepo.getById(id);
         VehicleType vehicleType = vehicle.getCarType();
         vehicle.setCarType(VehicleType.DIESEL);

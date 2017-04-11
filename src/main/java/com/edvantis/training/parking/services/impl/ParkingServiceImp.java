@@ -60,6 +60,7 @@ public class ParkingServiceImp implements ParkingService {
 
     @Override
     public Owner getOwnerByLastName(String ownerLastName) {
+
         return ownerRepo.getByLastName(ownerLastName);
     }
 

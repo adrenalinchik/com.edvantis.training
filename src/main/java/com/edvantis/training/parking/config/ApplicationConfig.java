@@ -1,7 +1,7 @@
 package com.edvantis.training.parking.config;
 
 import com.edvantis.training.parking.repository.*;
-import com.edvantis.training.parking.repository.jpa.*;
+import com.edvantis.training.parking.repository.jpa.imp.*;
 import com.edvantis.training.parking.services.ParkingService;
 import com.edvantis.training.parking.services.impl.ParkingServiceImp;
 import org.flywaydb.core.Flyway;
@@ -41,19 +41,19 @@ public class ApplicationConfig {
     }
 
     public OwnerRepository getOwnerRepository() {
-        return new OwnerJpaRepository();
+        return new OwnerJpaRepository(getInstance());
     }
 
     public VehicleRepository getVehicleRepository() {
-        return new VehicleJpaRepository();
+        return new VehicleJpaRepository(getInstance());
     }
 
     public ParkingRepository getParkingRepository() {
-        return new ParkingJpaRepository();
+        return new ParkingJpaRepository(getInstance());
     }
 
     public GarageRepository getGarageRepository() {
-        return new GarageJpaRepository();
+        return new GarageJpaRepository(getInstance());
     }
 
     public ReservationRepository getReservationRepository() {

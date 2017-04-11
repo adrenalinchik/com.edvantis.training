@@ -4,7 +4,6 @@ import com.edvantis.training.parking.models.Garage;
 import com.edvantis.training.parking.models.GarageType;
 import com.edvantis.training.parking.repository.GarageRepository;
 import com.edvantis.training.parking.repository.jdbc.AbstractJdbcRepository;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -13,8 +12,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashSet;
 import java.util.Set;
-
-import static com.edvantis.training.parking.jdbc.Constants.*;
 
 /**
  * Created by taras.fihurnyak on 2/13/2017.
@@ -31,7 +28,7 @@ public class GarageJdbcRepositoryImp extends AbstractJdbcRepository implements G
     public Garage getById(long id) {
         Garage garage = null;
         try {
-            PreparedStatement pstmt = getConnection().prepareStatement(GET_GARAGE_BY_ID + id);
+            PreparedStatement pstmt = getConnection().prepareStatement("SELECT * FROM GARAGE WHERE ID=" + id);
             ResultSet rs = pstmt.executeQuery();
             garage = new Garage();
             rs.next();
@@ -61,7 +58,7 @@ public class GarageJdbcRepositoryImp extends AbstractJdbcRepository implements G
     @Override
     public void insert(Garage garage) {
         try {
-            PreparedStatement pstmt = getConnection().prepareStatement(CREATE_GARAGE);
+            PreparedStatement pstmt = getConnection().prepareStatement("INSERT INTO GARAGE(PARKING_ID, TYPE, SQUARE) VALUES(?,?,?)");
             pstmt.setInt(1, 1);
             switch (garage.getGarageType()) {
                 case SMALL:
@@ -85,7 +82,7 @@ public class GarageJdbcRepositoryImp extends AbstractJdbcRepository implements G
     @Override
     public void update(int garageId, Garage garage) {
         try {
-            PreparedStatement pstmt = getConnection().prepareStatement(UPDATE_GARAGE);
+            PreparedStatement pstmt = getConnection().prepareStatement("UPDATE GARAGE SET TYPE = ?, SQUARE = ? WHERE ID=?");
             switch (garage.getGarageType()) {
                 case SMALL:
                     pstmt.setInt(1, 1);
@@ -114,7 +111,7 @@ public class GarageJdbcRepositoryImp extends AbstractJdbcRepository implements G
     @Override
     public void delete(long id) {
         try {
-            PreparedStatement pstmt = getConnection().prepareStatement(DELETE_GARAGE);
+            PreparedStatement pstmt = getConnection().prepareStatement("DELETE FROM GARAGE WHERE ID=?");
             pstmt.setLong(1, id);
             pstmt.executeUpdate();
             logger.info("Garage id={} deleted successfully.", id);
@@ -126,7 +123,7 @@ public class GarageJdbcRepositoryImp extends AbstractJdbcRepository implements G
     public Set<Garage> getAllGaragesByType(GarageType garageType) {
         Set<Garage> garageSet = new HashSet<>();
         try {
-            PreparedStatement pstmt = getConnection().prepareStatement(GET_ALL_GARAGES_BY_TYPE);
+            PreparedStatement pstmt = getConnection().prepareStatement("SELECT * FROM GARAGE WHERE TYPE=?");
             switch (garageType) {
                 case SMALL:
                     pstmt.setInt(1, 1);
@@ -163,7 +160,7 @@ public class GarageJdbcRepositoryImp extends AbstractJdbcRepository implements G
 
     public void addParkingIdToGarage(int parkingId, int garageId) {
         try {
-            PreparedStatement pstmt = getConnection().prepareStatement(UPDATE_GARAGE_PARKING);
+            PreparedStatement pstmt = getConnection().prepareStatement("UPDATE GARAGE SET PARKING_ID = ? WHERE ID=?");
             pstmt.setInt(1, parkingId);
             pstmt.setInt(2, garageId);
             pstmt.executeUpdate();

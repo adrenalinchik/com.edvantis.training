@@ -1,14 +1,15 @@
-package com.edvantis.training.parking.repository.jpa;
+package com.edvantis.training.parking.repository.jpa.imp;
 
 import com.edvantis.training.parking.models.Garage;
 import com.edvantis.training.parking.models.GarageType;
 import com.edvantis.training.parking.models.Garage_;
-import com.edvantis.training.parking.repository.CrudRepository;
 import com.edvantis.training.parking.repository.GarageRepository;
+import com.edvantis.training.parking.repository.jpa.CrudRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
@@ -22,8 +23,8 @@ public class GarageJpaRepository extends CrudRepository<Garage> implements Garag
 
     private final Logger logger = LoggerFactory.getLogger(GarageJpaRepository.class);
 
-    public GarageJpaRepository() {
-        super();
+    public GarageJpaRepository(EntityManagerFactory factory) {
+        super(factory);
     }
 
     @Override

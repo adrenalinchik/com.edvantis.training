@@ -1,6 +1,4 @@
-package com.edvantis.training.parking.repository;
-
-import com.edvantis.training.parking.config.ApplicationConfig;
+package com.edvantis.training.parking.repository.jpa;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -17,8 +15,8 @@ public abstract class CrudRepository<T> {
 
     protected EntityManagerFactory emFactory;
 
-    protected CrudRepository() {
-        emFactory = new ApplicationConfig().getInstance();
+    protected CrudRepository(EntityManagerFactory emFactory) {
+        this.emFactory = emFactory;
     }
 
     public T findById(Class<T> classType, Long id) {

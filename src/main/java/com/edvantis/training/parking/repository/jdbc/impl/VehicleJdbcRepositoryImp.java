@@ -4,7 +4,6 @@ import com.edvantis.training.parking.models.Vehicle;
 import com.edvantis.training.parking.models.VehicleType;
 import com.edvantis.training.parking.repository.VehicleRepository;
 import com.edvantis.training.parking.repository.jdbc.AbstractJdbcRepository;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -15,7 +14,6 @@ import java.sql.Types;
 import java.util.HashSet;
 import java.util.Set;
 
-import static com.edvantis.training.parking.jdbc.Constants.*;
 import static com.edvantis.training.parking.models.VehicleType.*;
 
 /**
@@ -25,6 +23,8 @@ public class VehicleJdbcRepositoryImp extends AbstractJdbcRepository implements 
 
     private final Logger logger = LoggerFactory.getLogger(VehicleJdbcRepositoryImp.class);
 
+    public static final String GET_VEHICLE_BY_NUMBER = "SELECT * FROM VEHICLE WHERE NUMBER=?";
+
     public VehicleJdbcRepositoryImp(String dbName) {
         super(dbName);
     }
@@ -33,7 +33,7 @@ public class VehicleJdbcRepositoryImp extends AbstractJdbcRepository implements 
     public Vehicle getById(long id) {
         Vehicle vehicle = null;
         try {
-            PreparedStatement pstmt = getConnection().prepareStatement(GET_VEHICLE_BY_ID + id);
+            PreparedStatement pstmt = getConnection().prepareStatement("SELECT * FROM VEHICLE WHERE ID = " + id);
             ResultSet rs = pstmt.executeQuery();
             rs.next();
             vehicle = new Vehicle();
@@ -67,7 +67,7 @@ public class VehicleJdbcRepositoryImp extends AbstractJdbcRepository implements 
     @Override
     public void insert(Vehicle vehicle) {
         try {
-            PreparedStatement pstmt = getConnection().prepareStatement(CREATE_VEHICLE);
+            PreparedStatement pstmt = getConnection().prepareStatement("INSERT INTO VEHICLE(OWNER_ID,TYPE, NUMBER, MODEL) VALUES(?,?,?,?)");
             pstmt.setNull(1, Types.INTEGER);
             switch (vehicle.getCarType()) {
                 case ELECTRO:
@@ -95,7 +95,7 @@ public class VehicleJdbcRepositoryImp extends AbstractJdbcRepository implements 
     @Override
     public void update(int vehicleId, Vehicle vehicle) {
         try {
-            PreparedStatement pstmt = getConnection().prepareStatement(UPDATE_VEHICLE);
+            PreparedStatement pstmt = getConnection().prepareStatement("UPDATE VEHICLE SET TYPE = ?, NUMBER = ?, MODEL = ? WHERE ID=?");
             switch (vehicle.getCarType()) {
                 case ELECTRO:
                     pstmt.setInt(1, 1);
@@ -128,7 +128,7 @@ public class VehicleJdbcRepositoryImp extends AbstractJdbcRepository implements 
     @Override
     public void delete(long id) {
         try {
-            PreparedStatement pstmt = getConnection().prepareStatement(DELETE_VEHICLE);
+            PreparedStatement pstmt = getConnection().prepareStatement("DELETE FROM VEHICLE WHERE ID=?");
             pstmt.setLong(1, id);
             pstmt.executeUpdate();
             logger.info("Vehicle id={} deleted successfully.", id);
@@ -140,7 +140,7 @@ public class VehicleJdbcRepositoryImp extends AbstractJdbcRepository implements 
     public Set<Vehicle> getAllVehiclesByType(VehicleType vehicleType) {
         Set<Vehicle> vehicleSet = new HashSet<>();
         try {
-            PreparedStatement pstmt = getConnection().prepareStatement(GET_ALL_VEHICLES_BY_TYPE);
+            PreparedStatement pstmt = getConnection().prepareStatement("SELECT * FROM VEHICLE WHERE TYPE=?");
             switch (vehicleType) {
                 case ELECTRO:
                     pstmt.setInt(1, 1);
@@ -227,4 +227,6 @@ public class VehicleJdbcRepositoryImp extends AbstractJdbcRepository implements 
         }
         return vehicleId;
     }
+
+
 }

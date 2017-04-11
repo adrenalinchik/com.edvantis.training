@@ -1,15 +1,16 @@
-package com.edvantis.training.parking.repository.jpa;
+package com.edvantis.training.parking.repository.jpa.imp;
 
 import com.edvantis.training.parking.models.Owner;
 import com.edvantis.training.parking.models.Owner_;
 import com.edvantis.training.parking.models.Vehicle;
 import com.edvantis.training.parking.models.Vehicle_;
-import com.edvantis.training.parking.repository.CrudRepository;
 import com.edvantis.training.parking.repository.OwnerRepository;
+import com.edvantis.training.parking.repository.jpa.CrudRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
 import javax.persistence.criteria.*;
 import java.util.Set;
 
@@ -20,8 +21,8 @@ public class OwnerJpaRepository extends CrudRepository<Owner> implements OwnerRe
 
     private final Logger logger = LoggerFactory.getLogger(OwnerJpaRepository.class);
 
-    public OwnerJpaRepository() {
-       super();
+    public OwnerJpaRepository(EntityManagerFactory factory) {
+        super(factory);
     }
 
     @Override
@@ -49,7 +50,7 @@ public class OwnerJpaRepository extends CrudRepository<Owner> implements OwnerRe
     @Override
     public void delete(long id) {
         remove(Owner.class, id);
-        logger.info("Owner with id={} id removed from db successfully.",id);
+        logger.info("Owner with id={} id removed from db successfully.", id);
     }
 
     public void update(Owner owner) {

@@ -1,11 +1,12 @@
-package com.edvantis.training.parking.repository.jpa;
+package com.edvantis.training.parking.repository.jpa.imp;
 
 import com.edvantis.training.parking.models.Parking;
-import com.edvantis.training.parking.repository.CrudRepository;
 import com.edvantis.training.parking.repository.ParkingRepository;
+import com.edvantis.training.parking.repository.jpa.CrudRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.persistence.EntityManagerFactory;
 import java.util.Set;
 
 /**
@@ -15,8 +16,8 @@ public class ParkingJpaRepository extends CrudRepository<Parking> implements Par
 
     private final Logger logger = LoggerFactory.getLogger(ParkingJpaRepository.class);
 
-    public ParkingJpaRepository() {
-        super();
+    public ParkingJpaRepository(EntityManagerFactory factory) {
+        super(factory);
     }
 
     @Override

@@ -3,7 +3,6 @@ package com.edvantis.training.parking.repository.jdbc.impl;
 import com.edvantis.training.parking.models.Parking;
 import com.edvantis.training.parking.repository.ParkingRepository;
 import com.edvantis.training.parking.repository.jdbc.AbstractJdbcRepository;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -12,8 +11,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
 import java.util.Set;
-
-import static com.edvantis.training.parking.jdbc.Constants.*;
 
 /**
  * Created by taras.fihurnyak on 2/14/2017.
@@ -31,7 +28,7 @@ public class ParkingJdbcRepositoryImp extends AbstractJdbcRepository implements 
     public Parking getById(long id) {
         Parking parking = null;
         try {
-            PreparedStatement pstmt = getConnection().prepareStatement(GET_PARKING_BY_ID + id);
+            PreparedStatement pstmt = getConnection().prepareStatement("SELECT * FROM PARKING WHERE ID = " + id);
             ResultSet rs = pstmt.executeQuery();
             rs.next();
             parking = new Parking();
@@ -52,7 +49,7 @@ public class ParkingJdbcRepositoryImp extends AbstractJdbcRepository implements 
     @Override
     public void insert(Parking parking) {
         try {
-            PreparedStatement pstmt = getConnection().prepareStatement(CREATE_PARKING);
+            PreparedStatement pstmt = getConnection().prepareStatement("INSERT INTO PARKING(MANAGER_ID, ADDRESS, FREE_GARAGES) VALUES(?,?,?)");
             pstmt.setNull(1, Types.INTEGER);
             pstmt.setString(2, parking.getAddress());
             if (parking.getFreeGaragesNumber() != 0) {
@@ -68,7 +65,7 @@ public class ParkingJdbcRepositoryImp extends AbstractJdbcRepository implements 
     @Override
     public void update(int parkingId, Parking parking) {
         try {
-            PreparedStatement pstmt = getConnection().prepareStatement(UPDATE_PARKING);
+            PreparedStatement pstmt = getConnection().prepareStatement("UPDATE GARAGE SET ADDRESS = ?, FREE_GARAGES = ? WHERE ID=?");
             pstmt.setString(2, parking.getAddress());
             pstmt.setInt(3, parking.getFreeGaragesNumber());
             pstmt.setInt(4, parkingId);
@@ -87,7 +84,7 @@ public class ParkingJdbcRepositoryImp extends AbstractJdbcRepository implements 
     @Override
     public void delete(long id) {
         try {
-            PreparedStatement pstmt = getConnection().prepareStatement(DELETE_PARKING);
+            PreparedStatement pstmt = getConnection().prepareStatement("DELETE FROM PARKING WHERE ID=?");
             pstmt.setLong(1, id);
             pstmt.executeUpdate();
             logger.info("Parking with id={} id removed from db successfully.", id);

@@ -4,7 +4,6 @@ import com.edvantis.training.parking.models.Gender;
 import com.edvantis.training.parking.models.Owner;
 import com.edvantis.training.parking.repository.OwnerRepository;
 import com.edvantis.training.parking.repository.jdbc.AbstractJdbcRepository;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -15,14 +14,14 @@ import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
 
-import static com.edvantis.training.parking.jdbc.Constants.*;
-
 /**
  * Created by taras.fihurnyak on 2/9/2017.
  */
 public class OwnerJdbcRepositoryImp extends AbstractJdbcRepository implements OwnerRepository {
 
     private final Logger logger = LoggerFactory.getLogger(OwnerJdbcRepositoryImp.class);
+
+    private final String getOwnerByLastname = "SELECT * FROM OWNER WHERE LASTNAME = ?";
 
     public OwnerJdbcRepositoryImp(String dbName) {
         super(dbName);
@@ -32,7 +31,7 @@ public class OwnerJdbcRepositoryImp extends AbstractJdbcRepository implements Ow
     public Owner getById(long id) {
         Owner owner = null;
         try {
-            PreparedStatement pstmt = getConnection().prepareStatement(GET_OWNER_BY_ID + id);
+            PreparedStatement pstmt = getConnection().prepareStatement("SELECT * FROM OWNER WHERE ID=" + id);
             ResultSet rs = pstmt.executeQuery();
             owner = new Owner();
             rs.next();
@@ -51,7 +50,7 @@ public class OwnerJdbcRepositoryImp extends AbstractJdbcRepository implements Ow
     @Override
     public void insert(Owner owner) {
         try {
-            PreparedStatement pstmt = getConnection().prepareStatement(CREATE_OWNER);
+            PreparedStatement pstmt = getConnection().prepareStatement("INSERT INTO OWNER(FIRSTNAME, LASTNAME, GENDER, DOB) VALUES(?,?,?,?)");
             pstmt.setString(1, owner.getFirstName());
             pstmt.setString(2, owner.getLastName());
             if (owner.getGender().toString().toLowerCase().equals("male")) {
@@ -68,7 +67,7 @@ public class OwnerJdbcRepositoryImp extends AbstractJdbcRepository implements Ow
     @Override
     public void update(int id, Owner owner) {
         try {
-            PreparedStatement pstmt = getConnection().prepareStatement(UPDATE_OWNER);
+            PreparedStatement pstmt = getConnection().prepareStatement("UPDATE OWNER SET FIRSTNAME = ?, LASTNAME = ?, GENDER = ?, DOB = ? WHERE ID=?");
             pstmt.setString(1, owner.getFirstName());
             pstmt.setString(2, owner.getLastName());
             if (owner.getGender().equals(Gender.MALE)) {
@@ -92,19 +91,24 @@ public class OwnerJdbcRepositoryImp extends AbstractJdbcRepository implements Ow
     public void delete(long id) {
         try {
             PreparedStatement pstmt = getConnection()
-                    .prepareStatement(DELETE_OWNER);
+                    .prepareStatement("DELETE FROM OWNER WHERE ID=?");
             pstmt.setLong(1, id);
             pstmt.executeUpdate();
-            logger.info("Owner with id={} id removed from db successfully.",id);
+            logger.info("Owner with id={} id removed from db successfully.", id);
         } catch (SQLException e) {
             logger.warn(e.getMessage());
         }
     }
 
+    @Override
+    public Owner getByVehicleNumber(String vehicleNumber) {
+        return getById(getOwnerIdFromVehicleByNumber(vehicleNumber));
+    }
+
     public Set<Owner> getAll() {
         Set<Owner> ownerSet = new HashSet<>();
         try {
-            PreparedStatement pstmt = getConnection().prepareStatement(GET_ALL_OWNERS);
+            PreparedStatement pstmt = getConnection().prepareStatement("SELECT * FROM OWNER");
             ResultSet rs = pstmt.executeQuery();
             while (rs.next()) {
                 Owner owner = new Owner();
@@ -125,7 +129,7 @@ public class OwnerJdbcRepositoryImp extends AbstractJdbcRepository implements Ow
     public Owner getByLastName(String lastName) {
         Owner owner = null;
         try {
-            PreparedStatement pstmt = getConnection().prepareStatement(GET_OWNER_BY_LASTNAME);
+            PreparedStatement pstmt = getConnection().prepareStatement(getOwnerByLastname);
             pstmt.setString(1, lastName);
             ResultSet rs = pstmt.executeQuery();
             owner = new Owner();
@@ -142,14 +146,10 @@ public class OwnerJdbcRepositoryImp extends AbstractJdbcRepository implements Ow
         return owner;
     }
 
-    public Owner getByVehicleNumber(String vehicleNumber) {
-        return getById(getOwnerIdFromVehicleByNumber(vehicleNumber));
-    }
-
     public int getOwnerIdByLastName(String ownerLastName) {
         int ownerId = 0;
         try {
-            PreparedStatement pstmt = getConnection().prepareStatement(GET_OWNER_BY_LASTNAME);
+            PreparedStatement pstmt = getConnection().prepareStatement(getOwnerByLastname);
             pstmt.setString(1, ownerLastName);
             ResultSet rs = pstmt.executeQuery();
             rs.next();
@@ -159,11 +159,10 @@ public class OwnerJdbcRepositoryImp extends AbstractJdbcRepository implements Ow
         }
         return ownerId;
     }
-
     private int getOwnerIdFromVehicleByNumber(String vehicleNumber) {
         int ownerId = 0;
         try {
-            PreparedStatement pstmt = getConnection().prepareStatement(GET_VEHICLE_BY_NUMBER);
+            PreparedStatement pstmt = getConnection().prepareStatement(VehicleJdbcRepositoryImp.GET_VEHICLE_BY_NUMBER);
             pstmt.setString(1, vehicleNumber);
             ResultSet rs = pstmt.executeQuery();
             rs.next();
@@ -173,7 +172,6 @@ public class OwnerJdbcRepositoryImp extends AbstractJdbcRepository implements Ow
         }
         return ownerId;
     }
-
     private java.sql.Date convertDateToDatabaseColumn(LocalDate date) {
         return java.sql.Date.valueOf(date);
     }
@@ -181,5 +179,4 @@ public class OwnerJdbcRepositoryImp extends AbstractJdbcRepository implements Ow
     private LocalDate convertDateToOwnerAttribute(java.sql.Date databaseValue) {
         return databaseValue.toLocalDate();
     }
-
 }

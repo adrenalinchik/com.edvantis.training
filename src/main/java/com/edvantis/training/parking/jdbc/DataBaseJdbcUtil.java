@@ -83,7 +83,7 @@ public class DataBaseJdbcUtil {
     private static void createDatabase(String dbName, Connection connection) {
         try {
             Statement statement = connection.createStatement();
-            statement.executeUpdate(Constants.CREATE_DB + dbName);
+            statement.executeUpdate("CREATE DATABASE IF NOT EXISTS " + dbName);
             connection.setCatalog(dbName);
             logger.info("Database " + dbName + " is created.");
         } catch (Exception e) {
@@ -165,7 +165,7 @@ public class DataBaseJdbcUtil {
 
     private static void cleanTable(String tableName, Connection connection) {
         try {
-            PreparedStatement pstmt = connection.prepareStatement(Constants.CLEAN_TABLE + tableName);
+            PreparedStatement pstmt = connection.prepareStatement("TRUNCATE TABLE " + tableName);
             pstmt.executeUpdate();
         } catch (SQLException e) {
             logger.warn(e.getMessage());
@@ -175,7 +175,7 @@ public class DataBaseJdbcUtil {
 
     public static void dropAllObjects() {
         try (Connection connection = getConnection(url + dbName)) {
-            PreparedStatement pstmt = connection.prepareStatement(Constants.DROP_ALL_OBJECTS);
+            PreparedStatement pstmt = connection.prepareStatement("DROP ALL OBJECTS");
             pstmt.executeUpdate();
             logger.info("All objects are deleted");
         } catch (SQLException e) {
@@ -186,7 +186,7 @@ public class DataBaseJdbcUtil {
 
     private static void dropDatabase(String databaseName, Connection connection) {
         try {
-            PreparedStatement pstmt = connection.prepareStatement(Constants.DROP_DATABASE + databaseName);
+            PreparedStatement pstmt = connection.prepareStatement("DROP SCHEMA IF EXISTS " + databaseName);
             pstmt.executeUpdate();
         } catch (SQLException e) {
             logger.warn(e.getMessage());
@@ -196,7 +196,7 @@ public class DataBaseJdbcUtil {
 
     private static void setForeignKeyChecks(int checks, Connection connection) {
         try {
-            PreparedStatement pstmt = connection.prepareStatement(Constants.SET_FOREIGN_KEY_CHECKS + checks);
+            PreparedStatement pstmt = connection.prepareStatement("SET FOREIGN_KEY_CHECKS = " + checks);
             pstmt.executeUpdate();
         } catch (SQLException e) {
             logger.warn(e.getMessage());

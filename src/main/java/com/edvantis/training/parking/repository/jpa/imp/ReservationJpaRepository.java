@@ -1,11 +1,13 @@
-package com.edvantis.training.parking.repository.jpa;
+package com.edvantis.training.parking.repository.jpa.imp;
 
 import com.edvantis.training.parking.config.ApplicationConfig;
-import com.edvantis.training.parking.models.*;
-import com.edvantis.training.parking.repository.CrudRepository;
+import com.edvantis.training.parking.models.Garage;
+import com.edvantis.training.parking.models.GarageType;
+import com.edvantis.training.parking.models.Reservation;
+import com.edvantis.training.parking.models.Reservation_;
 import com.edvantis.training.parking.repository.GarageRepository;
 import com.edvantis.training.parking.repository.ReservationRepository;
-
+import com.edvantis.training.parking.repository.jpa.CrudRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -23,12 +25,12 @@ import java.util.Set;
 /**
  * Created by taras.fihurnyak on 3/7/2017.
  */
-public class ReservationJpaRepository extends CrudRepository<Reservation> implements ReservationRepository{
+public class ReservationJpaRepository extends CrudRepository<Reservation> implements ReservationRepository {
 
     private final Logger logger = LoggerFactory.getLogger(ReservationJpaRepository.class);
 
-    public ReservationJpaRepository(EntityManagerFactory entityManagerFactory) {
-        emFactory = entityManagerFactory;
+    public ReservationJpaRepository(EntityManagerFactory factory) {
+        super(factory);
     }
 
     @Override
