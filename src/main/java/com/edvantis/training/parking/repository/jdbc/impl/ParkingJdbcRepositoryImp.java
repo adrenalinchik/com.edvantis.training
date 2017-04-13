@@ -63,22 +63,17 @@ public class ParkingJdbcRepositoryImp extends AbstractJdbcRepository implements 
     }
 
     @Override
-    public void update(int parkingId, Parking parking) {
+    public void update(long parkingId, Parking parking) {
         try {
             PreparedStatement pstmt = getConnection().prepareStatement("UPDATE GARAGE SET ADDRESS = ?, FREE_GARAGES = ? WHERE ID=?");
             pstmt.setString(2, parking.getAddress());
             pstmt.setInt(3, parking.getFreeGaragesNumber());
-            pstmt.setInt(4, parkingId);
+            pstmt.setLong(4, parkingId);
             pstmt.executeUpdate();
             logger.info("Parking with id={} id updated successfully.", parking.getId());
         } catch (SQLException e) {
             logger.warn(e.getMessage());
         }
-    }
-
-    @Override
-    public void update(Parking parking) {
-        throw new UnsupportedOperationException("Not implemented");
     }
 
     @Override

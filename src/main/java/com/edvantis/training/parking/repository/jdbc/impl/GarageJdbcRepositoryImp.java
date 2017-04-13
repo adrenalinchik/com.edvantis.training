@@ -80,7 +80,7 @@ public class GarageJdbcRepositoryImp extends AbstractJdbcRepository implements G
     }
 
     @Override
-    public void update(int garageId, Garage garage) {
+    public void update(long garageId, Garage garage) {
         try {
             PreparedStatement pstmt = getConnection().prepareStatement("UPDATE GARAGE SET TYPE = ?, SQUARE = ? WHERE ID=?");
             switch (garage.getGarageType()) {
@@ -95,17 +95,12 @@ public class GarageJdbcRepositoryImp extends AbstractJdbcRepository implements G
                     break;
             }
             pstmt.setFloat(2, garage.getSquare());
-            pstmt.setInt(3, garageId);
+            pstmt.setLong(3, garageId);
             pstmt.executeUpdate();
             logger.info("Garage id={} updated successfully.", garage.getId());
         } catch (SQLException e) {
             logger.warn(e.getMessage());
         }
-    }
-
-    @Override
-    public void update(Garage garage) {
-        throw new UnsupportedOperationException("Not implemented");
     }
 
     @Override

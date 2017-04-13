@@ -15,9 +15,7 @@ public interface ParkingRepository {
 
     void insert(Parking parking);
 
-    void update(int Id, Parking parking);
-
-    void update(Parking parking);
+    void update(long Id, Parking parking);
 
     void delete(long Id);
 

@@ -4,18 +4,27 @@ import com.edvantis.training.parking.config.ApplicationConfig;
 import com.edvantis.training.parking.models.*;
 import com.edvantis.training.parking.repository.*;
 import com.edvantis.training.parking.services.ParkingService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.*;
 
 /**
  * Created by taras.fihurnyak on 2/11/2017.
  */
-public class ParkingServiceImp implements ParkingService {
 
+@Service
+public class ParkingServiceImp implements ParkingService {
+    @Autowired
     private OwnerRepository ownerRepo;
+    @Autowired
     private VehicleRepository vehicleRepo;
+    @Autowired
     private GarageRepository garageRepo;
+    @Autowired
     private ParkingRepository parkingRepo;
+    @Autowired
     private ReservationRepository reservationRepo;
 
     public ParkingServiceImp(OwnerRepository ownerRepo, VehicleRepository vehicleRepo, GarageRepository garageRepo, ParkingRepository parkingRepo, ReservationRepository reservationRepo) {
@@ -26,6 +35,7 @@ public class ParkingServiceImp implements ParkingService {
         this.reservationRepo = reservationRepo;
     }
 
+    @Transactional
     @Override
     public Owner getOwnerByVehicleNumber(String vehicleNumber) {
         return ownerRepo.getByVehicleNumber(vehicleNumber);
@@ -137,7 +147,7 @@ public class ParkingServiceImp implements ParkingService {
         }
         reservations = deleteFalseReservation(reservations);
         Set<Long> garagesId = getFinalAvailableGarageId(reservations);
-        garagesId.forEach((i)-> garagesSet.add(new ApplicationConfig().getGarageRepository().getById(i)));
+        garagesId.forEach((i) -> garagesSet.add(new ApplicationConfig().getGarageRepository().getById(i)));
         garagesSet.addAll(reservationRepo.getGaragesByType(garageType));
 
         return garagesSet;
@@ -159,7 +169,7 @@ public class ParkingServiceImp implements ParkingService {
         }
         reservations = deleteFalseReservation(reservations);
         Set<Long> garagesId = getFinalAvailableGarageId(reservations);
-        garagesId.forEach((i)-> garagesSet.add(new ApplicationConfig().getGarageRepository().getById(i)));
+        garagesId.forEach((i) -> garagesSet.add(new ApplicationConfig().getGarageRepository().getById(i)));
         garagesSet.addAll(reservationRepo.getGaragesByParkingId(parkingId));
         return garagesSet;
     }

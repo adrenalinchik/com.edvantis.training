@@ -8,54 +8,23 @@ import com.edvantis.training.parking.repository.OwnerRepository;
 import com.edvantis.training.parking.repository.jpa.CrudRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.criteria.*;
-import java.util.Set;
 
 /**
  * Created by taras.fihurnyak on 2/24/2017.
  */
+
+@Repository
 public class OwnerJpaRepository extends CrudRepository<Owner> implements OwnerRepository {
 
     private final Logger logger = LoggerFactory.getLogger(OwnerJpaRepository.class);
 
     public OwnerJpaRepository(EntityManagerFactory factory) {
-        super(factory);
-    }
-
-    @Override
-    public Owner getById(long id) {
-        return findById(Owner.class, id);
-    }
-
-    @Override
-    public Set<Owner> getAll() {
-        return findAll(Owner.class);
-    }
-
-    @Override
-    public void insert(Owner owner) {
-        save(owner);
-        logger.info("Owner {} {} saved to db successfully.", owner.getFirstName(), owner.getFirstName());
-    }
-
-    @Override
-    public void update(int id, Owner owner) {
-        edit(owner);
-        logger.info("Owner with id={} id updated successfully.", owner.getId());
-    }
-
-    @Override
-    public void delete(long id) {
-        remove(Owner.class, id);
-        logger.info("Owner with id={} id removed from db successfully.", id);
-    }
-
-    public void update(Owner owner) {
-        edit(owner);
-        logger.info("Owner with id={} id updated successfully.", owner.getId());
+        super(factory,Owner.class);
     }
 
     @Override

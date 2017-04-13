@@ -16,9 +16,7 @@ public interface GarageRepository{
 
     void insert(Garage garage);
 
-    void update(int Id, Garage garage);
-
-    void update(Garage garage);
+    void update(long Id, Garage garage);
 
     void delete(long id);
 

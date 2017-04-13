@@ -65,7 +65,7 @@ public class OwnerJdbcRepositoryImp extends AbstractJdbcRepository implements Ow
     }
 
     @Override
-    public void update(int id, Owner owner) {
+    public void update(long id, Owner owner) {
         try {
             PreparedStatement pstmt = getConnection().prepareStatement("UPDATE OWNER SET FIRSTNAME = ?, LASTNAME = ?, GENDER = ?, DOB = ? WHERE ID=?");
             pstmt.setString(1, owner.getFirstName());
@@ -74,17 +74,12 @@ public class OwnerJdbcRepositoryImp extends AbstractJdbcRepository implements Ow
                 pstmt.setInt(3, 1);
             } else pstmt.setInt(3, 2);
             pstmt.setDate(4, convertDateToDatabaseColumn(owner.getDOB()));
-            pstmt.setInt(5, id);
+            pstmt.setLong(5, id);
             pstmt.executeUpdate();
             logger.info("Owner with id={} id updated successfully.", owner.getId());
         } catch (SQLException e) {
             logger.warn(e.getMessage());
         }
-    }
-
-    @Override
-    public void update(Owner owner) {
-        throw new UnsupportedOperationException("Not implemented");
     }
 
     @Override

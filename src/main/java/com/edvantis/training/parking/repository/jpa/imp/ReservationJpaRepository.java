@@ -10,6 +10,7 @@ import com.edvantis.training.parking.repository.ReservationRepository;
 import com.edvantis.training.parking.repository.jpa.CrudRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -25,45 +26,14 @@ import java.util.Set;
 /**
  * Created by taras.fihurnyak on 3/7/2017.
  */
+
+@Repository
 public class ReservationJpaRepository extends CrudRepository<Reservation> implements ReservationRepository {
 
     private final Logger logger = LoggerFactory.getLogger(ReservationJpaRepository.class);
 
     public ReservationJpaRepository(EntityManagerFactory factory) {
-        super(factory);
-    }
-
-    @Override
-    public Reservation getById(Long id) {
-        return findById(Reservation.class, id);
-    }
-
-    @Override
-    public Set<Reservation> getAll() {
-        return findAll(Reservation.class);
-    }
-
-    @Override
-    public void insert(Reservation reservation) {
-        save(reservation);
-        logger.info("Reservation id={} is saved to db successfully.", reservation.getId());
-    }
-
-    @Override
-    public void update(int id, Reservation reservation) {
-        edit(reservation);
-        logger.info("Reservation id={} updated successfully.", reservation.getId());
-    }
-
-    public void update(Reservation reservation) {
-        edit(reservation);
-        logger.info("Reservation id={} updated successfully.", reservation.getId());
-    }
-
-    @Override
-    public void delete(long id) {
-        remove(Reservation.class, id);
-        logger.info("Reservation id={} deleted successfully.", id);
+        super(factory, Reservation.class);
     }
 
     //get all garages by parking id that don't exist in reservation table

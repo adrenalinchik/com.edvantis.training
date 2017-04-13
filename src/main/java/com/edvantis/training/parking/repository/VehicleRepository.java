@@ -15,9 +15,7 @@ public interface VehicleRepository {
 
     void insert(Vehicle vehicle);
 
-    void update(int Id, Vehicle vehicle);
-
-    void update(Vehicle vehicle);
+    void update(long Id, Vehicle vehicle);
 
     void delete(long Id);
 }

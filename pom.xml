@@ -22,6 +22,7 @@
         <cobertura.version>2.7</cobertura.version>
         <mvn.compiler>3.0</mvn.compiler>
         <codehaus.plagin.version>1.5.0</codehaus.plagin.version>
+        <spring.core.version>4.3.7.RELEASE</spring.core.version>
     </properties>
 
     <dependencies>
@@ -75,6 +76,16 @@
             <groupId>org.flywaydb</groupId>
             <artifactId>flyway-maven-plugin</artifactId>
             <version>${flywaydb.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-core</artifactId>
+            <version>${spring.core.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context</artifactId>
+            <version>4.3.7.RELEASE</version>
         </dependency>
     </dependencies>
 

@@ -1,5 +1,8 @@
 package com.edvantis.training.parking.repository.jpa;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.criteria.CriteriaBuilder;
@@ -14,19 +17,22 @@ import java.util.Set;
 public abstract class CrudRepository<T> {
 
     protected EntityManagerFactory emFactory;
+    protected Class<T> classType;
+    private final Logger logger = LoggerFactory.getLogger(CrudRepository.class);
 
-    protected CrudRepository(EntityManagerFactory emFactory) {
+    protected CrudRepository(EntityManagerFactory emFactory, Class<T> classType) {
         this.emFactory = emFactory;
+        this.classType = classType;
     }
 
-    public T findById(Class<T> classType, Long id) {
+    public T getById(long id) {
         EntityManager em = emFactory.createEntityManager();
         T entity = em.find(classType, id);
         if (em.isOpen()) em.close();
         return entity;
     }
 
-    public Set<T> findAll(Class<T> classType) {
+    public Set<T> getAll() {
         EntityManager em = emFactory.createEntityManager();
         CriteriaBuilder builder = em.getCriteriaBuilder();
         CriteriaQuery<T> cq = builder.createQuery(classType);
@@ -36,27 +42,31 @@ public abstract class CrudRepository<T> {
         return reservationsSet;
     }
 
-    public void save(T t) {
+    public void insert(T t) {
         EntityManager em = emFactory.createEntityManager();
         em.getTransaction().begin();
         em.persist(t);
         em.getTransaction().commit();
+        logger.info("{} is saved to db successfully.", t.getClass().getName());
         if (em.isOpen()) em.close();
     }
 
-    public void edit(T t) {
+    public void update(long id, T t) {
         EntityManager em = emFactory.createEntityManager();
         em.getTransaction().begin();
         em.merge(t);
         em.getTransaction().commit();
+        logger.info("{} id={} is updated successfully.",t.getClass().getName(), id);
         if (em.isOpen()) em.close();
     }
 
-    public void remove(Class<T> classType, Long id) {
+    public void delete(long id) {
         EntityManager em = emFactory.createEntityManager();
         em.getTransaction().begin();
-        em.remove(em.find(classType, id));
+        T t = em.find(classType, id);
+        em.remove(t);
         em.getTransaction().commit();
+        logger.info("{} id={} is deleted successfully.",t.getClass().getName(), id);
         if (em.isOpen()) em.close();
     }
 }

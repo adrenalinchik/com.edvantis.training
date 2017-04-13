@@ -93,7 +93,7 @@ public class VehicleJdbcRepositoryImp extends AbstractJdbcRepository implements 
     }
 
     @Override
-    public void update(int vehicleId, Vehicle vehicle) {
+    public void update(long vehicleId, Vehicle vehicle) {
         try {
             PreparedStatement pstmt = getConnection().prepareStatement("UPDATE VEHICLE SET TYPE = ?, NUMBER = ?, MODEL = ? WHERE ID=?");
             switch (vehicle.getCarType()) {
@@ -112,17 +112,12 @@ public class VehicleJdbcRepositoryImp extends AbstractJdbcRepository implements 
             }
             pstmt.setString(2, vehicle.getNumber());
             pstmt.setString(3, vehicle.getModel());
-            pstmt.setInt(4, vehicleId);
+            pstmt.setLong(4, vehicleId);
             pstmt.executeUpdate();
             logger.info("Vehicle id={} updated successfully.", vehicle.getId());
         } catch (SQLException e) {
             logger.warn(e.getMessage());
         }
-    }
-
-    @Override
-    public void update(Vehicle vehicle) {
-        throw new UnsupportedOperationException("Not implemented");
     }
 
     @Override

@@ -13,9 +13,7 @@ public interface OwnerRepository {
 
     void insert(Owner owner);
 
-    void update(int Id, Owner owner);
-
-    void update(Owner owner);
+    void update(long Id, Owner owner);
 
     void delete(long Id);
 

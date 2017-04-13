@@ -11,7 +11,6 @@ import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import java.util.HashMap;
 import java.util.Set;
 
 
@@ -65,7 +64,7 @@ public class ApplicationTest {
         Garage garage = garageRepo.getById(id);
         GarageType garageType = garage.getGarageType();
         garage.setGarageType(GarageType.MEDIUM);
-        garageRepo.update(garage);
+        garageRepo.update(garage.getId(), garage);
         Assert.assertNotEquals(garageType, garageRepo.getById(id).getGarageType());
     }
 
@@ -77,21 +76,16 @@ public class ApplicationTest {
         Set<Garage> parkingGarages = parking.getGarages();
         Assert.assertFalse(parkingGarages.contains(garage));
         parking.setGarage(garage);
-        parkingRepo.update(parking);
+        parkingRepo.update(parkingId, parking);
         Assert.assertTrue(parkingGarages.contains(garage));
     }
 
     @Test
     public void testUpdateVehicle() {
-
-        HashMap<String, String> map = new HashMap<>();
-
-
-
         Vehicle vehicle = vehicleRepo.getById(id);
         VehicleType vehicleType = vehicle.getCarType();
         vehicle.setCarType(VehicleType.DIESEL);
-        vehicleRepo.update(vehicle);
+        vehicleRepo.update(vehicle.getId(), vehicle);
         Assert.assertNotEquals(vehicleType, vehicleRepo.getById(1).getCarType());
     }
 
@@ -100,7 +94,7 @@ public class ApplicationTest {
         Owner owner = ownerRepo.getById(id);
         String firstName = owner.getFirstName();
         owner.setFirstName("New_test_name");
-        ownerRepo.update(owner);
+        ownerRepo.update(owner.getId(), owner);
         Assert.assertNotEquals(firstName, ownerRepo.getById(1).getFirstName());
     }
 
@@ -109,7 +103,7 @@ public class ApplicationTest {
         Reservation reservation = reservationRepo.getById(id);
         long ownerId = reservation.getOwnerId();
         reservation.setOwnerId(5);
-        reservationRepo.update(reservation);
+        reservationRepo.update(reservation.getId(), reservation);
         Assert.assertNotEquals(ownerId, reservationRepo.getById(id).getOwnerId());
     }
 
