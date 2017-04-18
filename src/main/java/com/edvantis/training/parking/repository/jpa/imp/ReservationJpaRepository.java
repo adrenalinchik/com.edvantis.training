@@ -1,6 +1,5 @@
 package com.edvantis.training.parking.repository.jpa.imp;
 
-import com.edvantis.training.parking.config.ApplicationConfig;
 import com.edvantis.training.parking.models.Garage;
 import com.edvantis.training.parking.models.GarageType;
 import com.edvantis.training.parking.models.Reservation;
@@ -8,8 +7,7 @@ import com.edvantis.training.parking.models.Reservation_;
 import com.edvantis.training.parking.repository.GarageRepository;
 import com.edvantis.training.parking.repository.ReservationRepository;
 import com.edvantis.training.parking.repository.jpa.CrudRepository;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
@@ -30,8 +28,10 @@ import java.util.Set;
 @Repository
 public class ReservationJpaRepository extends CrudRepository<Reservation> implements ReservationRepository {
 
-    private final Logger logger = LoggerFactory.getLogger(ReservationJpaRepository.class);
+    @Autowired
+    GarageRepository garageRepo;
 
+    @Autowired
     public ReservationJpaRepository(EntityManagerFactory factory) {
         super(factory, Reservation.class);
     }
@@ -46,9 +46,9 @@ public class ReservationJpaRepository extends CrudRepository<Reservation> implem
                 "LEFT JOIN reservation as t2 ON t2.GARAGE_ID = t1.ID " +
                 "WHERE t2.GARAGE_ID IS NULL and t1.PARKING_ID = " + parkingId;
         List<? extends BigInteger> garageIdList = em.createNativeQuery(makeQuery).getResultList();
-        GarageRepository garageJpaRepository = new ApplicationConfig().getGarageRepository();
+        //GarageRepository garageJpaRepository = new ApplicationConfig().getGarageRepository();
         for (BigInteger i : garageIdList) {
-            garages.add(garageJpaRepository.getById(i.longValue()));
+            garages.add(garageRepo.getById(i.longValue()));
         }
         if (em.isOpen()) {
             em.close();
@@ -69,9 +69,9 @@ public class ReservationJpaRepository extends CrudRepository<Reservation> implem
                 .setParameter(1, garageType.toString())
                 .getResultList();
         if (garageIdList.size() > 0) {
-            GarageRepository garageJpaRepository = new ApplicationConfig().getGarageRepository();
+           // GarageRepository garageJpaRepository = new ApplicationConfig().getGarageRepository();
             for (BigInteger i : garageIdList) {
-                garages.add(garageJpaRepository.getById(i.longValue()));
+                garages.add(garageRepo.getById(i.longValue()));
             }
         }
         if (em.isOpen()) {
@@ -91,8 +91,8 @@ public class ReservationJpaRepository extends CrudRepository<Reservation> implem
                 "WHERE t2.GARAGE_ID IS NULL";
         List<? extends BigInteger> garageIdList = em.createNativeQuery(makeQuery).getResultList();
         if (garageIdList.size() > 0) {
-            GarageRepository garageJpaRepository = new ApplicationConfig().getGarageRepository();
-            garageIdList.forEach((i) -> garages.add(garageJpaRepository.getById(i.longValue())));
+            //GarageRepository garageJpaRepository = new ApplicationConfig().getGarageRepository();
+            garageIdList.forEach((i) -> garages.add(garageRepo.getById(i.longValue())));
         }
         if (em.isOpen()) em.close();
         return garages;

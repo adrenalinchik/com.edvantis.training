@@ -10,6 +10,7 @@ import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 import java.util.Set;
 
@@ -20,17 +21,24 @@ import java.util.Set;
 public class ApplicationTest {
     private static long id = 1;
 
-    private static ApplicationConfig factory = new ApplicationConfig();
-    private static OwnerRepository ownerRepo = factory.getOwnerRepository();
-    private static VehicleRepository vehicleRepo = factory.getVehicleRepository();
-    private static ParkingRepository parkingRepo = factory.getParkingRepository();
-    private static GarageRepository garageRepo = factory.getGarageRepository();
-    private static ReservationRepository reservationRepo = factory.getReservationRepository();
-    private static ParkingService parkingService = factory.getParkingService(ownerRepo, vehicleRepo, garageRepo, parkingRepo, reservationRepo);
+    private static AnnotationConfigApplicationContext ctx;
+    private static OwnerRepository ownerRepo;
+    private static VehicleRepository vehicleRepo;
+    private static ParkingRepository parkingRepo;
+    private static GarageRepository garageRepo;
+    private static ReservationRepository reservationRepo;
+    private static ParkingService parkingService;
 
     @BeforeClass
     public static void createPopulateDb() {
         DataBaseJdbcUtil.createDb();
+        ctx = new AnnotationConfigApplicationContext(ApplicationConfig.class);
+        ownerRepo = ctx.getBean(OwnerRepository.class);
+        vehicleRepo = ctx.getBean(VehicleRepository.class);
+        parkingRepo = ctx.getBean(ParkingRepository.class);
+        garageRepo = ctx.getBean(GarageRepository.class);
+        reservationRepo = ctx.getBean(ReservationRepository.class);
+        parkingService = ctx.getBean(ParkingService.class);
         parkingService.populateWithMockObjects(TestsHelper.generateObjects());
         Assert.assertNotNull(ownerRepo.getById(1));
         Assert.assertNotNull(vehicleRepo.getById(1));
@@ -125,6 +133,6 @@ public class ApplicationTest {
     @AfterClass
     public static void dropDb() {
         // DataBaseJdbcUtil.clearDb(TestsHelper.tablesList());
-        DataBaseJdbcUtil.dropDB();
+      // DataBaseJdbcUtil.dropDB();
     }
 }

@@ -4,9 +4,7 @@ import com.edvantis.training.parking.config.ApplicationConfig;
 import com.edvantis.training.parking.jdbc.DataBaseJdbcUtil;
 import com.edvantis.training.parking.models.*;
 import com.edvantis.training.parking.repository.*;
-import com.edvantis.training.parking.repository.jpa.imp.*;
 import com.edvantis.training.parking.services.ParkingService;
-import com.edvantis.training.parking.services.impl.ParkingServiceImp;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 import java.text.ParseException;
@@ -23,23 +21,23 @@ public class Application {
     public static void main(String[] args) {
         DataBaseJdbcUtil.createDb();
         AnnotationConfigApplicationContext ctx = new AnnotationConfigApplicationContext(ApplicationConfig.class);
-        ParkingService parkingService = ctx.getBean(ParkingServiceImp.class);
+        ParkingService parkingService = ctx.getBean(ParkingService.class);
         parkingService.populateWithMockObjects(generateObjects());
         Set<Owner> set = parkingService.getAllOwners();
         //set.forEach(System.out::print);
         parkingService.getAvailableGarages(from, to);
         parkingService.makeReservation(from, to, GarageType.BIG, 1);
-        OwnerRepository ownerRepo = ctx.getBean(OwnerJpaRepository.class);
+        OwnerRepository ownerRepo = ctx.getBean(OwnerRepository.class);
         Owner owner = ownerRepo.getById(1);
         owner.setFirstName("Taras");
         ownerRepo.update(owner.getId(), owner);
         parkingService.addNewOwner(new Owner());
-        VehicleRepository vehicleRepo = ctx.getBean(VehicleJpaRepository.class);
+        VehicleRepository vehicleRepo = ctx.getBean(VehicleRepository.class);
         Set<Vehicle> vehicleSet = vehicleRepo.getAll();
         Vehicle vehicle = vehicleSet.iterator().next();
         vehicleRepo.update(vehicle.getId(), vehicle);
-        GarageRepository garageRepo = ctx.getBean(GarageJpaRepository.class);
-        ParkingRepository parkingRepo = ctx.getBean(ParkingJpaRepository.class);
+        GarageRepository garageRepo = ctx.getBean(GarageRepository.class);
+        ParkingRepository parkingRepo = ctx.getBean(ParkingRepository.class);
         garageRepo.getAllGaragesByType(GarageType.MEDIUM);
         Garage garage = garageRepo.getById(5);
         Parking parking = parkingRepo.getById(2);
@@ -47,11 +45,16 @@ public class Application {
         garageRepo.update(garage.getId(), garage);
         parking.setGarage(new Garage());
         parkingRepo.update(parking.getId(), parking);
-        ReservationRepository reserRepo = ctx.getBean(ReservationJpaRepository.class);
+        ReservationRepository reserRepo = ctx.getBean(ReservationRepository.class);
         reserRepo.getAllReservations();
         Reservation reser = reserRepo.getLastReservation();
         reser.setOwnerId(4);
         reserRepo.update(reser.getId(), reser);
+        //Set JDBC environment
+        ctx.getEnvironment().setActiveProfiles("jdbc");
+        ctx.register(ApplicationConfig.class);
+        VehicleRepository vehicleJdbcRepo = ctx.getBean(VehicleRepository.class);
+        vehicleJdbcRepo.getById(1);
         DataBaseJdbcUtil.clearDb(tablesList());
         DataBaseJdbcUtil.dropDb();
     }

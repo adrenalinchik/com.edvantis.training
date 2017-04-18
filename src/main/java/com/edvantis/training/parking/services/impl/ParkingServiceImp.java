@@ -1,13 +1,11 @@
 package com.edvantis.training.parking.services.impl;
 
-import com.edvantis.training.parking.config.ApplicationConfig;
 import com.edvantis.training.parking.models.*;
 import com.edvantis.training.parking.repository.*;
 import com.edvantis.training.parking.services.ParkingService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.transaction.Transactional;
 import java.util.*;
 
 /**
@@ -27,6 +25,7 @@ public class ParkingServiceImp implements ParkingService {
     @Autowired
     private ReservationRepository reservationRepo;
 
+    @Autowired
     public ParkingServiceImp(OwnerRepository ownerRepo, VehicleRepository vehicleRepo, GarageRepository garageRepo, ParkingRepository parkingRepo, ReservationRepository reservationRepo) {
         this.ownerRepo = ownerRepo;
         this.vehicleRepo = vehicleRepo;
@@ -35,7 +34,11 @@ public class ParkingServiceImp implements ParkingService {
         this.reservationRepo = reservationRepo;
     }
 
-    @Transactional
+    @Override
+    public Owner getOwner(long id) {
+        return ownerRepo.getById(id);
+    }
+
     @Override
     public Owner getOwnerByVehicleNumber(String vehicleNumber) {
         return ownerRepo.getByVehicleNumber(vehicleNumber);
@@ -126,7 +129,7 @@ public class ParkingServiceImp implements ParkingService {
         }
         reservations = deleteFalseReservation(reservations);
         Set<Long> garagesId = getFinalAvailableGarageId(reservations);
-        garagesId.forEach((i) -> garagesSet.add(new ApplicationConfig().getGarageRepository().getById(i)));
+        garagesId.forEach((i) -> garagesSet.add(garageRepo.getById(i)));
         garagesSet.addAll(reservationRepo.getAllGarages());
         return garagesSet;
     }
@@ -147,7 +150,7 @@ public class ParkingServiceImp implements ParkingService {
         }
         reservations = deleteFalseReservation(reservations);
         Set<Long> garagesId = getFinalAvailableGarageId(reservations);
-        garagesId.forEach((i) -> garagesSet.add(new ApplicationConfig().getGarageRepository().getById(i)));
+        garagesId.forEach((i) -> garagesSet.add(garageRepo.getById(i)));
         garagesSet.addAll(reservationRepo.getGaragesByType(garageType));
 
         return garagesSet;
@@ -169,7 +172,7 @@ public class ParkingServiceImp implements ParkingService {
         }
         reservations = deleteFalseReservation(reservations);
         Set<Long> garagesId = getFinalAvailableGarageId(reservations);
-        garagesId.forEach((i) -> garagesSet.add(new ApplicationConfig().getGarageRepository().getById(i)));
+        garagesId.forEach((i) -> garagesSet.add(garageRepo.getById(i)));
         garagesSet.addAll(reservationRepo.getGaragesByParkingId(parkingId));
         return garagesSet;
     }

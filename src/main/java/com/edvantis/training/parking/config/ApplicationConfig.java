@@ -1,12 +1,14 @@
 package com.edvantis.training.parking.config;
 
-import com.edvantis.training.parking.repository.*;
-import com.edvantis.training.parking.repository.jpa.imp.*;
-import com.edvantis.training.parking.services.ParkingService;
-import com.edvantis.training.parking.services.impl.ParkingServiceImp;
 import org.flywaydb.core.Flyway;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.support.ReloadableResourceBundleMessageSource;
+import org.springframework.web.servlet.config.annotation.DefaultServletHandlerConfigurer;
+import org.springframework.web.servlet.config.annotation.EnableWebMvc;
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
@@ -15,11 +17,14 @@ import javax.persistence.PersistenceContext;
 /**
  * Created by taras.fihurnyak on 2/16/2017.
  */
+@EnableWebMvc
 @Configuration
-public class ApplicationConfig {
+@ComponentScan("com.edvantis.training.parking")
+public class ApplicationConfig extends WebMvcConfigurerAdapter {
 
     @PersistenceContext
     private EntityManagerFactory emFactory;
+
     private Flyway flywayInstance;
 
     public ApplicationConfig() {
@@ -41,34 +46,32 @@ public class ApplicationConfig {
         return Persistence.createEntityManagerFactory("entityManager");
     }
 
-    @Bean
-    public OwnerRepository getOwnerRepository() {
-        return new OwnerJpaRepository(getInstance());
+    // web
+
+    @Override
+    public void addResourceHandlers(ResourceHandlerRegistry registry) {
+        registry.addResourceHandler("/resources/**").addResourceLocations("/resources/");
     }
 
-    @Bean
-    public VehicleRepository getVehicleRepository() {
-        return new VehicleJpaRepository(getInstance());
+    @Override
+    public void configureDefaultServletHandling(DefaultServletHandlerConfigurer configurer) {
+        configurer.enable();
     }
 
-    @Bean
-    public ParkingRepository getParkingRepository() {
-        return new ParkingJpaRepository(getInstance());
-    }
+//    @Bean
+//    public InternalResourceViewResolver jspViewResolver() {
+//        InternalResourceViewResolver bean = new InternalResourceViewResolver();
+//        bean.setPrefix("/WEB-INF/views/");
+//        bean.setSuffix(".jsp");
+//        return bean;
+//    }
 
-    @Bean
-    public GarageRepository getGarageRepository() {
-        return new GarageJpaRepository(getInstance());
-    }
-
-    @Bean
-    public ReservationRepository getReservationRepository() {
-        return new ReservationJpaRepository(getInstance());
-    }
-
-    @Bean
-    public ParkingService getParkingService(OwnerRepository ownerRepository, VehicleRepository vehicleRepository, GarageRepository garageRepository, ParkingRepository parkingRepository, ReservationRepository reservationRepository) {
-        return new ParkingServiceImp(ownerRepository, vehicleRepository, garageRepository, parkingRepository, reservationRepository);
+    @Bean(name = "messageSource")
+    public ReloadableResourceBundleMessageSource getMessageSource() {
+        ReloadableResourceBundleMessageSource resource = new ReloadableResourceBundleMessageSource();
+        resource.setBasename("classpath:messages");
+        resource.setDefaultEncoding("UTF-8");
+        return resource;
     }
 
 }

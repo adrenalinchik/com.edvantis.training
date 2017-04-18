@@ -17,6 +17,8 @@ public interface ParkingService {
 
     Set<Owner> getAllOwners();
 
+    Owner getOwner(long id);
+
     Owner getOwnerByLastName(String ownerLastName);
 
     Owner getOwnerByVehicleNumber(String vehicleNumber);

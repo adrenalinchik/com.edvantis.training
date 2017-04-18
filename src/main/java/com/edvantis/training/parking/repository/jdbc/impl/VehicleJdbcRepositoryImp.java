@@ -6,6 +6,9 @@ import com.edvantis.training.parking.repository.VehicleRepository;
 import com.edvantis.training.parking.repository.jdbc.AbstractJdbcRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Profile;
+import org.springframework.stereotype.Repository;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -19,12 +22,13 @@ import static com.edvantis.training.parking.models.VehicleType.*;
 /**
  * Created by taras.fihurnyak on 2/9/2017.
  */
+@Repository
+@Profile("jdbc")
 public class VehicleJdbcRepositoryImp extends AbstractJdbcRepository implements VehicleRepository {
-
     private final Logger logger = LoggerFactory.getLogger(VehicleJdbcRepositoryImp.class);
-
     public static final String GET_VEHICLE_BY_NUMBER = "SELECT * FROM VEHICLE WHERE NUMBER=?";
 
+    @Autowired
     public VehicleJdbcRepositoryImp(String dbName) {
         super(dbName);
     }

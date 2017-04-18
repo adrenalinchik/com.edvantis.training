@@ -6,6 +6,9 @@ import com.edvantis.training.parking.repository.GarageRepository;
 import com.edvantis.training.parking.repository.jdbc.AbstractJdbcRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Profile;
+import org.springframework.stereotype.Repository;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -16,10 +19,13 @@ import java.util.Set;
 /**
  * Created by taras.fihurnyak on 2/13/2017.
  */
+@Repository
+@Profile("jdbc")
 public class GarageJdbcRepositoryImp extends AbstractJdbcRepository implements GarageRepository {
 
     private final Logger logger = LoggerFactory.getLogger(GarageJdbcRepositoryImp.class);
 
+    @Autowired
     public GarageJdbcRepositoryImp(String dbName) {
         super(dbName);
     }

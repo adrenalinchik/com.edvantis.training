@@ -5,7 +5,7 @@ import com.edvantis.training.parking.models.GarageType;
 import com.edvantis.training.parking.models.Garage_;
 import com.edvantis.training.parking.repository.GarageRepository;
 import com.edvantis.training.parking.repository.jpa.CrudRepository;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
@@ -19,10 +19,10 @@ import java.util.Set;
 /**
  * Created by taras.fihurnyak on 2/22/2017.
  */
-@Configuration
 @Repository
 public class GarageJpaRepository extends CrudRepository<Garage> implements GarageRepository {
 
+    @Autowired
     public GarageJpaRepository(EntityManagerFactory factory) {
         super(factory, Garage.class);
     }

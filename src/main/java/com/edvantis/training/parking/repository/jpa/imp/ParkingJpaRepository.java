@@ -3,8 +3,7 @@ package com.edvantis.training.parking.repository.jpa.imp;
 import com.edvantis.training.parking.models.Parking;
 import com.edvantis.training.parking.repository.ParkingRepository;
 import com.edvantis.training.parking.repository.jpa.CrudRepository;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManagerFactory;
@@ -16,10 +15,9 @@ import javax.persistence.EntityManagerFactory;
 @Repository
 public class ParkingJpaRepository extends CrudRepository<Parking> implements ParkingRepository {
 
-    private final Logger logger = LoggerFactory.getLogger(ParkingJpaRepository.class);
-
+    @Autowired
     public ParkingJpaRepository(EntityManagerFactory factory) {
-        super(factory,Parking.class);
+        super(factory, Parking.class);
     }
 
 }

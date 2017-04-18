@@ -6,8 +6,7 @@ import com.edvantis.training.parking.models.Vehicle;
 import com.edvantis.training.parking.models.Vehicle_;
 import com.edvantis.training.parking.repository.OwnerRepository;
 import com.edvantis.training.parking.repository.jpa.CrudRepository;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
@@ -21,8 +20,7 @@ import javax.persistence.criteria.*;
 @Repository
 public class OwnerJpaRepository extends CrudRepository<Owner> implements OwnerRepository {
 
-    private final Logger logger = LoggerFactory.getLogger(OwnerJpaRepository.class);
-
+    @Autowired
     public OwnerJpaRepository(EntityManagerFactory factory) {
         super(factory,Owner.class);
     }
