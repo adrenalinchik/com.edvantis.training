@@ -11,29 +11,28 @@ import javax.persistence.Persistence;
 import javax.persistence.PersistenceContext;
 
 /**
- * Created by taras.fihurnyak on 2/16/2017.
+ * Without mvc config
  */
 @Configuration
-@ComponentScan("com.edvantis.training.parking")
-@Import({MvcConfig.class})
-public class ApplicationConfig {
+@ComponentScan(basePackages = {
+        "com.edvantis.training.parking.models",
+        "com.edvantis.training.parking.repository",
+        "com.edvantis.training.parking.services",
+        "com.edvantis.training.parking.controllers"
+})
+//@Import({MvcConfig.class}) - for web mvc different approach should be used
+public class ApplicationTestConfig {
 
-    @PersistenceContext
-    private EntityManagerFactory emFactory;
-
-    private Flyway flywayInstance;
-
-    public ApplicationConfig() {
-
+    public ApplicationTestConfig() {
     }
 
     @Bean
     public EntityManagerFactory getInstance() {
-        return emFactory = getEntityManagerFactoryInstance();
+        return getEntityManagerFactoryInstance();
     }
 
     public Flyway getFlywayInstance(String dbName, String login, String password) {
-        flywayInstance = new Flyway();
+        Flyway flywayInstance = new Flyway();
         flywayInstance.setDataSource(dbName, login, password);
         return flywayInstance;
     }

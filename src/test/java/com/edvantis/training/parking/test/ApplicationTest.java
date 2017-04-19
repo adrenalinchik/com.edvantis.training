@@ -1,6 +1,6 @@
 package com.edvantis.training.parking.test;
 
-import com.edvantis.training.parking.config.ApplicationConfig;
+import com.edvantis.training.parking.config.ApplicationTestConfig;
 import com.edvantis.training.parking.jdbc.DataBaseJdbcUtil;
 import com.edvantis.training.parking.models.*;
 import com.edvantis.training.parking.repository.*;
@@ -32,7 +32,7 @@ public class ApplicationTest {
     @BeforeClass
     public static void createPopulateDb() {
         DataBaseJdbcUtil.createDb();
-        ctx = new AnnotationConfigApplicationContext(ApplicationConfig.class);
+        ctx = new AnnotationConfigApplicationContext(ApplicationTestConfig.class);
         ownerRepo = ctx.getBean(OwnerRepository.class);
         vehicleRepo = ctx.getBean(VehicleRepository.class);
         parkingRepo = ctx.getBean(ParkingRepository.class);
