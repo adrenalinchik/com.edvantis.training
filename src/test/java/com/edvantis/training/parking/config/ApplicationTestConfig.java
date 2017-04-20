@@ -4,11 +4,9 @@ import org.flywaydb.core.Flyway;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Import;
 
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
-import javax.persistence.PersistenceContext;
 
 /**
  * Without mvc config
@@ -38,7 +36,7 @@ public class ApplicationTestConfig {
     }
 
     private EntityManagerFactory getEntityManagerFactoryInstance() {
-        return Persistence.createEntityManagerFactory("entityManager");
+        return Persistence.createEntityManagerFactory("entityManager1");
     }
 
 }

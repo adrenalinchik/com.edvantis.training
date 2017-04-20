@@ -1,5 +1,6 @@
 package com.edvantis.training.parking.models;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
@@ -31,7 +32,9 @@ public class Owner {
     @Enumerated(EnumType.STRING)
     private Gender gender;
 
+
     @Column(name = "DOB")
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate dob;
 
     @OneToMany(orphanRemoval = true, mappedBy="owner", fetch = FetchType.EAGER)

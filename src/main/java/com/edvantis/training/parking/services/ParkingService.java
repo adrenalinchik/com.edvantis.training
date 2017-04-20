@@ -33,5 +33,5 @@ public interface ParkingService {
 
     Set<Garage> getAvailableGarages(Date from, Date to);
 
-
+    Owner updateOwner(long id, Owner owner);
 }

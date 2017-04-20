@@ -67,6 +67,12 @@ public class ParkingServiceImp implements ParkingService {
     }
 
     @Override
+    public Owner updateOwner(long id, Owner owner) {
+        ownerRepo.update(id, owner);
+        return ownerRepo.getById(id);
+    }
+
+    @Override
     public Set<Owner> getAllOwners() {
         return ownerRepo.getAll();
     }

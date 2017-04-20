@@ -1,6 +1,7 @@
 package com.edvantis.training.parking.test;
 
 import com.edvantis.training.parking.config.ApplicationTestConfig;
+import com.edvantis.training.parking.jdbc.DataBaseJdbcUtil;
 import com.edvantis.training.parking.models.Garage;
 import com.edvantis.training.parking.models.GarageType;
 import com.edvantis.training.parking.models.Reservation;
@@ -31,7 +32,7 @@ public class ParkingServiceTest {
 
     @BeforeClass
     public static void populateDb() {
-        //DataBaseJdbcUtil.createDb();
+        DataBaseJdbcUtil.createDb();
         ctx = new AnnotationConfigApplicationContext(ApplicationTestConfig.class);
         ownerRepo = ctx.getBean(OwnerRepository.class);
         vehicleRepo = ctx.getBean(VehicleRepository.class);
@@ -39,12 +40,12 @@ public class ParkingServiceTest {
         garageRepo = ctx.getBean(GarageRepository.class);
         reservationRepo = ctx.getBean(ReservationRepository.class);
         parkingService = ctx.getBean(ParkingService.class);
-//        parkingService.populateWithMockObjects(TestsHelper.generateObjects());
-//        Assert.assertNotNull(ownerRepo.getById(1));
-//        Assert.assertNotNull(vehicleRepo.getById(1));
-//        Assert.assertNotNull(parkingRepo.getById(1));
-//        Assert.assertNotNull(garageRepo.getById(1));
-//        Assert.assertNotNull(reservationRepo.getById((long) 1));
+        parkingService.populateWithMockObjects(TestsHelper.generateObjects());
+        Assert.assertNotNull(ownerRepo.getById(1));
+        Assert.assertNotNull(vehicleRepo.getById(1));
+        Assert.assertNotNull(parkingRepo.getById(1));
+        Assert.assertNotNull(garageRepo.getById(1));
+        Assert.assertNotNull(reservationRepo.getById((long) 1));
     }
 
     @Test
@@ -93,7 +94,7 @@ public class ParkingServiceTest {
         Date to = TestsHelper.parseDate("2017-03-15 19:16:59");
         Set<Garage> list = parkingService.getAvailableGaragesByType(from, to, garageType);
         Assert.assertFalse(list.isEmpty());
-        Assert.assertEquals(4, list.size());
+        Assert.assertEquals(5, list.size());
         for (Garage i : list) {
             Assert.assertEquals(garageType, i.getGarageType());
         }
@@ -175,7 +176,7 @@ public class ParkingServiceTest {
 
     @AfterClass
     public static void dropDb() {
-//        DataBaseJdbcUtil.clearDb(TestsHelper.tablesList());
-//        DataBaseJdbcUtil.dropDB();
+        DataBaseJdbcUtil.clearDb(TestsHelper.tablesList());
+        DataBaseJdbcUtil.dropDB();
     }
 }
