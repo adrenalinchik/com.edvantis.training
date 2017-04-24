@@ -129,6 +129,11 @@ public class ApplicationTest {
         Assert.assertEquals(vehicleNumber, owner.getVehicleByNumber(vehicleNumber).getNumber());
     }
 
+    @Test
+    public void testGetOwnerVehicles() {
+        Set<Vehicle> set = vehicleRepo.getOwnerVehicles(1);
+        Assert.assertNotNull(set);
+    }
 
     @AfterClass
     public static void dropDb() {

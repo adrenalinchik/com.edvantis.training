@@ -1,5 +1,6 @@
 package com.edvantis.training.parking.models;
 
+import com.edvantis.training.parking.config.Util;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import org.hibernate.annotations.GenericGenerator;
 
@@ -15,6 +16,8 @@ import java.util.Set;
 @Entity
 @Table(name = "OWNER")
 public class Owner {
+
+    private static final String date = Util.getDatePattern();
 
     @Id
     @GeneratedValue(generator = "increment")
@@ -37,7 +40,7 @@ public class Owner {
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate dob;
 
-    @OneToMany(orphanRemoval = true, mappedBy="owner", fetch = FetchType.EAGER)
+    @OneToMany(orphanRemoval = true, mappedBy = "owner", fetch = FetchType.EAGER)
     private Set<Vehicle> userVehicles = new HashSet<>();
 
     public Owner() {

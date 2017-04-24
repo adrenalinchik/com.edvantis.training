@@ -1,5 +1,7 @@
 package com.edvantis.training.parking.config;
 
+import com.edvantis.training.parking.jdbc.AppProperty;
+
 import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -30,5 +32,9 @@ public class Util {
         } finally {
             if (st != null) st.close();
         }
+    }
+
+    public static String getDatePattern(){
+        return new AppProperty().getApplicationProperties().getProperty("date.template");
     }
 }

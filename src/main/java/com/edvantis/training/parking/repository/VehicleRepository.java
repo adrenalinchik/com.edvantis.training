@@ -18,4 +18,6 @@ public interface VehicleRepository {
     void update(long Id, Vehicle vehicle);
 
     void delete(long Id);
+
+    Set<Vehicle> getOwnerVehicles(long id);
 }

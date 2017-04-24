@@ -21,7 +21,6 @@ public class ParkingWebApplicationInitializer implements WebApplicationInitializ
     @Override
     public void onStartup(ServletContext container) {
         logger.info("On web application startup");
-        // Create the 'root' Spring application context
         AnnotationConfigWebApplicationContext rootContext = new AnnotationConfigWebApplicationContext();
         //rootContext.register(ServiceConfig.class, JPAConfig.class, SecurityConfig.class);
 

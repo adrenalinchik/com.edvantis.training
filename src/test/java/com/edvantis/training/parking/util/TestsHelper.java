@@ -1,7 +1,9 @@
 package com.edvantis.training.parking.util;
 
 import com.edvantis.training.parking.models.*;
+import org.springframework.http.MediaType;
 
+import java.nio.charset.Charset;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
@@ -90,5 +92,9 @@ public class TestsHelper {
         return new String[]{"VEHICLE", "OWNER", "PARKING", "GARAGE", "RESERVATION"};
     }
 
+    public static final MediaType APPLICATION_JSON_UTF8 = new MediaType(MediaType.APPLICATION_JSON.getType(),
+            MediaType.APPLICATION_JSON.getSubtype(),
+            Charset.forName("utf8")
+    );
 
 }

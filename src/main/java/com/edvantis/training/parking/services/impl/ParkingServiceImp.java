@@ -78,6 +78,11 @@ public class ParkingServiceImp implements ParkingService {
     }
 
     @Override
+    public Set<Vehicle> getOwnerVehicles(long ownerId) {
+        return vehicleRepo.getOwnerVehicles(ownerId);
+    }
+
+    @Override
     public Owner getOwnerByLastName(String ownerLastName) {
 
         return ownerRepo.getByLastName(ownerLastName);

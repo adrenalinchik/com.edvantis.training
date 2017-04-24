@@ -23,6 +23,8 @@ public interface ParkingService {
 
     Owner getOwnerByVehicleNumber(String vehicleNumber);
 
+    Set<Vehicle> getOwnerVehicles(long ownerId);
+
     Reservation makeReservation(Date from, Date to, GarageType type, long ownerId);
 
     Reservation makeReservation(Date from, Date to, long ownerId);

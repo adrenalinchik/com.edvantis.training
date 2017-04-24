@@ -5,6 +5,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
+import org.springframework.web.servlet.ViewResolver;
+import org.springframework.web.servlet.view.InternalResourceViewResolver;
+import org.springframework.web.servlet.view.JstlView;
 
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
@@ -38,7 +41,17 @@ public class ApplicationConfig {
         return flywayInstance;
     }
 
+    @Bean
+    public ViewResolver viewResolver() {
+        InternalResourceViewResolver viewResolver = new InternalResourceViewResolver();
+        viewResolver.setViewClass(JstlView.class);
+        viewResolver.setPrefix("/web/WEB-INF/jsp/");
+        viewResolver.setSuffix(".jsp");
+
+        return viewResolver;
+    }
+
     private EntityManagerFactory getEntityManagerFactoryInstance() {
-        return Persistence.createEntityManagerFactory("entityManager");
+        return Persistence.createEntityManagerFactory("mysql");
     }
 }

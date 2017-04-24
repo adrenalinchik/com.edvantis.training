@@ -136,6 +136,11 @@ public class VehicleJdbcRepositoryImp extends AbstractJdbcRepository implements 
         }
     }
 
+    @Override
+    public Set<Vehicle> getOwnerVehicles(long id) {
+        throw new UnsupportedOperationException("Not implemented");
+    }
+
     public Set<Vehicle> getAllVehiclesByType(VehicleType vehicleType) {
         Set<Vehicle> vehicleSet = new HashSet<>();
         try {
