@@ -1,3 +1,4 @@
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@page import="com.google.gson.JsonObject" %>
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
          pageEncoding="ISO-8859-1" %>
@@ -6,14 +7,13 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
     <title>View Json</title>
-    <%
-        JsonObject jsonObject = (JsonObject) session.getAttribute("allOwners");
-    %>
-
 </head>
 <body>
-<h6>JSON View</h6>
-<br>
-<%=jsonObject%>
+<select id="selectOwner">
+    <option>Select vehicle...</option>
+    <c:forEach var="element" items="${vehicles}">
+        <option>${element.model}</option>
+    </c:forEach>
+</select>
 </body>
 </html>

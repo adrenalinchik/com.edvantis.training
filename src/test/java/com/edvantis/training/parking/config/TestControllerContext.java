@@ -2,11 +2,9 @@ package com.edvantis.training.parking.config;
 
 import com.edvantis.training.parking.services.ParkingService;
 import org.mockito.Mockito;
-import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.support.ResourceBundleMessageSource;
 
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
@@ -25,16 +23,6 @@ public class TestControllerContext {
     @Bean
     public EntityManagerFactory getInstance() {
         return getEntityManagerFactoryInstance();
-    }
-
-    @Bean
-    public MessageSource messageSource() {
-        ResourceBundleMessageSource messageSource = new ResourceBundleMessageSource();
-
-        messageSource.setBasename("i18n/messages");
-        messageSource.setUseCodeAsDefaultMessage(true);
-
-        return messageSource;
     }
 
     @Bean

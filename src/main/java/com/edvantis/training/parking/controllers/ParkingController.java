@@ -42,12 +42,6 @@ public class ParkingController {
         return parkingService.getOwner(ownerId);
     }
 
-    @RequestMapping(method = RequestMethod.GET)
-    public ModelAndView sayHello(ModelMap model) {
-        model.addAttribute("greeting", "Hello World from Spring 4 MVC");
-        return new ModelAndView("welcome","greeting","Hello World from Spring 4 MVC");
-    }
-
     @RequestMapping(value = "/owner", method = GET)
     public Owner getOwnerByLastName(@RequestParam(value = "name") String name) {
         return parkingService.getOwnerByLastName(name);
@@ -55,14 +49,17 @@ public class ParkingController {
 
     @RequestMapping(value = "/owners", method = GET)
     public ModelAndView getAllOwners(Model model) {
-        Set<Owner> models = parkingService.getAllOwners();
-        model.addAttribute("owners", models);
-        return new ModelAndView("allOwners");
+        Set<Owner> owners = parkingService.getAllOwners();
+        model.addAttribute("owners", owners);
+        return new ModelAndView("allOwners","model", model);
     }
 
     @RequestMapping(value = "/owner/{ownerId}/vehicles", method = GET)
-    public Set<Vehicle> getAllOwners(@PathVariable("ownerId") long ownerId) {
-        return parkingService.getOwnerVehicles(ownerId);
+    public Set<Vehicle> getAllOwners(@PathVariable("ownerId") long ownerId, ModelMap model) {
+        Set<Vehicle> vehicles = parkingService.getOwnerVehicles(ownerId);
+        model.addAttribute("vehicles",vehicles);
+        //return new ModelAndView("ownerVehicles","model", model);
+        return vehicles;
     }
 
     @RequestMapping(value = "/reservation/owner/{ownerId}", method = GET)

@@ -1,5 +1,6 @@
 package com.edvantis.training.parking.test;
 
+import com.edvantis.training.parking.config.JsonViewResolver;
 import com.edvantis.training.parking.config.TestControllerContext;
 import com.edvantis.training.parking.controllers.ParkingController;
 import com.edvantis.training.parking.models.Gender;
@@ -54,7 +55,7 @@ public class ParkingControllerTest {
     @Before
     public void setUp() {
         mockMvc = MockMvcBuilders.standaloneSetup(new ParkingController(parkingServiceMock))
-                .setViewResolvers(viewResolver())
+                .setViewResolvers(jspViewResolver(), jsonViewResolver())
                 .build();
     }
 
@@ -127,24 +128,28 @@ public class ParkingControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(TestsHelper.APPLICATION_JSON_UTF8))
                 .andExpect(jsonPath("$", hasSize(2)))
-                .andExpect(jsonPath("$[0].id", is(22)))
-                .andExpect(jsonPath("$[0].model", is("Audi")))
-                .andExpect(jsonPath("$[0].number", is("654321")))
-                .andExpect(jsonPath("$[0].carType", is(VehicleType.HIBRID.toString())))
-                .andExpect(jsonPath("$[1].id", is(11)))
-                .andExpect(jsonPath("$[1].model", is("BMW")))
-                .andExpect(jsonPath("$[1].number", is("123456")))
-                .andExpect(jsonPath("$[1].carType", is(VehicleType.DIESEL.toString())));
+                .andExpect(jsonPath("$[0].id", is(11)))
+                .andExpect(jsonPath("$[0].model", is("BMW")))
+                .andExpect(jsonPath("$[0].number", is("123456")))
+                .andExpect(jsonPath("$[0].carType", is(VehicleType.DIESEL.toString())))
+                .andExpect(jsonPath("$[1].id", is(22)))
+                .andExpect(jsonPath("$[1].model", is("Audi")))
+                .andExpect(jsonPath("$[1].number", is("654321")))
+                .andExpect(jsonPath("$[1].carType", is(VehicleType.HIBRID.toString())));
 
         verify(parkingServiceMock, times(1)).getOwnerVehicles(1);
     }
 
-    private ViewResolver viewResolver() {
+    private ViewResolver jspViewResolver() {
         InternalResourceViewResolver viewResolver = new InternalResourceViewResolver();
         viewResolver.setViewClass(JstlView.class);
         viewResolver.setPrefix("/web/WEB-INF/jsp/");
         viewResolver.setSuffix(".jsp");
 
         return viewResolver;
+    }
+
+    private ViewResolver jsonViewResolver() {
+        return new JsonViewResolver();
     }
 }
