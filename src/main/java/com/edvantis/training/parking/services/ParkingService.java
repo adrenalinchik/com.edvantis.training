@@ -4,7 +4,6 @@ import com.edvantis.training.parking.models.*;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Set;
 
 /**
  * Created by taras.fihurnyak on 2/11/2017.
@@ -15,7 +14,7 @@ public interface ParkingService {
 
     void addNewOwner(Owner owner);
 
-    Set<Owner> getAllOwners();
+    ArrayList<Owner> getAllOwners();
 
     Owner getOwner(long id);
 
@@ -23,17 +22,21 @@ public interface ParkingService {
 
     Owner getOwnerByVehicleNumber(String vehicleNumber);
 
-    Set<Vehicle> getOwnerVehicles(long ownerId);
+    ArrayList<Vehicle> getOwnerVehicles(long ownerId);
 
     Reservation makeReservation(Date from, Date to, GarageType type, long ownerId);
 
     Reservation makeReservation(Date from, Date to, long ownerId);
 
-    Set<Garage> getAvailableGaragesByType(Date from, Date to, GarageType garageType);
+    ArrayList<Garage> getAvailableGaragesByType(Date from, Date to, GarageType garageType);
 
-    Set<Garage> getAvailableGaragesByParking(Date from, Date to, long parkingId);
+    ArrayList<Garage> getAvailableGaragesByParking(Date from, Date to, long parkingId);
 
-    Set<Garage> getAvailableGarages(Date from, Date to);
+    ArrayList<Garage> getAvailableGarages(Date from, Date to);
 
     Owner updateOwner(long id, Owner owner);
+
+    ArrayList<Garage> getAllParkingGarages(long parkingId);
+
+    ArrayList<Garage> getAllGarages();
 }

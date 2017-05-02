@@ -1,8 +1,7 @@
-package com.edvantis.training.parking.test;
+package com.edvantis.training.parking.test.controllerTests;
 
-import com.edvantis.training.parking.config.JsonViewResolver;
+import com.edvantis.training.parking.api.OwnerEndpoint;
 import com.edvantis.training.parking.config.TestControllerContext;
-import com.edvantis.training.parking.controllers.ParkingController;
 import com.edvantis.training.parking.models.Gender;
 import com.edvantis.training.parking.models.Owner;
 import com.edvantis.training.parking.models.Vehicle;
@@ -19,18 +18,15 @@ import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
-import org.springframework.web.servlet.ViewResolver;
-import org.springframework.web.servlet.view.InternalResourceViewResolver;
-import org.springframework.web.servlet.view.JstlView;
 
-import java.time.Clock;
 import java.time.LocalDate;
-import java.util.HashSet;
-import java.util.Set;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 
 import static org.hamcrest.Matchers.*;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 
@@ -42,8 +38,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = {TestControllerContext.class})
 @WebAppConfiguration
-public class ParkingControllerTest {
-
+public class OwnerControllerTest {
     private MockMvc mockMvc;
 
     @Autowired
@@ -54,8 +49,7 @@ public class ParkingControllerTest {
 
     @Before
     public void setUp() {
-        mockMvc = MockMvcBuilders.standaloneSetup(new ParkingController(parkingServiceMock))
-                .setViewResolvers(jspViewResolver(), jsonViewResolver())
+        mockMvc = MockMvcBuilders.standaloneSetup(new OwnerEndpoint(parkingServiceMock))
                 .build();
     }
 
@@ -69,40 +63,30 @@ public class ParkingControllerTest {
         owner1.setId(1L);
 
         Owner owner2 = new Owner();
-        owner2.setDOB(LocalDate.now(Clock.systemDefaultZone()));
+        owner2.setDOB(LocalDate.now());
         owner2.setFirstName("FirstName_User2");
         owner2.setLastName("LastName_User2");
         owner2.setGender(Gender.FEMALE);
         owner2.setId(2L);
-        Set ownerSet = new HashSet<Owner>();
-        ownerSet.add(owner1);
-        ownerSet.add(owner2);
+        ArrayList<Owner> ownerList = new ArrayList<>();
+        ownerList.add(owner1);
+        ownerList.add(owner2);
 
-        when(parkingServiceMock.getAllOwners()).thenReturn(ownerSet);
+        when(parkingServiceMock.getAllOwners()).thenReturn(ownerList);
 
-        mockMvc.perform(get("/parking/owners"))
+        mockMvc.perform(get("/parking/api/owners"))
                 .andExpect(status().isOk())
-                .andExpect(view().name("allOwners"))
-                //.andExpect(forwardedUrl("/WEB-INF/jsp/allOwners.jsp"))
-                .andExpect(model().attribute("owners", hasSize(2)))
-                .andExpect(model().attribute("owners", hasItem(
-                        allOf(
-                                hasProperty("id", is(1L)),
-                                hasProperty("firstName", is("FirstName_User1")),
-                                hasProperty("lastName", is("LastName_User1")),
-                                hasProperty("gender", is(Gender.MALE)),
-                                hasProperty("DOB", is(LocalDate.now()))
-                        )
-                )))
-                .andExpect(model().attribute("owners", hasItem(
-                        allOf(
-                                hasProperty("id", is(2L)),
-                                hasProperty("firstName", is("FirstName_User2")),
-                                hasProperty("lastName", is("LastName_User2")),
-                                hasProperty("gender", is(Gender.FEMALE)),
-                                hasProperty("DOB", is(LocalDate.now(Clock.systemDefaultZone())))
-                        )
-                )));
+                .andExpect(content().contentType(TestsHelper.APPLICATION_JSON_UTF8))
+                .andExpect(jsonPath("$", hasSize(2)))
+                .andExpect(jsonPath("$[0].id", is(1)))
+                .andExpect(jsonPath("$[0].firstName", is("FirstName_User1")))
+                .andExpect(jsonPath("$[0].lastName", is("LastName_User1")))
+                .andExpect(jsonPath("$[0].gender", is(Gender.MALE.toString())))
+                .andExpect(jsonPath("$[1].id", is(2)))
+                .andExpect(jsonPath("$[1].firstName", is("FirstName_User2")))
+                .andExpect(jsonPath("$[1].lastName", is("LastName_User2")))
+                .andExpect(jsonPath("$[1].gender", is(Gender.FEMALE.toString())));
+
         verify(parkingServiceMock, times(1)).getAllOwners();
     }
 
@@ -118,13 +102,13 @@ public class ParkingControllerTest {
         v2.setCarType(VehicleType.HIBRID);
         v2.setModel("Audi");
         v2.setNumber("654321");
-        Set vehicSet = new HashSet<Owner>();
-        vehicSet.add(v1);
-        vehicSet.add(v2);
+        ArrayList<Vehicle> vehicList = new ArrayList<>();
+        vehicList.add(v1);
+        vehicList.add(v2);
 
-        when(parkingServiceMock.getOwnerVehicles(1)).thenReturn(vehicSet);
+        when(parkingServiceMock.getOwnerVehicles(1)).thenReturn(vehicList);
 
-        mockMvc.perform(get("/parking/owner/1/vehicles"))
+        mockMvc.perform(get("/parking/api/owner/1/vehicles"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(TestsHelper.APPLICATION_JSON_UTF8))
                 .andExpect(jsonPath("$", hasSize(2)))
@@ -140,16 +124,36 @@ public class ParkingControllerTest {
         verify(parkingServiceMock, times(1)).getOwnerVehicles(1);
     }
 
-    private ViewResolver jspViewResolver() {
-        InternalResourceViewResolver viewResolver = new InternalResourceViewResolver();
-        viewResolver.setViewClass(JstlView.class);
-        viewResolver.setPrefix("/web/WEB-INF/jsp/");
-        viewResolver.setSuffix(".jsp");
+    @Test
+    public void createUser() throws Exception {
+        Owner owner = new Owner();
+        owner.setDOB(LocalDate.now());
+        owner.setFirstName("FirstName_User1");
+        owner.setLastName("LastName_User1");
+        owner.setGender(Gender.MALE);
+        owner.setId(1L);
 
-        return viewResolver;
+        doNothing().when(parkingServiceMock).addNewOwner(owner);
+
+        mockMvc.perform(
+                post("/parking/api/createOwner")
+                        .contentType(TestsHelper.APPLICATION_JSON_UTF8)
+                        .content(createOwnerInJson(owner)))
+                .andExpect(status().isCreated())
+                .andExpect(header().string("location", containsString("http://localhost/parking/api/createOwner")));
+
+        verify(parkingServiceMock, times(1)).addNewOwner(owner);
     }
 
-    private ViewResolver jsonViewResolver() {
-        return new JsonViewResolver();
+    private static String createOwnerInJson(Owner owner) {
+        DateTimeFormatter formatter_1 = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        String dob = owner.getDOB().format(formatter_1);
+        return "{ \"id\": \"" + owner.getId() + "\", " +
+                "\"firstName\":\"" + owner.getFirstName() + "\"," +
+                "\"lastName\":\"" + owner.getLastName() + "\"," +
+                "\"gender\":\"" + owner.getGender().toString() + "\"," +
+                "\"dob\":\"" + dob + "\"}";
+
     }
+
 }

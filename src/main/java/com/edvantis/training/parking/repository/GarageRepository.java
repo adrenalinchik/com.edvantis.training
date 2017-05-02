@@ -21,4 +21,6 @@ public interface GarageRepository{
     void delete(long id);
 
     Set<Garage> getAllGaragesByType(GarageType garageType);
+
+    Set<Garage> getGaragesByParking(long parkingId);
 }

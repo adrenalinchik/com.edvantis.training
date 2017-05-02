@@ -13,7 +13,9 @@ import javax.persistence.EntityManagerFactory;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
+import java.math.BigInteger;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -25,6 +27,28 @@ public class GarageJpaRepository extends CrudRepository<Garage> implements Garag
     @Autowired
     public GarageJpaRepository(EntityManagerFactory factory) {
         super(factory, Garage.class);
+    }
+
+    @Override
+    public Set<Garage> getGaragesByParking(long parkingId) {
+        Set<Garage> garages = new HashSet<>();
+        EntityManager em = emFactory.createEntityManager();
+        String makeQuery = "SELECT t1.ID " +
+                "FROM garage as t1 " +
+                "WHERE t1.PARKING_ID = ?1";
+        List<? extends BigInteger> garageIdList = em.createNativeQuery(makeQuery)
+                .setParameter(1, parkingId)
+                .getResultList();
+        garageIdList.stream().forEach(i-> garages.add(getById(i.longValue())));
+//        if (garageIdList.size() > 0) {
+//            for (BigInteger i : garageIdList) {
+//                garages.add(getById(i.longValue()));
+//            }
+//        }
+        if (em.isOpen()) {
+            em.close();
+        }
+        return garages;
     }
 
     @Override

@@ -23,7 +23,7 @@ public class Application {
         AnnotationConfigApplicationContext ctx = new AnnotationConfigApplicationContext(ApplicationConfig.class);
         ParkingService parkingService = ctx.getBean(ParkingService.class);
         parkingService.populateWithMockObjects(generateObjects());
-        Set<Owner> set = parkingService.getAllOwners();
+        ArrayList<Owner> list = parkingService.getAllOwners();
         //set.forEach(System.out::print);
         parkingService.getAvailableGarages(from, to);
         parkingService.makeReservation(from, to, GarageType.BIG, 1);

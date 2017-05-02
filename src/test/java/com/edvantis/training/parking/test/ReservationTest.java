@@ -14,13 +14,14 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Set;
 
 /**
  * Created by taras.fihurnyak on 3/25/2017.
  */
-public class ParkingServiceTest {
+public class ReservationTest {
 
     private static AnnotationConfigApplicationContext ctx;
     private static OwnerRepository ownerRepo;
@@ -48,12 +49,20 @@ public class ParkingServiceTest {
         Assert.assertNotNull(reservationRepo.getById((long) 1));
     }
 
+
+
+    @Test
+    public void test() {
+        ArrayList<Garage> garages = parkingService.getAllParkingGarages(1);
+    }
+
+
     @Test
     public void testGetAvailableGaragesLowerBoundaryDate() {
         int parkingId = 1;
         Date from = TestsHelper.parseDate("2017-03-05 19:16:59");
         Date to = TestsHelper.parseDate("2017-03-15 19:16:59");
-        Set<Garage> list = parkingService.getAvailableGaragesByParking(from, to, parkingId);
+        ArrayList<Garage> list = parkingService.getAvailableGaragesByParking(from, to, parkingId);
         Assert.assertFalse(list.isEmpty());
         Assert.assertEquals(15, list.size());
         for (Garage i : list) {
@@ -66,7 +75,7 @@ public class ParkingServiceTest {
         int parkingId = 1;
         Date from = TestsHelper.parseDate("2017-03-08 19:16:59");
         Date to = TestsHelper.parseDate("2017-03-20 19:16:59");
-        Set<Garage> list = parkingService.getAvailableGaragesByParking(from, to, parkingId);
+        ArrayList<Garage> list = parkingService.getAvailableGaragesByParking(from, to, parkingId);
         Assert.assertFalse(list.isEmpty());
         Assert.assertEquals(5, list.size());
         for (Garage i : list) {
@@ -79,7 +88,7 @@ public class ParkingServiceTest {
         int parkingId = 1;
         Date from = TestsHelper.parseDate("2017-03-25 19:16:59");
         Date to = TestsHelper.parseDate("2017-04-05 19:16:59");
-        Set<Garage> list = parkingService.getAvailableGaragesByParking(from, to, parkingId);
+        ArrayList<Garage> list = parkingService.getAvailableGaragesByParking(from, to, parkingId);
         Assert.assertFalse(list.isEmpty());
         Assert.assertEquals(15, list.size());
         for (Garage i : list) {
@@ -92,7 +101,7 @@ public class ParkingServiceTest {
         GarageType garageType = GarageType.SMALL;
         Date from = TestsHelper.parseDate("2017-03-05 19:16:59");
         Date to = TestsHelper.parseDate("2017-03-15 19:16:59");
-        Set<Garage> list = parkingService.getAvailableGaragesByType(from, to, garageType);
+        ArrayList<Garage> list = parkingService.getAvailableGaragesByType(from, to, garageType);
         Assert.assertFalse(list.isEmpty());
         Assert.assertEquals(5, list.size());
         for (Garage i : list) {
@@ -105,7 +114,7 @@ public class ParkingServiceTest {
         GarageType garageType = GarageType.BIG;
         Date from = TestsHelper.parseDate("2017-03-18 19:16:59");
         Date to = TestsHelper.parseDate("2017-03-30 19:16:59");
-        Set<Garage> list = parkingService.getAvailableGaragesByType(from, to, garageType);
+        ArrayList<Garage> list = parkingService.getAvailableGaragesByType(from, to, garageType);
         Assert.assertFalse(list.isEmpty());
         Assert.assertEquals(10, list.size());
         for (Garage i : list) {
@@ -118,7 +127,7 @@ public class ParkingServiceTest {
         GarageType garageType = GarageType.BIG;
         Date from = TestsHelper.parseDate("2017-03-25 19:16:59");
         Date to = TestsHelper.parseDate("2017-03-30 19:16:59");
-        Set<Garage> list = parkingService.getAvailableGaragesByType(from, to, garageType);
+        ArrayList<Garage> list = parkingService.getAvailableGaragesByType(from, to, garageType);
         Assert.assertFalse(list.isEmpty());
         Assert.assertEquals(15, list.size());
         for (Garage i : list) {

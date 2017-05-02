@@ -62,6 +62,11 @@ public class GarageJdbcRepositoryImp extends AbstractJdbcRepository implements G
     }
 
     @Override
+    public Set<Garage> getGaragesByParking(long parkingId) {
+        throw new UnsupportedOperationException("Not implemented");
+    }
+
+    @Override
     public void insert(Garage garage) {
         try {
             PreparedStatement pstmt = getConnection().prepareStatement("INSERT INTO GARAGE(PARKING_ID, TYPE, SQUARE) VALUES(?,?,?)");

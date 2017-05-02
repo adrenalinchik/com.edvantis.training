@@ -5,7 +5,11 @@
              version="2.0">
     <persistence-unit name="mysql">
         <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
-        <class>com.edvantis.training.parking.models</class>
+        <class>com.edvantis.training.parking.models.Parking</class>
+        <class>com.edvantis.training.parking.models.Garage</class>
+        <class>com.edvantis.training.parking.models.Owner</class>
+        <class>com.edvantis.training.parking.models.Vehicle</class>
+        <class>com.edvantis.training.parking.models.Reservation</class>
         <properties>
             <property name="hibernate.dialect" value="org.hibernate.dialect.MySQLDialect"/>
             <property name="hibernate.hbm2ddl.auto" value="update"/>
@@ -17,15 +21,15 @@
         </properties>
     </persistence-unit>
     <!--<persistence-unit name="h2">-->
-        <!--<provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>-->
-        <!--<class>com.edvantis.training.parking.models</class>-->
-        <!--<properties>-->
-            <!--<property name="hibernate.dialect" value="org.hibernate.dialect.H2Dialect"/>-->
-            <!--<property name="hibernate.hbm2ddl.auto" value="update"/>-->
-            <!--<property name="javax.persistence.jdbc.driver" value="org.h2.Driver"/>-->
-            <!--<property name="javax.persistence.jdbc.url" value="jdbc:h2:~/test"/>-->
-            <!--<property name="javax.persistence.jdbc.user" value="sa"/>-->
-            <!--<property name="javax.persistence.jdbc.password" value=""/>-->
-        <!--</properties>-->
+    <!--<provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>-->
+    <!--<class>com.edvantis.training.parking.models</class>-->
+    <!--<properties>-->
+    <!--<property name="hibernate.dialect" value="org.hibernate.dialect.H2Dialect"/>-->
+    <!--<property name="hibernate.hbm2ddl.auto" value="update"/>-->
+    <!--<property name="javax.persistence.jdbc.driver" value="org.h2.Driver"/>-->
+    <!--<property name="javax.persistence.jdbc.url" value="jdbc:h2:~/test"/>-->
+    <!--<property name="javax.persistence.jdbc.user" value="sa"/>-->
+    <!--<property name="javax.persistence.jdbc.password" value=""/>-->
+    <!--</properties>-->
     <!--</persistence-unit>-->
 </persistence>

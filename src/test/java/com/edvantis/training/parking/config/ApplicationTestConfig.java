@@ -16,7 +16,8 @@ import javax.persistence.Persistence;
         "com.edvantis.training.parking.models",
         "com.edvantis.training.parking.repository",
         "com.edvantis.training.parking.services",
-        "com.edvantis.training.parking.controllers"
+        "com.edvantis.training.parking.controllers",
+        "com.edvantis.training.parking.api"
 })
 //@Import({MvcConfig.class}) - for web mvc different approach should be used
 public class ApplicationTestConfig {

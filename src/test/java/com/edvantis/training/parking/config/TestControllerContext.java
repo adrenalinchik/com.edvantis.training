@@ -16,7 +16,8 @@ import javax.persistence.Persistence;
 @ComponentScan(basePackages = {
         "com.edvantis.training.parking.models",
         "com.edvantis.training.parking.repository",
-        "com.edvantis.training.parking.controllers"
+        "com.edvantis.training.parking.controllers",
+        "com.edvantis.training.parking.api"
 })
 public class TestControllerContext {
 

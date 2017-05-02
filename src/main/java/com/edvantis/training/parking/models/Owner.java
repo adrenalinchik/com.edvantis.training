@@ -2,6 +2,7 @@ package com.edvantis.training.parking.models;
 
 import com.edvantis.training.parking.config.Util;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
@@ -40,6 +41,7 @@ public class Owner {
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate dob;
 
+    @JsonIgnore
     @OneToMany(orphanRemoval = true, mappedBy = "owner", fetch = FetchType.EAGER)
     private Set<Vehicle> userVehicles = new HashSet<>();
 

@@ -1,5 +1,6 @@
 package com.edvantis.training.parking.models;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
@@ -19,9 +20,11 @@ public class Reservation {
     @Column(name = "ID", unique = true, nullable = false)
     private long id;
 
+    @JsonFormat(pattern = "yyyy-MM-dd")
     @Column(name = "BEGIN")
     private Date begin;
 
+    @JsonFormat(pattern = "yyyy-MM-dd")
     @Column(name = "END")
     private Date end;
 

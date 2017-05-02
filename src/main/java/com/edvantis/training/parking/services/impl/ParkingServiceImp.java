@@ -73,13 +73,24 @@ public class ParkingServiceImp implements ParkingService {
     }
 
     @Override
-    public Set<Owner> getAllOwners() {
-        return ownerRepo.getAll();
+    public ArrayList<Garage> getAllParkingGarages(long parkingId){
+        return new ArrayList<>(garageRepo.getGaragesByParking(parkingId));
     }
 
     @Override
-    public Set<Vehicle> getOwnerVehicles(long ownerId) {
-        return vehicleRepo.getOwnerVehicles(ownerId);
+    public ArrayList<Owner> getAllOwners() {
+        return new ArrayList<>(ownerRepo.getAll());
+    }
+
+    @Override
+    public ArrayList<Garage> getAllGarages() {
+        return new ArrayList<>(garageRepo.getAll());
+    }
+
+
+    @Override
+    public ArrayList<Vehicle> getOwnerVehicles(long ownerId) {
+        return new ArrayList<>(vehicleRepo.getOwnerVehicles(ownerId));
     }
 
     @Override
@@ -90,7 +101,7 @@ public class ParkingServiceImp implements ParkingService {
 
     @Override
     public Reservation makeReservation(Date from, Date to, GarageType type, long ownerId) {
-        Set<Garage> availableGarages = getAvailableGaragesByType(from, to, type);
+        ArrayList<Garage> availableGarages = getAvailableGaragesByType(from, to, type);
         Reservation reserv = null;
         if (availableGarages.size() > 0) {
             Garage garage = availableGarages.stream().findFirst().get();
@@ -108,7 +119,7 @@ public class ParkingServiceImp implements ParkingService {
 
     @Override
     public Reservation makeReservation(Date from, Date to, long ownerId) {
-        Set<Garage> availableGarages = getAvailableGarages(from, to);
+        ArrayList<Garage> availableGarages = getAvailableGarages(from, to);
         Reservation reserv = null;
         if (availableGarages.size() > 0) {
             Garage garage = availableGarages.stream().findFirst().get();
@@ -125,8 +136,8 @@ public class ParkingServiceImp implements ParkingService {
     }
 
     @Override
-    public Set<Garage> getAvailableGarages(Date from, Date to) {
-        Set<Garage> garagesSet = new HashSet<>();
+    public ArrayList<Garage> getAvailableGarages(Date from, Date to) {
+        ArrayList<Garage> garagesSet = new ArrayList<>();
         HashMap<Reservation, Boolean> reservations = new HashMap<>();
         Set<Reservation> reservationsList = reservationRepo.getAllReservations();
         for (Reservation i : reservationsList) {
@@ -146,8 +157,8 @@ public class ParkingServiceImp implements ParkingService {
     }
 
     @Override
-    public Set<Garage> getAvailableGaragesByType(Date from, Date to, GarageType garageType) {
-        Set<Garage> garagesSet = new HashSet<>();
+    public ArrayList<Garage> getAvailableGaragesByType(Date from, Date to, GarageType garageType) {
+        ArrayList<Garage> garagesSet = new ArrayList<>();
         HashMap<Reservation, Boolean> reservations = new HashMap<>();
         Set<Reservation> reservationsList = reservationRepo.getAllReservationsByGarageType(garageType);
         for (Reservation i : reservationsList) {
@@ -168,10 +179,18 @@ public class ParkingServiceImp implements ParkingService {
     }
 
     @Override
-    public Set<Garage> getAvailableGaragesByParking(Date from, Date to, long parkingId) {
-        Set<Garage> garagesSet = new HashSet<>();
+    public ArrayList<Garage> getAvailableGaragesByParking(Date from, Date to, long parkingId) {
+        ArrayList<Garage> garagesList = new ArrayList<>();
+        HashMap<Reservation, Boolean> reservations =
+                filterReservations(reservationRepo.getAllReservationsByParking(parkingId), from, to);
+        Set<Long> garagesId = getFinalAvailableGarageId(deleteFalseReservation(reservations));
+        garagesId.forEach((i) -> garagesList.add(garageRepo.getById(i)));
+        garagesList.addAll(reservationRepo.getGaragesByParkingId(parkingId));
+        return garagesList;
+    }
+
+    private HashMap<Reservation, Boolean> filterReservations(Set<Reservation> reservationsList, Date from, Date to) {
         HashMap<Reservation, Boolean> reservations = new HashMap<>();
-        Set<Reservation> reservationsList = reservationRepo.getAllReservationsByParking(parkingId);
         for (Reservation i : reservationsList) {
             Date reservBegine = i.getBegin();
             Date reservEnd = i.getEnd();
@@ -181,11 +200,7 @@ public class ParkingServiceImp implements ParkingService {
                 reservations.put(i, true);
             } else reservations.put(i, false);
         }
-        reservations = deleteFalseReservation(reservations);
-        Set<Long> garagesId = getFinalAvailableGarageId(reservations);
-        garagesId.forEach((i) -> garagesSet.add(garageRepo.getById(i)));
-        garagesSet.addAll(reservationRepo.getGaragesByParkingId(parkingId));
-        return garagesSet;
+        return reservations;
     }
 
     private Set<Long> getFinalAvailableGarageId(HashMap<Reservation, Boolean> mapReservations) {

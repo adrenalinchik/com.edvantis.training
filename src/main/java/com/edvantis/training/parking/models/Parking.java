@@ -1,5 +1,6 @@
 package com.edvantis.training.parking.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
@@ -25,6 +26,7 @@ public class Parking {
     @Column(name = "FREE_GARAGES")
     private int freeGarages;
 
+    @JsonIgnore
     @OneToMany(orphanRemoval = true, mappedBy = "parking", fetch = FetchType.EAGER)
     private Set<Garage> garages = new HashSet<>();
 
