@@ -1,7 +1,5 @@
 package com.edvantis.training.parking.config;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.web.WebApplicationInitializer;
 import org.springframework.web.context.ContextLoaderListener;
 import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
@@ -15,12 +13,8 @@ import javax.servlet.ServletRegistration;
  * Created by taras.fihurnyak on 4/14/2017.
  */
 public class ParkingWebApplicationInitializer implements WebApplicationInitializer {
-
-    Logger logger = LoggerFactory.getLogger(ParkingWebApplicationInitializer.class);
-
     @Override
     public void onStartup(ServletContext container) {
-        logger.info("On web application startup");
         AnnotationConfigWebApplicationContext rootContext = new AnnotationConfigWebApplicationContext();
         //rootContext.register(ServiceConfig.class, JPAConfig.class, SecurityConfig.class);
 

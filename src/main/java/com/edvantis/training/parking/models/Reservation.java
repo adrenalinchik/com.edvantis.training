@@ -20,11 +20,11 @@ public class Reservation {
     @Column(name = "ID", unique = true, nullable = false)
     private long id;
 
-    @JsonFormat(pattern = "yyyy-MM-dd")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @Column(name = "BEGIN")
     private Date begin;
 
-    @JsonFormat(pattern = "yyyy-MM-dd")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @Column(name = "END")
     private Date end;
 
@@ -86,5 +86,40 @@ public class Reservation {
 
     public void setGarageId(long garageId) {
         this.garageId = garageId;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Reservation that = (Reservation) o;
+        if (parkingId != that.parkingId) return false;
+        if (ownerId != that.ownerId) return false;
+        if (garageId != that.garageId) return false;
+        if (!begin.equals(that.begin)) return false;
+        return end.equals(that.end);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = 31 * begin.hashCode();
+        result = 31 * result + end.hashCode();
+        result = 31 * result + (int) (parkingId ^ (parkingId >>> 32));
+        result = 31 * result + (int) (ownerId ^ (ownerId >>> 32));
+        result = 31 * result + (int) (garageId ^ (garageId >>> 32));
+        return result;
+    }
+
+    @Override
+    public String toString() {
+        return "Reservation{" +
+                "id=" + id +
+                ", begin=" + begin +
+                ", end=" + end +
+                ", parkingId=" + parkingId +
+                ", ownerId=" + ownerId +
+                ", garageId=" + garageId +
+                '}';
     }
 }

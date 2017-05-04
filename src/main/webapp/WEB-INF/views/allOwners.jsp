@@ -6,14 +6,16 @@
 <html>
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+    <%--<link rel="stylesheet" href="resources/css/bootstrap.css"/>--%>
+    <%--<link href="<c:url value="resources/css/bootstrap.css"/>" rel="stylesheet"/>--%>
     <title>View Json</title>
 </head>
 <body>
-<select id="selectOwner">
-    <option>Select owner...</option>
-    <c:forEach var="element" items="${owners}">
-        <option>${element.firstName}</option>
-    </c:forEach>
-</select>
+<%--<select id="selectOwner">--%>
+    <%--<option>Select owner...</option>--%>
+    <%--<c:forEach var="element" items="${owners}">--%>
+        <%--<option>${element.firstName}</option>--%>
+    <%--</c:forEach>--%>
+<%--</select>--%>
 </body>
 </html>

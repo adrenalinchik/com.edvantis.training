@@ -12,7 +12,7 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
@@ -34,14 +34,14 @@ public class ParkingController {
 
     @RequestMapping(value = "/owners", method = GET)
     public String getAllOwners(Model model) {
-        ArrayList<Owner> owners = parkingService.getAllOwners();
+        List<Owner> owners = parkingService.getAllOwners();
         model.addAttribute("owners", owners);
-        return "allOwners";//new ModelAndView("allOwners","model", model);
+        return "allOwners";
     }
 
     @RequestMapping(value = "/owner/{ownerId}/vehicles", method = GET)
     public String getAllOwnerVehicles(@PathVariable("ownerId") long ownerId, ModelMap model) {
-        ArrayList<Vehicle> vehicles = parkingService.getOwnerVehicles(ownerId);
+        List<Vehicle> vehicles = parkingService.getOwnerVehicles(ownerId);
         model.addAttribute("vehicles",vehicles);
         return "ownerVehicles";
     }

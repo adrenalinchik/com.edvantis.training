@@ -1,6 +1,6 @@
 package com.edvantis.training.parking.test.controllerTests;
 
-import com.edvantis.training.parking.api.OwnerEndpoint;
+import com.edvantis.training.parking.api.ReservationEndpoind;
 import com.edvantis.training.parking.config.TestControllerContext;
 import com.edvantis.training.parking.models.Garage;
 import com.edvantis.training.parking.models.GarageType;
@@ -19,6 +19,8 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -26,6 +28,7 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 /**
@@ -36,8 +39,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebAppConfiguration
 public class ReservationControllerTest {
     private MockMvc mockMvc;
-    private Date from = TestsHelper.parseDate("2017-04-25 19:16:59");
-    private Date to = TestsHelper.parseDate("2018-05-29 19:16:59");
+    private Date from = TestsHelper.parseDate("2017-04-25 00:00:00");
+    private Date to = TestsHelper.parseDate("2018-05-29 00:00:00");
 
     @Autowired
     private ParkingService parkingServiceMock;
@@ -47,7 +50,7 @@ public class ReservationControllerTest {
 
     @Before
     public void setUp() {
-        mockMvc = MockMvcBuilders.standaloneSetup(new OwnerEndpoint(parkingServiceMock))
+        mockMvc = MockMvcBuilders.standaloneSetup(new ReservationEndpoind(parkingServiceMock))
                 .build();
     }
 
@@ -72,11 +75,11 @@ public class ReservationControllerTest {
         garageList.add(g1);
         garageList.add(g2);
 
-        when(parkingServiceMock.getAvailableGaragesByParking(from, to, 1)).thenReturn(garageList);
+        when(parkingServiceMock.getAvailableGaragesByParking(any(Date.class), any(Date.class), eq(1L))).thenReturn(garageList);
 
         mockMvc.perform(get("/parking/api/reservation/availableGarages/parking/{parkingId}", 1)
-                .param("from","2017-04-29")
-                .param("to","2017-04-29"))
+                .param("from", "2017-04-25")
+                .param("to", "2018-05-29"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(TestsHelper.APPLICATION_JSON_UTF8))
                 .andExpect(jsonPath("$", hasSize(2)))
@@ -93,7 +96,7 @@ public class ReservationControllerTest {
                 .andExpect(jsonPath("$[1].square", is(22.0)))
                 .andExpect(jsonPath("$[1].garageType", is(GarageType.MEDIUM.toString())));
 
-        //verify(parkingServiceMock, times(1)).getOwnerVehicles(1);
+        verify(parkingServiceMock, times(1)).getAvailableGaragesByParking(from, to, 1);
     }
 
 
@@ -107,20 +110,25 @@ public class ReservationControllerTest {
         r1.setOwnerId(1);
         r1.setId(1L);
 
-        when(parkingServiceMock.makeReservation(from, to, 1)).thenReturn(r1);
+        when(parkingServiceMock.makeReservation(any(Reservation.class))).thenReturn(r1);
+        mockMvc.perform(
+                post("/parking/api/reservations/addReservation")
+                        .contentType(TestsHelper.APPLICATION_JSON_UTF8)
+                        .content(createReservationInJson(r1)))
+                .andExpect(status().isCreated());
 
-        mockMvc.perform(get("/parking/api/reservation/owner/{ownerId}",1)
-                .param("from","2017-04-29")
-                .param("to","2017-04-29"))
-                .andExpect(status().isOk())
-                .andExpect(content().contentType(TestsHelper.APPLICATION_JSON_UTF8))
-                .andExpect(jsonPath("$.id", is(1)))
-                .andExpect(jsonPath("$.parkingId", is(1)))
-                .andExpect(jsonPath("$.ownerId", is(1)))
-                .andExpect(jsonPath("$.garageId", is(15)))
-                .andExpect(jsonPath("$.begin", is("2017-04-27")))
-                .andExpect(jsonPath("$.end", is("2017-05-04")));
+        verify(parkingServiceMock, times(1)).makeReservation(any(Reservation.class));
+    }
 
-        verify(parkingServiceMock, times(1)).makeReservation(from, to, 1);
+    private String createReservationInJson(Reservation reserv) {
+        DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        String from = df.format(reserv.getBegin());
+        String to = df.format(reserv.getEnd());
+        return "{ \"id\": \"" + reserv.getId() + "\", " +
+                "\"begin\":\"" + from + "\"," +
+                "\"end\":\"" + to + "\"," +
+                "\"parkingId\":\"" + reserv.getParkingId() + "\"," +
+                "\"ownerId\":\"" + reserv.getOwnerId() + "\"," +
+                "\"garageId\":\"" + reserv.getGarageId() + "\"}";
     }
 }

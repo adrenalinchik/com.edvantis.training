@@ -91,7 +91,6 @@ public class ReservationJpaRepository extends CrudRepository<Reservation> implem
                 "WHERE t2.GARAGE_ID IS NULL";
         List<? extends BigInteger> garageIdList = em.createNativeQuery(makeQuery).getResultList();
         if (garageIdList.size() > 0) {
-            //GarageRepository garageJpaRepository = new ApplicationConfig().getGarageRepository();
             garageIdList.forEach((i) -> garages.add(garageRepo.getById(i.longValue())));
         }
         if (em.isOpen()) em.close();

@@ -23,7 +23,8 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -52,6 +53,7 @@ public class OwnerControllerTest {
         mockMvc = MockMvcBuilders.standaloneSetup(new OwnerEndpoint(parkingServiceMock))
                 .build();
     }
+
 
     @Test
     public void findAllOwners() throws Exception {
@@ -87,7 +89,7 @@ public class OwnerControllerTest {
                 .andExpect(jsonPath("$[1].lastName", is("LastName_User2")))
                 .andExpect(jsonPath("$[1].gender", is(Gender.FEMALE.toString())));
 
-        verify(parkingServiceMock, times(1)).getAllOwners();
+        verify(parkingServiceMock, times(2)).getAllOwners();
     }
 
     @Test
@@ -125,7 +127,7 @@ public class OwnerControllerTest {
     }
 
     @Test
-    public void createUser() throws Exception {
+    public void createOwner() throws Exception {
         Owner owner = new Owner();
         owner.setDOB(LocalDate.now());
         owner.setFirstName("FirstName_User1");
@@ -136,16 +138,15 @@ public class OwnerControllerTest {
         doNothing().when(parkingServiceMock).addNewOwner(owner);
 
         mockMvc.perform(
-                post("/parking/api/createOwner")
+                post("/parking/api/owners/createOwner")
                         .contentType(TestsHelper.APPLICATION_JSON_UTF8)
                         .content(createOwnerInJson(owner)))
-                .andExpect(status().isCreated())
-                .andExpect(header().string("location", containsString("http://localhost/parking/api/createOwner")));
+                .andExpect(status().isCreated());
 
         verify(parkingServiceMock, times(1)).addNewOwner(owner);
     }
 
-    private static String createOwnerInJson(Owner owner) {
+    private String createOwnerInJson(Owner owner) {
         DateTimeFormatter formatter_1 = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         String dob = owner.getDOB().format(formatter_1);
         return "{ \"id\": \"" + owner.getId() + "\", " +

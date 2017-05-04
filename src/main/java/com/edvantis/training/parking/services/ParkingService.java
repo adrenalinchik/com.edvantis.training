@@ -4,6 +4,7 @@ import com.edvantis.training.parking.models.*;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 /**
  * Created by taras.fihurnyak on 2/11/2017.
@@ -14,7 +15,7 @@ public interface ParkingService {
 
     void addNewOwner(Owner owner);
 
-    ArrayList<Owner> getAllOwners();
+    List<Owner> getAllOwners();
 
     Owner getOwner(long id);
 
@@ -22,21 +23,23 @@ public interface ParkingService {
 
     Owner getOwnerByVehicleNumber(String vehicleNumber);
 
-    ArrayList<Vehicle> getOwnerVehicles(long ownerId);
+    List<Vehicle> getOwnerVehicles(long ownerId);
 
-    Reservation makeReservation(Date from, Date to, GarageType type, long ownerId);
+    Reservation makeReservation(Reservation reserv, GarageType type);
 
-    Reservation makeReservation(Date from, Date to, long ownerId);
+    Reservation makeReservation(Reservation reserv);
 
-    ArrayList<Garage> getAvailableGaragesByType(Date from, Date to, GarageType garageType);
+    List<Garage> getAvailableGaragesByType(Date from, Date to, GarageType garageType);
 
-    ArrayList<Garage> getAvailableGaragesByParking(Date from, Date to, long parkingId);
+    List<Garage> getAvailableGaragesByParking(Date from, Date to, long parkingId);
 
-    ArrayList<Garage> getAvailableGarages(Date from, Date to);
+    List<Garage> getAvailableGarages(Date from, Date to);
 
     Owner updateOwner(long id, Owner owner);
 
-    ArrayList<Garage> getAllParkingGarages(long parkingId);
+    List<Garage> getAllParkingGarages(long parkingId);
 
-    ArrayList<Garage> getAllGarages();
+    List<Garage> getAllGarages();
+
+    List<Reservation> getAllReservations();
 }

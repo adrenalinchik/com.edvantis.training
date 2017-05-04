@@ -12,6 +12,7 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Set;
 
 public class Application {
@@ -23,10 +24,14 @@ public class Application {
         AnnotationConfigApplicationContext ctx = new AnnotationConfigApplicationContext(ApplicationConfig.class);
         ParkingService parkingService = ctx.getBean(ParkingService.class);
         parkingService.populateWithMockObjects(generateObjects());
-        ArrayList<Owner> list = parkingService.getAllOwners();
-        //set.forEach(System.out::print);
+        List<Owner> list = parkingService.getAllOwners();
+        list.forEach(System.out::print);
         parkingService.getAvailableGarages(from, to);
-        parkingService.makeReservation(from, to, GarageType.BIG, 1);
+        Reservation r= new Reservation();
+        r.setBegin(from);
+        r.setEnd(to);
+        r.setOwnerId(1);
+        parkingService.makeReservation(r,GarageType.BIG);
         OwnerRepository ownerRepo = ctx.getBean(OwnerRepository.class);
         Owner owner = ownerRepo.getById(1);
         owner.setFirstName("Taras");
