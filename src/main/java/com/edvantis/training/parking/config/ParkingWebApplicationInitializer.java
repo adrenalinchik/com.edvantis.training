@@ -29,6 +29,5 @@ public class ParkingWebApplicationInitializer implements WebApplicationInitializ
         ServletRegistration.Dynamic dispatcher = container.addServlet("dispatcher", new DispatcherServlet(dispatcherServlet));
         dispatcher.setLoadOnStartup(1);
         dispatcher.addMapping("/");
-
     }
 }

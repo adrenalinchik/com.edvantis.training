@@ -8,6 +8,7 @@ import com.edvantis.training.parking.services.ParkingService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -40,7 +41,6 @@ public class JspControllerTest {
 
     private MockMvc mockMvc;
 
-    @Autowired
     private ParkingService parkingServiceMock;
 
     @Autowired
@@ -48,6 +48,7 @@ public class JspControllerTest {
 
     @Before
     public void setUp() {
+        parkingServiceMock = Mockito.mock(ParkingService.class);
         mockMvc = MockMvcBuilders.standaloneSetup(new ParkingController(parkingServiceMock))
                 .setViewResolvers(jspViewResolver())
                 .build();

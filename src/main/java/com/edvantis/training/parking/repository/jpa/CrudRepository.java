@@ -37,9 +37,9 @@ public abstract class CrudRepository<T> {
         CriteriaBuilder builder = em.getCriteriaBuilder();
         CriteriaQuery<T> cq = builder.createQuery(classType);
         Root<T> reservationRoot = cq.from(classType);
-        Set<T> reservationsSet = new HashSet<>(em.createQuery(cq).getResultList());
+        Set<T> set = new HashSet<>(em.createQuery(cq).getResultList());
         if (em.isOpen()) em.close();
-        return reservationsSet;
+        return set;
     }
 
     public void insert(T t) {

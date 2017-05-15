@@ -117,24 +117,22 @@ public class Owner {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-
         Owner owner = (Owner) o;
-
         if (id != owner.id) return false;
-        if (!firstName.equals(owner.firstName)) return false;
-        if (!lastName.equals(owner.lastName)) return false;
+        if (firstName != null ? !firstName.equals(owner.firstName) : owner.firstName != null) return false;
+        if (lastName != null ? !lastName.equals(owner.lastName) : owner.lastName != null) return false;
         if (gender != owner.gender) return false;
-        if (!dob.equals(owner.dob)) return false;
+        if (dob != null ? !dob.equals(owner.dob) : owner.dob != null) return false;
         return userVehicles != null ? userVehicles.equals(owner.userVehicles) : owner.userVehicles == null;
     }
 
     @Override
     public int hashCode() {
         int result = (int) (id ^ (id >>> 32));
-        result = 31 * result + firstName.hashCode();
-        result = 31 * result + lastName.hashCode();
-        result = 31 * result + gender.hashCode();
-        result = 31 * result + dob.hashCode();
+        result = 31 * result + (firstName != null ? firstName.hashCode() : 0);
+        result = 31 * result + (lastName != null ? lastName.hashCode() : 0);
+        result = 31 * result + (gender != null ? gender.hashCode() : 0);
+        result = 31 * result + (dob != null ? dob.hashCode() : 0);
         result = 31 * result + (userVehicles != null ? userVehicles.hashCode() : 0);
         return result;
     }

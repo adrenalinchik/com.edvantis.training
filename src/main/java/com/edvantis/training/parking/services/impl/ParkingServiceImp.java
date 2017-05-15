@@ -78,6 +78,11 @@ public class ParkingServiceImp implements ParkingService {
     }
 
     @Override
+    public void deleteOwner(long id) {
+        ownerRepo.delete(id);
+    }
+
+    @Override
     public List<Owner> getAllOwners() {
         return new ArrayList<>(ownerRepo.getAll());
     }

@@ -1,7 +1,5 @@
 package com.edvantis.training.parking.config;
 
-import com.edvantis.training.parking.services.ParkingService;
-import org.mockito.Mockito;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -17,7 +15,8 @@ import javax.persistence.Persistence;
         "com.edvantis.training.parking.models",
         "com.edvantis.training.parking.repository",
         "com.edvantis.training.parking.controllers",
-        "com.edvantis.training.parking.api"
+        "com.edvantis.training.parking.api",
+        "com.edvantis.training.parking.services"
 })
 public class TestControllerContext {
 
@@ -26,10 +25,10 @@ public class TestControllerContext {
         return getEntityManagerFactoryInstance();
     }
 
-    @Bean
-    public ParkingService parkingService() {
-        return Mockito.mock(ParkingService.class);
-    }
+//    @Bean
+//    public ParkingService parkingService() {
+//        return Mockito.mock(ParkingService.class);
+//    }
 
     private EntityManagerFactory getEntityManagerFactoryInstance() {
         return Persistence.createEntityManagerFactory("h2");

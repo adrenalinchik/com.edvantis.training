@@ -11,6 +11,7 @@ import com.edvantis.training.parking.util.TestsHelper;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -40,9 +41,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ContextConfiguration(classes = {TestControllerContext.class})
 @WebAppConfiguration
 public class OwnerControllerTest {
+
     private MockMvc mockMvc;
 
-    @Autowired
     private ParkingService parkingServiceMock;
 
     @Autowired
@@ -50,10 +51,10 @@ public class OwnerControllerTest {
 
     @Before
     public void setUp() {
+        parkingServiceMock = Mockito.mock(ParkingService.class);
         mockMvc = MockMvcBuilders.standaloneSetup(new OwnerEndpoint(parkingServiceMock))
                 .build();
     }
-
 
     @Test
     public void findAllOwners() throws Exception {
@@ -89,7 +90,7 @@ public class OwnerControllerTest {
                 .andExpect(jsonPath("$[1].lastName", is("LastName_User2")))
                 .andExpect(jsonPath("$[1].gender", is(Gender.FEMALE.toString())));
 
-        verify(parkingServiceMock, times(2)).getAllOwners();
+        verify(parkingServiceMock, times(1)).getAllOwners();
     }
 
     @Test
@@ -154,7 +155,5 @@ public class OwnerControllerTest {
                 "\"lastName\":\"" + owner.getLastName() + "\"," +
                 "\"gender\":\"" + owner.getGender().toString() + "\"," +
                 "\"dob\":\"" + dob + "\"}";
-
     }
-
 }

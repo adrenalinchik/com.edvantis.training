@@ -11,8 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 import static org.springframework.http.HttpStatus.CREATED;
-import static org.springframework.web.bind.annotation.RequestMethod.GET;
-import static org.springframework.web.bind.annotation.RequestMethod.POST;
+import static org.springframework.web.bind.annotation.RequestMethod.*;
 
 @RestController
 @RequestMapping("/parking/api")
@@ -54,8 +53,14 @@ public class OwnerEndpoint {
         return parkingService.getOwnerByLastName(owner.getLastName());
     }
 
-    @RequestMapping(value = "/owners/updateOwner", method = POST)
+    @RequestMapping(value = "/owner/updateOwner", method = PUT)
     public Owner updateOwner(@RequestBody Owner owner) {
+        logger.info("Inside Edit controller");
         return parkingService.updateOwner(owner.getId(), owner);
+    }
+
+    @RequestMapping(value = "/owner/delete/{ownerId}", method = DELETE)
+    public void deleteOwner(@PathVariable("ownerId") long ownerId) {
+       parkingService.deleteOwner(ownerId);
     }
 }

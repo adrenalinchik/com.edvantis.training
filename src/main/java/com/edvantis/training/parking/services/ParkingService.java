@@ -42,4 +42,7 @@ public interface ParkingService {
     List<Garage> getAllGarages();
 
     List<Reservation> getAllReservations();
+
+    void deleteOwner(long id);
+
 }

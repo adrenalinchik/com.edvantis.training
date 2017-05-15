@@ -11,6 +11,7 @@ import com.edvantis.training.parking.util.TestsHelper;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -42,7 +43,6 @@ public class ReservationControllerTest {
     private Date from = TestsHelper.parseDate("2017-04-25 00:00:00");
     private Date to = TestsHelper.parseDate("2018-05-29 00:00:00");
 
-    @Autowired
     private ParkingService parkingServiceMock;
 
     @Autowired
@@ -50,6 +50,7 @@ public class ReservationControllerTest {
 
     @Before
     public void setUp() {
+        parkingServiceMock = Mockito.mock(ParkingService.class);
         mockMvc = MockMvcBuilders.standaloneSetup(new ReservationEndpoind(parkingServiceMock))
                 .build();
     }
