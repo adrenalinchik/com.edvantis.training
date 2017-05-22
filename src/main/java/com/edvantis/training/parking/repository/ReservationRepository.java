@@ -23,6 +23,8 @@ public interface ReservationRepository {
 
     Set<Reservation> getAllReservationsByParking(long parkingId);
 
+    Set<Reservation> getAllReservationsByOwner(long ownerId);
+
     Set<Garage> getGaragesByParkingId(long parkingId);
 
     Set<Reservation> getAllReservationsByGarageType(GarageType garageType);

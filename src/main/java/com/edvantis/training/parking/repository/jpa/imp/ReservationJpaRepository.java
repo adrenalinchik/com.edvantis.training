@@ -69,7 +69,7 @@ public class ReservationJpaRepository extends CrudRepository<Reservation> implem
                 .setParameter(1, garageType.toString())
                 .getResultList();
         if (garageIdList.size() > 0) {
-           // GarageRepository garageJpaRepository = new ApplicationConfig().getGarageRepository();
+            // GarageRepository garageJpaRepository = new ApplicationConfig().getGarageRepository();
             for (BigInteger i : garageIdList) {
                 garages.add(garageRepo.getById(i.longValue()));
             }
@@ -128,6 +128,20 @@ public class ReservationJpaRepository extends CrudRepository<Reservation> implem
         CriteriaQuery<Reservation> cq = builder.createQuery(Reservation.class);
         Root<Reservation> reservationRoot = cq.from(Reservation.class);
         cq.where(builder.equal(reservationRoot.get(Reservation_.parkingId), parkingId));
+        Set<Reservation> reservationsSet = new HashSet<>(em.createQuery(cq).getResultList());
+        if (em.isOpen()) {
+            em.close();
+        }
+        return reservationsSet;
+    }
+
+    @Override
+    public Set<Reservation> getAllReservationsByOwner(long ownerId) {
+        EntityManager em = emFactory.createEntityManager();
+        CriteriaBuilder builder = em.getCriteriaBuilder();
+        CriteriaQuery<Reservation> cq = builder.createQuery(Reservation.class);
+        Root<Reservation> reservationRoot = cq.from(Reservation.class);
+        cq.where(builder.equal(reservationRoot.get(Reservation_.ownerId), ownerId));
         Set<Reservation> reservationsSet = new HashSet<>(em.createQuery(cq).getResultList());
         if (em.isOpen()) {
             em.close();

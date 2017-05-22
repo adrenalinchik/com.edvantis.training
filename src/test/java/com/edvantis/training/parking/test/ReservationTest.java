@@ -17,6 +17,7 @@ import org.springframework.context.annotation.AnnotationConfigApplicationContext
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.ExecutionException;
 
 /**
  * Created by taras.fihurnyak on 3/25/2017.
@@ -51,8 +52,12 @@ public class ReservationTest {
 
 
     @Test
-    public void test() {
-        List<Garage> garages = parkingService.getAllParkingGarages(1);
+    public void testGetProfitByAllOwners() throws ExecutionException, InterruptedException{
+        int ownerId = 1;
+        Date from = TestsHelper.parseDate("2017-03-05 19:16:59");
+        Date to = TestsHelper.parseDate("2017-03-15 19:16:59");
+        //System.out.println("" + parkingService.getReservedDays(from, to, ownerId));
+        parkingService.getProfitForAllOwners(from,to);
     }
 
 
@@ -151,7 +156,7 @@ public class ReservationTest {
         long ownerId = 1;
         Date from = TestsHelper.parseDate("2017-04-25 19:16:59");
         Date to = TestsHelper.parseDate("2017-04-29 19:16:59");
-        Reservation r= new Reservation();
+        Reservation r = new Reservation();
         r.setBegin(from);
         r.setEnd(to);
         r.setOwnerId(1);
@@ -186,11 +191,11 @@ public class ReservationTest {
         long ownerId = 1;
         Date from = TestsHelper.parseDate("2017-03-15 19:16:59");
         Date to = TestsHelper.parseDate("2017-03-25 19:16:59");
-        Reservation r= new Reservation();
+        Reservation r = new Reservation();
         r.setBegin(from);
         r.setEnd(to);
         r.setOwnerId(1);
-        Reservation reser = parkingService.makeReservation(r,garageType);
+        Reservation reser = parkingService.makeReservation(r, garageType);
         Assert.assertNull(reser);
     }
 

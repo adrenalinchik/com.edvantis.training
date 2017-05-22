@@ -7,6 +7,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+
 
 /**
  * Created by taras.fihurnyak on 2/11/2017.
@@ -164,7 +169,8 @@ public class ParkingServiceImp implements ParkingService {
     }
 
     @Override
-    public List<Garage> getAvailableGaragesByParking(Date from, Date to, long parkingId) {
+    public List<Garage> getAvailableGaragesByParking(Date from, Date to, long parkingId)
+    {
         List<Garage> garagesList = new ArrayList<>();
         HashMap<Reservation, Boolean> reservations =
                 filterReservations(reservationRepo.getAllReservationsByParking(parkingId), from, to);
@@ -172,6 +178,32 @@ public class ParkingServiceImp implements ParkingService {
         garagesId.forEach((i) -> garagesList.add(garageRepo.getById(i)));
         garagesList.addAll(reservationRepo.getGaragesByParkingId(parkingId));
         return garagesList;
+    }
+
+    public void getProfitForAllOwners(Date from, Date to) throws ExecutionException, InterruptedException{
+        List<Owner> owners = getAllOwners();
+        ExecutorService service = null;
+        try {
+            service = Executors.newFixedThreadPool(owners.size());
+            for (Owner i : owners) {
+                Future<Long> result = service.submit(()->getReservedDays(from,to,i.getId()));
+                System.out.println("Current Thread: " + Thread.currentThread().getName()+" | "+i.getId()+" "+ result.get());
+            }
+        } finally {
+            if (service != null) service.shutdown();
+        }
+    }
+
+    public long getReservedDays(Date from, Date to, long ownerId) {
+        HashMap<Reservation, Boolean> reservations =
+                filterReservations(reservationRepo.getAllReservationsByOwner(ownerId), from, to);
+        deleteFalseReservation(reservations);
+        System.out.println("Current Thread: " + Thread.currentThread().getName());
+        long days = 0;
+        for (Reservation r : reservations.keySet()) {
+            days += r.getDaysAmount();
+        }
+        return days;
     }
 
     private HashMap<Reservation, Boolean> filterReservations(Set<Reservation> reservationsList, Date from, Date

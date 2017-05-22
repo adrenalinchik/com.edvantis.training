@@ -8,6 +8,8 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
 import org.springframework.web.servlet.view.JstlView;
 
+import java.util.concurrent.Callable;
+
 @EnableWebMvc
 public class MvcConfig extends WebMvcConfigurerAdapter {
     @Bean
@@ -26,4 +28,5 @@ public class MvcConfig extends WebMvcConfigurerAdapter {
                 .addResourceHandler("/resources/**")
                 .addResourceLocations("/resources/");
     }
+    Callable<Throwable> a;
 }

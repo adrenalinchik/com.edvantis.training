@@ -47,7 +47,7 @@ public class OwnerEndpoint {
     }
 
     @ResponseStatus(CREATED)
-    @RequestMapping(value = "/owners/createOwner", method = POST)
+    @RequestMapping(value = "/owner/createOwner", method = POST)
     public Owner addNewOwner(@RequestBody Owner owner) {
         parkingService.addNewOwner(owner);
         return parkingService.getOwnerByLastName(owner.getLastName());

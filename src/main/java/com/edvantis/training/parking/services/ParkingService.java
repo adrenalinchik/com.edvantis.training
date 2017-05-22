@@ -5,6 +5,7 @@ import com.edvantis.training.parking.models.*;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 /**
  * Created by taras.fihurnyak on 2/11/2017.
@@ -44,5 +45,9 @@ public interface ParkingService {
     List<Reservation> getAllReservations();
 
     void deleteOwner(long id);
+
+    void getProfitForAllOwners(Date from, Date to) throws ExecutionException, InterruptedException;
+
+    long getReservedDays(Date from, Date to, long ownerId);
 
 }

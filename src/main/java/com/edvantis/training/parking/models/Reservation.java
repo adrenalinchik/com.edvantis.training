@@ -5,6 +5,7 @@ import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created by taras.fihurnyak on 3/7/2017.
@@ -74,6 +75,10 @@ public class Reservation {
 
     public long getOwnerId() {
         return ownerId;
+    }
+
+    public long getDaysAmount() {
+        return end != null && begin!=null? TimeUnit.DAYS.convert(end.getTime() - begin.getTime(), TimeUnit.MILLISECONDS): 0;
     }
 
     public void setOwnerId(long ownerId) {
