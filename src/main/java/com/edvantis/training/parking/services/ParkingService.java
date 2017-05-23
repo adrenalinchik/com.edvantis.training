@@ -5,6 +5,7 @@ import com.edvantis.training.parking.models.*;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
 /**
@@ -46,8 +47,8 @@ public interface ParkingService {
 
     void deleteOwner(long id);
 
-    void getProfitForAllOwners(Date from, Date to) throws ExecutionException, InterruptedException;
+    Map<Owner, Long> getProfitForAllOwners(Date from, Date to) throws ExecutionException, InterruptedException;
 
-    long getReservedDays(Date from, Date to, long ownerId);
+    long countProfitFromOwner(Date from, Date to, long ownerId);
 
 }

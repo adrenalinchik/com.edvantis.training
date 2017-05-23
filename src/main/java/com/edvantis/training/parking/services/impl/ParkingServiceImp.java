@@ -1,16 +1,17 @@
 package com.edvantis.training.parking.services.impl;
 
+import com.edvantis.training.parking.jdbc.AppProperty;
 import com.edvantis.training.parking.models.*;
 import com.edvantis.training.parking.repository.*;
 import com.edvantis.training.parking.services.ParkingService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
+import java.util.concurrent.*;
 
 
 /**
@@ -169,8 +170,7 @@ public class ParkingServiceImp implements ParkingService {
     }
 
     @Override
-    public List<Garage> getAvailableGaragesByParking(Date from, Date to, long parkingId)
-    {
+    public List<Garage> getAvailableGaragesByParking(Date from, Date to, long parkingId) {
         List<Garage> garagesList = new ArrayList<>();
         HashMap<Reservation, Boolean> reservations =
                 filterReservations(reservationRepo.getAllReservationsByParking(parkingId), from, to);
@@ -180,34 +180,39 @@ public class ParkingServiceImp implements ParkingService {
         return garagesList;
     }
 
-    public void getProfitForAllOwners(Date from, Date to) throws ExecutionException, InterruptedException{
+    public Map<Owner, Long> getProfitForAllOwners(Date from, Date to) throws ExecutionException, InterruptedException {
         List<Owner> owners = getAllOwners();
+        Map<Owner, Long> ownerProfit = new HashMap<>();
         ExecutorService service = null;
         try {
             service = Executors.newFixedThreadPool(owners.size());
             for (Owner i : owners) {
-                Future<Long> result = service.submit(()->getReservedDays(from,to,i.getId()));
-                System.out.println("Current Thread: " + Thread.currentThread().getName()+" | "+i.getId()+" "+ result.get());
+                Future<Long> result = service.submit(() -> countProfitFromOwner(from, to, i.getId()));
+                ownerProfit.put(i, result.get());
             }
         } finally {
             if (service != null) service.shutdown();
         }
+        return ownerProfit;
     }
 
-    public long getReservedDays(Date from, Date to, long ownerId) {
-        HashMap<Reservation, Boolean> reservations =
-                filterReservations(reservationRepo.getAllReservationsByOwner(ownerId), from, to);
-        deleteFalseReservation(reservations);
-        System.out.println("Current Thread: " + Thread.currentThread().getName());
-        long days = 0;
-        for (Reservation r : reservations.keySet()) {
-            days += r.getDaysAmount();
+    public long countProfitFromOwner(Date from, Date to, long ownerId) {
+        Set<Reservation> reservationsList = reservationRepo.getAllReservationsByOwner(ownerId);
+        long diffHours = 0;
+        for (Reservation i : reservationsList) {
+            Date reservBegine = i.getBegin();
+            Date reservEnd = i.getEnd();
+            if (from.before(reservEnd) && reservBegine.before(to)) {
+                Date maxStart = from.after(reservBegine) ? from : reservBegine;
+                Date minEnd = to.before(reservEnd) ? to : reservEnd;
+                long diff = minEnd.getTime() - maxStart.getTime();
+                diffHours += TimeUnit.MILLISECONDS.toHours(diff);
+            }
         }
-        return days;
+        return diffHours * Long.parseLong(new AppProperty().getApplicationProperties().getProperty("parkingRate"));
     }
 
-    private HashMap<Reservation, Boolean> filterReservations(Set<Reservation> reservationsList, Date from, Date
-            to) {
+    private HashMap<Reservation, Boolean> filterReservations(Set<Reservation> reservationsList, Date from, Date to) {
         HashMap<Reservation, Boolean> reservations = new HashMap<>();
         for (Reservation i : reservationsList) {
             Date reservBegine = i.getBegin();
@@ -224,8 +229,7 @@ public class ParkingServiceImp implements ParkingService {
     private Set<Long> getFinalAvailableGarageId(HashMap<Reservation, Boolean> mapReservations) {
         Set<Long> garagesId = new HashSet<>();
         mapReservations.forEach((k, v) -> {
-            if (v)
-                garagesId.add(k.getGarageId());
+            if (v) garagesId.add(k.getGarageId());
         });
         return garagesId;
     }

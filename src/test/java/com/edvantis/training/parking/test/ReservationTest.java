@@ -50,17 +50,6 @@ public class ReservationTest {
         Assert.assertNotNull(reservationRepo.getById((long) 1));
     }
 
-
-    @Test
-    public void testGetProfitByAllOwners() throws ExecutionException, InterruptedException{
-        int ownerId = 1;
-        Date from = TestsHelper.parseDate("2017-03-05 19:16:59");
-        Date to = TestsHelper.parseDate("2017-03-15 19:16:59");
-        //System.out.println("" + parkingService.getReservedDays(from, to, ownerId));
-        parkingService.getProfitForAllOwners(from,to);
-    }
-
-
     @Test
     public void testGetAvailableGaragesLowerBoundaryDate() {
         int parkingId = 1;

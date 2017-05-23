@@ -2,7 +2,7 @@ package com.edvantis.training.parking;
 
 import com.edvantis.training.parking.config.ApplicationConfig;
 import com.edvantis.training.parking.models.*;
-import com.edvantis.training.parking.repository.OwnerRepository;
+import com.edvantis.training.parking.repository.ReservationRepository;
 import com.edvantis.training.parking.services.ParkingService;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
@@ -13,17 +13,19 @@ import java.util.ArrayList;
 import java.util.Date;
 
 public class Application {
-    public static Date from = parseDate("2017-03-05 19:16:59");
-    public static Date to = parseDate("2017-03-15 19:16:59");
+    public static Date from = parseDate("2017-03-18 19:14:59");
+    public static Date to = parseDate("2017-03-23 19:16:59");
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
 //        DataBaseJdbcUtil.createDb();
         AnnotationConfigApplicationContext ctx = new AnnotationConfigApplicationContext(ApplicationConfig.class);
         ParkingService parkingService = ctx.getBean(ParkingService.class);
-        OwnerRepository ownerRepo= ctx.getBean(OwnerRepository.class);
-        Owner owner = ownerRepo.getById(9);
-        owner.setFirstName("Edited_By_Service");
-        parkingService.updateOwner(owner.getId(), owner);
+        ReservationRepository reserRepo= ctx.getBean(ReservationRepository.class);
+       // Set<Reservation> set = reserRepo.getAllReservationsByOwner(4);
+        //set.forEach(i -> System.out.println(i.getId()));
+        parkingService.getProfitForAllOwners(from,to);
+        //parkingService.getProfitForAllOwners(from,to);
+        //parkingService.getReservedDays(from, to, ownerId);
 //        parkingService.populateWithMockObjects(generateObjects());
 //        List<Owner> list = parkingService.getAllOwners();
 //        list.forEach(System.out::print);
