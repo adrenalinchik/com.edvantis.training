@@ -7,9 +7,6 @@ import com.edvantis.training.parking.services.ParkingService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
-import java.time.ZoneId;
-import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.concurrent.*;
 
@@ -79,6 +76,18 @@ public class ParkingServiceImp implements ParkingService {
     }
 
     @Override
+    public Vehicle updateVehicle(long id, Vehicle vehicle) {
+        vehicleRepo.update(id, vehicle);
+        return vehicleRepo.getById(id);
+    }
+
+    @Override
+    public Reservation updateReservation(long id, Reservation reservation) {
+        reservationRepo.update(id, reservation);
+        return reservationRepo.getById(id);
+    }
+
+    @Override
     public List<Garage> getAllParkingGarages(long parkingId) {
         return new ArrayList<>(garageRepo.getGaragesByParking(parkingId));
     }
@@ -94,10 +103,49 @@ public class ParkingServiceImp implements ParkingService {
     }
 
     @Override
-    public List<Garage> getAllGarages() {
-        return new ArrayList<>(garageRepo.getAll());
+    public List<Owner> getAllActiveOwners() {
+        return new ArrayList<>(ownerRepo.getActiveOrInactive(ModelState.ACTIVE));
     }
 
+    @Override
+    public List<Owner> getAllInactiveOwners() {
+        return new ArrayList<>(ownerRepo.getActiveOrInactive(ModelState.INACTIVE));
+    }
+
+    @Override
+    public void addNewVehicle(Vehicle vehicle) {
+        vehicleRepo.insert(vehicle);
+    }
+
+    @Override
+    public void deleteVehicle(long id) {
+        vehicleRepo.delete(id);
+    }
+
+    @Override
+    public Vehicle getVehicle(long id) {
+        return vehicleRepo.getById(id);
+    }
+
+    @Override
+    public Vehicle getVehicleByNumber(String number) {
+        return vehicleRepo.getVehicleByNumber(number);
+    }
+
+    @Override
+    public List<Vehicle> getAllVehicles() {
+        return new ArrayList<>(vehicleRepo.getAll());
+    }
+
+    @Override
+    public List<Vehicle> getAllActiveVehicles() {
+        return new ArrayList<>(vehicleRepo.getActiveOrInactive(ModelState.ACTIVE));
+    }
+
+    @Override
+    public List<Vehicle> getAllInactiveVehicles() {
+        return new ArrayList<>(vehicleRepo.getActiveOrInactive(ModelState.INACTIVE));
+    }
 
     @Override
     public List<Vehicle> getOwnerVehicles(long ownerId) {
@@ -105,8 +153,24 @@ public class ParkingServiceImp implements ParkingService {
     }
 
     @Override
+    public List<Garage> getAllGarages() {
+        return new ArrayList<>(garageRepo.getAll());
+    }
+
+
+    @Override
     public List<Reservation> getAllReservations() {
         return new ArrayList<>(reservationRepo.getAllReservations());
+    }
+
+    @Override
+    public List<Reservation> getAllActiveReservations() {
+        return new ArrayList<>(reservationRepo.getActiveOrInactive(ModelState.ACTIVE));
+    }
+
+    @Override
+    public List<Reservation> getAllInactiveReservations() {
+        return new ArrayList<>(reservationRepo.getActiveOrInactive(ModelState.INACTIVE));
     }
 
     @Override

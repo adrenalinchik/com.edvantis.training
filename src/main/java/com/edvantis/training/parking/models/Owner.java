@@ -18,8 +18,6 @@ import java.util.Set;
 @Table(name = "OWNER")
 public class Owner {
 
-    private static final String date = Util.getDatePattern();
-
     @Id
     @GeneratedValue(generator = "increment")
     @GenericGenerator(name = "increment", strategy = "increment")
@@ -36,10 +34,13 @@ public class Owner {
     @Enumerated(EnumType.STRING)
     private Gender gender;
 
-
     @Column(name = "DOB")
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate dob;
+
+    @Column(name = "STATE")
+    @Enumerated(EnumType.STRING)
+    private ModelState state = ModelState.ACTIVE;
 
     @JsonIgnore
     @OneToMany(orphanRemoval = true, mappedBy = "owner", fetch = FetchType.EAGER)
@@ -88,6 +89,14 @@ public class Owner {
         this.dob = age;
     }
 
+    public ModelState getState() {
+        return state;
+    }
+
+    public void setState(ModelState state) {
+        this.state = state;
+    }
+
     public Vehicle getVehicleByNumber(String vehicleNumber) {
         Vehicle vehicle = null;
         for (Vehicle v : userVehicles) {
@@ -133,7 +142,6 @@ public class Owner {
         result = 31 * result + (lastName != null ? lastName.hashCode() : 0);
         result = 31 * result + (gender != null ? gender.hashCode() : 0);
         result = 31 * result + (dob != null ? dob.hashCode() : 0);
-        result = 31 * result + (userVehicles != null ? userVehicles.hashCode() : 0);
         return result;
     }
 }

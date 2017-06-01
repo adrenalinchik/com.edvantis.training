@@ -15,6 +15,9 @@
     <script type="text/javascript"
             src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.1/js/bootstrap-datepicker.min.js"></script>
     <script type="text/javascript" src="<c:url value="../../resources/js/parking.js"/>"></script>
+    <script type="text/javascript" src="<c:url value="../../resources/js/owner.js"/>"></script>
+    <script type="text/javascript" src="<c:url value="../../resources/js/vehicle.js"/>"></script>
+    <script type="text/javascript" src="<c:url value="../../resources/js/reservation.js"/>"></script>
 </head>
 <body>
 
@@ -54,7 +57,22 @@
                 </div>
                 <div id="owners" class="tab-pane fade">
                     <h2>Owners</h2>
-                    <table class="table table-striped table-bordered" id="ownerTable" cellspacing="0" width="100%">
+                    <table class="table table-striped table-bordered" id="activeOwnerTable" cellspacing="0"
+                           width="100%">
+                        <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>First Name</th>
+                            <th>Last Name</th>
+                            <th>Gender</th>
+                            <th>Age</th>
+                            <th>Actions</th>
+                        </tr>
+                        </thead>
+                    </table>
+                    <h3>Inactive Owners</h3>
+                    <table class="table table-striped table-bordered" id="inactiveOwnerTable" cellspacing="0"
+                           width="100%">
                         <thead>
                         <tr>
                             <th>ID</th>
@@ -88,26 +106,109 @@
                         </div>
                     </div>
                 </div>
-
                 <div id="vehicles" class="tab-pane fade">
                     <h2>Vehicles</h2>
-                    <p>
-                        In this section you can see all vehicles in the all parkings. Also you can filter vehicles
-                        by owner,
-                        parking, vehicle type.
-                    </p>
-                    <ul>
-
-                    </ul>
+                    <table class="table table-striped table-bordered" id="activeVehicleTable" cellspacing="0"
+                           width="100%">
+                        <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Owner</th>
+                            <th>Number</th>
+                            <th>Model</th>
+                            <th>Type</th>
+                            <th>Actions</th>
+                        </tr>
+                        </thead>
+                    </table>
+                    <h3>Inactive Vehicles</h3>
+                    <table class="table table-striped table-bordered" id="inactiveVehicleTable" cellspacing="0"
+                           width="100%">
+                        <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Owner</th>
+                            <th>Number</th>
+                            <th>Model</th>
+                            <th>Type</th>
+                            <th>Actions</th>
+                        </tr>
+                        </thead>
+                    </table>
+                    <div id="deleteVehicleModal" class="modal fade" role="dialog">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                    <h4 class="modal-title">Delete <var id="number">number</var> vehicle</h4>
+                                </div>
+                                <div class="modal-body">
+                                    <p>Are you sure you want to delete vehicle?</p>
+                                </div>
+                                <div class="modal-footer">
+                                    <button id="deleteVehicleButton" type="button" class="btn btn-default">
+                                        Yes
+                                    </button>
+                                    <button type="button" class="btn btn-primary" data-dismiss="modal">
+                                        No
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
                 <div id="reservations" class="tab-pane fade">
                     <h2>Reservations</h2>
-                    <p>
-                        In this section you can make reservation for specific owner.
-                    </p>
-                    <ul>
-
-                    </ul>
+                    <table class="table table-striped table-bordered" id="activeReservationTable" cellspacing="0"
+                           width="100%">
+                        <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Start</th>
+                            <th>End</th>
+                            <th>Owner</th>
+                            <th>Parking</th>
+                            <th>Garage</th>
+                            <th>Actions</th>
+                        </tr>
+                        </thead>
+                    </table>
+                    <h3>Inactive Reservations</h3>
+                    <table class="table table-striped table-bordered" id="inactiveReservationTable" cellspacing="0"
+                           width="100%">
+                        <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Start</th>
+                            <th>End</th>
+                            <th>Owner</th>
+                            <th>Parking</th>
+                            <th>Garage</th>
+                            <th>Actions</th>
+                        </tr>
+                        </thead>
+                    </table>
+                    <div id="deleteReservationModal" class="modal fade" role="dialog">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                    <h4 class="modal-title">Delete <var id="id">id</var> vehicle</h4>
+                                </div>
+                                <div class="modal-body">
+                                    <p>Are you sure you want to delete vehicle?</p>
+                                </div>
+                                <div class="modal-footer">
+                                    <button id="deleteReservationButton" type="button" class="btn btn-default">
+                                        Yes
+                                    </button>
+                                    <button type="button" class="btn btn-primary" data-dismiss="modal">
+                                        No
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -207,9 +308,98 @@
                     </div>
                 </div>
             </div>
-            <button id="add_vehicle" type="button" class="btn btn-primary btn-block" style="display:none;">
+            <button id="add_vehicle" type="button" class="btn btn-primary btn-block"
+                    data-toggle="modal"
+                    data-target="#vehicleModal"
+                    style="display:none;">
                 Add Vehicle
             </button>
+            <!-- Create Vehicle Modal -->
+            <div class="modal fade text-left" id="vehicleModal" tabindex="-1" role="dialog"
+                 aria-labelledby="ownerModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <!-- Modal Header -->
+                        <div class="modal-header">
+                            <button type="button" class="close"
+                                    data-dismiss="modal">
+                                <span aria-hidden="true">&times;</span>
+                                <span class="sr-only">Close</span>
+                            </button>
+                            <h4 class="modal-title" id="vehicleModalLabel">
+                                <var id="vehicleModalHeader">Create New Vehicle</var>
+                            </h4>
+                        </div>
+                        <!-- Vehicle Modal Body -->
+                        <div class="modal-body">
+                            <form class="form-horizontal" role="form" id="vehicleForm">
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label requiredField" for="vehicleOwnerInput">
+                                        Owner
+                                        <span class="asteriskField">
+                                           *
+                                        </span>
+                                    </label>
+                                    <div class="col-sm-10">
+                                        <input type="text" class="form-control"
+                                               id="vehicleOwnerInput" placeholder="Select owner.." list="ownerList"
+                                               required/>
+                                        <datalist id="ownerList">
+                                        </datalist>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label requiredField" for="vehicleNumberInput">
+                                        Number
+                                        <span class="asteriskField">
+                                           *
+                                        </span>
+                                    </label>
+                                    <div class="col-sm-10">
+                                        <input type="text" class="form-control"
+                                               id="vehicleNumberInput" placeholder="Enter vehicle number" required/>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label requiredField" for="vehicleModelInput">
+                                        Model
+                                    </label>
+                                    <div class="col-sm-10">
+                                        <input type="text" class="form-control"
+                                               id="vehicleModelInput" placeholder="Enter vehicle model"/>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label requiredField" for="vehicleModelInput">
+                                        Type
+                                    </label>
+                                    <div class="col-sm-10">
+                                        <input type="text" class="form-control"
+                                               id="vehicleType" placeholder="Select vehicle type.."
+                                               list="vehicleTypeList"/>
+                                        <datalist id="vehicleTypeList">
+                                            <option value="ELECTRO">
+                                            <option value="HIBRID">
+                                            <option value="GASOLINE">
+                                            <option value="DIESEL">
+                                        </datalist>
+                                    </div>
+                                </div>
+                                <!--vehicle Modal Footer -->
+                                <div class="modal-footer">
+                                    <button type="button" id="closeVehicleForm" class="btn btn-default"
+                                            data-dismiss="modal">
+                                        Close
+                                    </button>
+                                    <button type="submit" id="submitVehicleForm" class="btn btn-primary">
+                                        Submit
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
             <button id="add_reservation" type="button" class="btn btn-primary btn-block" style="display:none;">
                 Make Reservation
             </button>

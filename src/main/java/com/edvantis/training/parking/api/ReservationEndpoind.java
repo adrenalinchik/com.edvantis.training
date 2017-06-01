@@ -3,6 +3,7 @@ package com.edvantis.training.parking.api;
 import com.edvantis.training.parking.models.Garage;
 import com.edvantis.training.parking.models.GarageType;
 import com.edvantis.training.parking.models.Reservation;
+import com.edvantis.training.parking.models.Vehicle;
 import com.edvantis.training.parking.services.ParkingService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,6 +17,7 @@ import java.util.List;
 import static org.springframework.http.HttpStatus.CREATED;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
+import static org.springframework.web.bind.annotation.RequestMethod.PUT;
 
 /**
  * Created by taras.fihurnyak on 5/3/2017.
@@ -33,6 +35,15 @@ public class ReservationEndpoind {
         this.parkingService = parkingService;
     }
 
+    @RequestMapping(value = "/reservations/active", method = GET)
+    public List<Reservation> getAllActiveReservations() {
+        return parkingService.getAllActiveReservations();
+    }
+
+    @RequestMapping(value = "/reservations/inactive", method = GET)
+    public List<Reservation> getAllInactiveReservations() {
+        return parkingService.getAllInactiveReservations();
+    }
 
     //Get All Reservations
     @RequestMapping(value = "/reservations", method = GET)
@@ -65,5 +76,9 @@ public class ReservationEndpoind {
         return type == null ? parkingService.makeReservation(reser) : parkingService.makeReservation(reser, type);
     }
 
+    @RequestMapping(value = "/reservation/updateReservation", method = PUT)
+    public Reservation updateReservation(@RequestBody Reservation reser) {
+        return parkingService.updateReservation(reser.getId(), reser);
+    }
 
 }

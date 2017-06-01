@@ -1,5 +1,7 @@
 package com.edvantis.training.parking.repository.jdbc.impl;
 
+import com.edvantis.training.parking.models.ModelState;
+import com.edvantis.training.parking.models.Owner;
 import com.edvantis.training.parking.models.Vehicle;
 import com.edvantis.training.parking.models.VehicleType;
 import com.edvantis.training.parking.repository.VehicleRepository;
@@ -31,6 +33,11 @@ public class VehicleJdbcRepositoryImp extends AbstractJdbcRepository implements 
     @Autowired
     public VehicleJdbcRepositoryImp(String dbName) {
         super(dbName);
+    }
+
+    @Override
+    public Set<Vehicle> getActiveOrInactive(ModelState status) {
+        throw new UnsupportedOperationException("Not implemented");
     }
 
     @Override

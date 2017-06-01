@@ -2,6 +2,7 @@ package com.edvantis.training.parking.repository;
 
 import com.edvantis.training.parking.models.Garage;
 import com.edvantis.training.parking.models.GarageType;
+import com.edvantis.training.parking.models.ModelState;
 import com.edvantis.training.parking.models.Reservation;
 
 import java.util.Set;
@@ -36,5 +37,7 @@ public interface ReservationRepository {
     Set<Garage> getAllGarages();
 
     Reservation getLastReservation();
+
+    Set<Reservation> getActiveOrInactive(ModelState state);
 
 }

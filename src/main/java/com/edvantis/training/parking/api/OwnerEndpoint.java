@@ -46,6 +46,16 @@ public class OwnerEndpoint {
         return parkingService.getAllOwners();
     }
 
+    @RequestMapping(value = "/owners/active", method = GET)
+    public List<Owner> getAllActiveOwners() {
+        return parkingService.getAllActiveOwners();
+    }
+
+    @RequestMapping(value = "/owners/inactive", method = GET)
+    public List<Owner> getAllInactiveOwners() {
+        return parkingService.getAllInactiveOwners();
+    }
+
     @ResponseStatus(CREATED)
     @RequestMapping(value = "/owner/createOwner", method = POST)
     public Owner addNewOwner(@RequestBody Owner owner) {
@@ -55,12 +65,11 @@ public class OwnerEndpoint {
 
     @RequestMapping(value = "/owner/updateOwner", method = PUT)
     public Owner updateOwner(@RequestBody Owner owner) {
-        logger.info("Inside Edit controller");
         return parkingService.updateOwner(owner.getId(), owner);
     }
 
     @RequestMapping(value = "/owner/delete/{ownerId}", method = DELETE)
     public void deleteOwner(@PathVariable("ownerId") long ownerId) {
-       parkingService.deleteOwner(ownerId);
+        parkingService.deleteOwner(ownerId);
     }
 }

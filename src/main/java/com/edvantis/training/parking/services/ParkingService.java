@@ -51,4 +51,30 @@ public interface ParkingService {
 
     long countProfitFromOwner(Date from, Date to, long ownerId);
 
+    List<Owner> getAllActiveOwners();
+
+    List<Owner> getAllInactiveOwners();
+
+    void deleteVehicle(long id);
+
+    List<Vehicle> getAllVehicles();
+
+    List<Vehicle> getAllActiveVehicles();
+
+    List<Vehicle> getAllInactiveVehicles();
+
+    Vehicle getVehicle(long id);
+
+    Vehicle updateVehicle(long id, Vehicle vehicle);
+
+    void addNewVehicle(Vehicle vehicle);
+
+    Vehicle getVehicleByNumber(String number);
+
+    List<Reservation> getAllInactiveReservations();
+
+    List<Reservation> getAllActiveReservations();
+
+    Reservation updateReservation(long id, Reservation reservation);
+
 }

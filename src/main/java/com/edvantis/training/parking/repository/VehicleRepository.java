@@ -1,5 +1,7 @@
 package com.edvantis.training.parking.repository;
 
+import com.edvantis.training.parking.models.ModelState;
+import com.edvantis.training.parking.models.Owner;
 import com.edvantis.training.parking.models.Vehicle;
 
 import java.util.Set;
@@ -20,4 +22,8 @@ public interface VehicleRepository {
     void delete(long Id);
 
     Set<Vehicle> getOwnerVehicles(long id);
+
+    Set<Vehicle> getActiveOrInactive(ModelState status);
+
+    Vehicle getVehicleByNumber(String number);
 }

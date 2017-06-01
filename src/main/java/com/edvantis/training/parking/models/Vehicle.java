@@ -34,6 +34,10 @@ public class Vehicle {
     @Enumerated(EnumType.STRING)
     private VehicleType carType;
 
+    @Column(name = "STATE")
+    @Enumerated(EnumType.STRING)
+    private ModelState state = ModelState.ACTIVE;
+
     public Vehicle() {
     }
 
@@ -75,5 +79,38 @@ public class Vehicle {
 
     public void setCarType(VehicleType carType) {
         this.carType = carType;
+    }
+
+    public ModelState getState() {
+        return state;
+    }
+
+    public void setState(ModelState state) {
+        this.state = state;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Vehicle vehicle = (Vehicle) o;
+
+        if (id != vehicle.id) return false;
+        if (owner != null ? !owner.equals(vehicle.owner) : vehicle.owner != null) return false;
+        if (model != null ? !model.equals(vehicle.model) : vehicle.model != null) return false;
+        if (number != null ? !number.equals(vehicle.number) : vehicle.number != null) return false;
+        if (carType != vehicle.carType) return false;
+        return state == vehicle.state;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = (int) (id ^ (id >>> 32));
+        result = 31 * result + (model != null ? model.hashCode() : 0);
+        result = 31 * result + (number != null ? number.hashCode() : 0);
+        result = 31 * result + (carType != null ? carType.hashCode() : 0);
+        result = 31 * result + (state != null ? state.hashCode() : 0);
+        return result;
     }
 }

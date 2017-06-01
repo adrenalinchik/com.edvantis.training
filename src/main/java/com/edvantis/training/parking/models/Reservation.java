@@ -38,6 +38,10 @@ public class Reservation {
     @Column(name = "GARAGE_ID")
     private long garageId;
 
+    @Column(name = "STATE")
+    @Enumerated(EnumType.STRING)
+    private ModelState state = ModelState.ACTIVE;
+
     public Reservation() {
     }
 
@@ -91,6 +95,14 @@ public class Reservation {
 
     public void setGarageId(long garageId) {
         this.garageId = garageId;
+    }
+
+    public ModelState getState() {
+        return state;
+    }
+
+    public void setState(ModelState state) {
+        this.state = state;
     }
 
     @Override

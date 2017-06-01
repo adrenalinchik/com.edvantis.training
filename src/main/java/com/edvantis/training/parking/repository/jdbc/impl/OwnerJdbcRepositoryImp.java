@@ -1,6 +1,7 @@
 package com.edvantis.training.parking.repository.jdbc.impl;
 
 import com.edvantis.training.parking.models.Gender;
+import com.edvantis.training.parking.models.ModelState;
 import com.edvantis.training.parking.models.Owner;
 import com.edvantis.training.parking.repository.OwnerRepository;
 import com.edvantis.training.parking.repository.jdbc.AbstractJdbcRepository;
@@ -29,6 +30,11 @@ public class OwnerJdbcRepositoryImp extends AbstractJdbcRepository implements Ow
     @Autowired
     public OwnerJdbcRepositoryImp(String dbName) {
         super(dbName);
+    }
+
+    @Override
+    public Set<Owner> getActiveOrInactive(ModelState status) {
+        throw new UnsupportedOperationException("Not implemented");
     }
 
     @Override

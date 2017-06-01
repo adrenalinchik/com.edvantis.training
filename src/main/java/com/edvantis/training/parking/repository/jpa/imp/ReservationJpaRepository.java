@@ -1,9 +1,6 @@
 package com.edvantis.training.parking.repository.jpa.imp;
 
-import com.edvantis.training.parking.models.Garage;
-import com.edvantis.training.parking.models.GarageType;
-import com.edvantis.training.parking.models.Reservation;
-import com.edvantis.training.parking.models.Reservation_;
+import com.edvantis.training.parking.models.*;
 import com.edvantis.training.parking.repository.GarageRepository;
 import com.edvantis.training.parking.repository.ReservationRepository;
 import com.edvantis.training.parking.repository.jpa.CrudRepository;
@@ -120,7 +117,19 @@ public class ReservationJpaRepository extends CrudRepository<Reservation> implem
         if (em.isOpen()) em.close();
         return reservationsSet;
     }
-
+    @Override
+    public Set<Reservation> getActiveOrInactive(ModelState state) {
+        EntityManager em = emFactory.createEntityManager();
+        CriteriaBuilder builder = em.getCriteriaBuilder();
+        CriteriaQuery<Reservation> cq = builder.createQuery(Reservation.class);
+        Root<Reservation> reservationRoot = cq.from(Reservation.class);
+        cq.where(builder.equal(reservationRoot.get(Reservation_.state), state));
+        Set<Reservation> reservations = new HashSet<>(em.createQuery(cq).getResultList());
+        if (em.isOpen()) {
+            em.close();
+        }
+        return reservations;
+    }
     @Override
     public Set<Reservation> getAllReservationsByParking(long parkingId) {
         EntityManager em = emFactory.createEntityManager();

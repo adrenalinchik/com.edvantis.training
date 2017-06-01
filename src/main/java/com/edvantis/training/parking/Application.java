@@ -1,6 +1,7 @@
 package com.edvantis.training.parking;
 
 import com.edvantis.training.parking.config.ApplicationConfig;
+import com.edvantis.training.parking.jdbc.DataBaseJdbcUtil;
 import com.edvantis.training.parking.models.*;
 import com.edvantis.training.parking.repository.ReservationRepository;
 import com.edvantis.training.parking.services.ParkingService;
@@ -11,24 +12,22 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 public class Application {
     public static Date from = parseDate("2017-03-18 19:14:59");
     public static Date to = parseDate("2017-03-23 19:16:59");
 
     public static void main(String[] args) throws Exception {
+//           DataBaseJdbcUtil.dropDb();
 //        DataBaseJdbcUtil.createDb();
         AnnotationConfigApplicationContext ctx = new AnnotationConfigApplicationContext(ApplicationConfig.class);
         ParkingService parkingService = ctx.getBean(ParkingService.class);
-        ReservationRepository reserRepo= ctx.getBean(ReservationRepository.class);
-       // Set<Reservation> set = reserRepo.getAllReservationsByOwner(4);
-        //set.forEach(i -> System.out.println(i.getId()));
-        parkingService.getProfitForAllOwners(from,to);
-        //parkingService.getProfitForAllOwners(from,to);
-        //parkingService.getReservedDays(from, to, ownerId);
-//        parkingService.populateWithMockObjects(generateObjects());
-//        List<Owner> list = parkingService.getAllOwners();
-//        list.forEach(System.out::print);
+        ReservationRepository reserRepo = ctx.getBean(ReservationRepository.class);
+        //  parkingService.populateWithMockObjects(generateObjects());
+
+//        List<Owner> list = parkingService.getAllActiveOwners();
+//        list.forEach(System.out::println);
 //        parkingService.getAvailableGarages(from, to);
 //        Reservation r= new Reservation();
 //        r.setBegin(from);
