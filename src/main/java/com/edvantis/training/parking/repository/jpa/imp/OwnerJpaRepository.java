@@ -1,6 +1,7 @@
 package com.edvantis.training.parking.repository.jpa.imp;
 
 import com.edvantis.training.parking.models.*;
+import com.edvantis.training.parking.models.enums.ModelState;
 import com.edvantis.training.parking.repository.OwnerRepository;
 import com.edvantis.training.parking.repository.jpa.CrudRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,7 +11,6 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.criteria.*;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 /**

@@ -1,9 +1,8 @@
 package com.edvantis.training.parking.repository.jdbc.impl;
 
-import com.edvantis.training.parking.models.ModelState;
-import com.edvantis.training.parking.models.Owner;
+import com.edvantis.training.parking.models.enums.ModelState;
 import com.edvantis.training.parking.models.Vehicle;
-import com.edvantis.training.parking.models.VehicleType;
+import com.edvantis.training.parking.models.enums.VehicleType;
 import com.edvantis.training.parking.repository.VehicleRepository;
 import com.edvantis.training.parking.repository.jdbc.AbstractJdbcRepository;
 import org.slf4j.Logger;
@@ -19,7 +18,7 @@ import java.sql.Types;
 import java.util.HashSet;
 import java.util.Set;
 
-import static com.edvantis.training.parking.models.VehicleType.*;
+import static com.edvantis.training.parking.models.enums.VehicleType.*;
 
 /**
  * Created by taras.fihurnyak on 2/9/2017.

@@ -26,8 +26,8 @@ public class TestControllerContext {
     }
 
 //    @Bean
-//    public ParkingService parkingService() {
-//        return Mockito.mock(ParkingService.class);
+//    public HelpService parkingService() {
+//        return Mockito.mock(HelpService.class);
 //    }
 
     private EntityManagerFactory getEntityManagerFactoryInstance() {

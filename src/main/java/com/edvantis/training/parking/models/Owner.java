@@ -1,6 +1,7 @@
 package com.edvantis.training.parking.models;
 
-import com.edvantis.training.parking.config.Util;
+import com.edvantis.training.parking.models.enums.Gender;
+import com.edvantis.training.parking.models.enums.ModelState;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.GenericGenerator;

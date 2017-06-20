@@ -1,7 +1,7 @@
 package com.edvantis.training.parking.api;
 
 import com.edvantis.training.parking.models.Garage;
-import com.edvantis.training.parking.services.ParkingService;
+import com.edvantis.training.parking.services.GarageService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,23 +23,23 @@ public class GarageEndpoind {
 
     private final static Logger logger = LoggerFactory.getLogger(OwnerEndpoint.class);
 
-    private final ParkingService parkingService;
+    private final GarageService garageService;
 
     @Autowired
-    public GarageEndpoind(ParkingService parkingService) {
-        this.parkingService = parkingService;
+    public GarageEndpoind(GarageService garageService) {
+        this.garageService = garageService;
     }
 
 
     //Get All Garages for specific parking
     @RequestMapping(value = "/garages/parking/{parkingId}", method = GET)
     public List<Garage> getGarages(@PathVariable("parkingId") long parkingId) {
-        return parkingService.getAllParkingGarages(parkingId);
+        return garageService.getAllParkingGarages(parkingId);
     }
 
     //Get All garages from the database
     @RequestMapping(value = "/garages", method = GET)
     public List<Garage> getAllGarages() {
-        return parkingService.getAllGarages();
+        return garageService.getAllGarages();
     }
 }

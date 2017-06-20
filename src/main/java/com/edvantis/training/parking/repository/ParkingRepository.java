@@ -1,6 +1,7 @@
 package com.edvantis.training.parking.repository;
 
 import com.edvantis.training.parking.models.Parking;
+import com.edvantis.training.parking.models.enums.ModelState;
 
 import java.util.Set;
 
@@ -19,4 +20,7 @@ public interface ParkingRepository {
 
     void delete(long Id);
 
+    Set<Parking> getActiveOrInactive(ModelState state);
+
+    Parking getParkingByAddress(String address);
 }

@@ -1,6 +1,8 @@
 package com.edvantis.training.parking.repository.jpa.imp;
 
 import com.edvantis.training.parking.models.*;
+import com.edvantis.training.parking.models.enums.GarageType;
+import com.edvantis.training.parking.models.enums.ModelState;
 import com.edvantis.training.parking.repository.GarageRepository;
 import com.edvantis.training.parking.repository.ReservationRepository;
 import com.edvantis.training.parking.repository.jpa.CrudRepository;
@@ -13,10 +15,7 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 import java.math.BigInteger;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Created by taras.fihurnyak on 3/7/2017.
@@ -117,6 +116,19 @@ public class ReservationJpaRepository extends CrudRepository<Reservation> implem
         if (em.isOpen()) em.close();
         return reservationsSet;
     }
+
+    @Override
+    public Set<Reservation> getReservationsByStartDate(Date start) {
+        EntityManager em = emFactory.createEntityManager();
+        CriteriaBuilder builder = em.getCriteriaBuilder();
+        CriteriaQuery<Reservation> cq = builder.createQuery(Reservation.class);
+        Root<Reservation> reservationRoot = cq.from(Reservation.class);
+        cq.where(builder.equal(reservationRoot.get(Reservation_.begin), start));
+        Set<Reservation> reservationsSet = new HashSet<>(em.createQuery(cq).getResultList());
+        if (em.isOpen()) em.close();
+        return reservationsSet;
+    }
+
     @Override
     public Set<Reservation> getActiveOrInactive(ModelState state) {
         EntityManager em = emFactory.createEntityManager();

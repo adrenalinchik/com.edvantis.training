@@ -36,7 +36,7 @@ public abstract class CrudRepository<T> {
         EntityManager em = emFactory.createEntityManager();
         CriteriaBuilder builder = em.getCriteriaBuilder();
         CriteriaQuery<T> cq = builder.createQuery(classType);
-        Root<T> reservationRoot = cq.from(classType);
+        Root<T> rootRoot = cq.from(classType);
         Set<T> set = new HashSet<>(em.createQuery(cq).getResultList());
         if (em.isOpen()) em.close();
         return set;

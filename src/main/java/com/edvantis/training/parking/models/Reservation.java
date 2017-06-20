@@ -1,5 +1,6 @@
 package com.edvantis.training.parking.models;
 
+import com.edvantis.training.parking.models.enums.ModelState;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import org.hibernate.annotations.GenericGenerator;
 
@@ -31,6 +32,9 @@ public class Reservation {
 
     @Column(name = "PARKING_ID")
     private long parkingId;
+
+    @Column(name = "VEHICLE_NUMBER")
+    private String vehicleNumber;
 
     @Column(name = "OWNER_ID")
     private long ownerId;
@@ -89,6 +93,14 @@ public class Reservation {
         this.ownerId = ownerId;
     }
 
+    public String getVehicleNumber() {
+        return vehicleNumber;
+    }
+
+    public void setVehicleNumber(String vehicleNumber) {
+        this.vehicleNumber = vehicleNumber;
+    }
+
     public long getGarageId() {
         return garageId;
     }
@@ -115,6 +127,7 @@ public class Reservation {
         if (ownerId != that.ownerId) return false;
         if (garageId != that.garageId) return false;
         if (!begin.equals(that.begin)) return false;
+        if (!vehicleNumber.equals(that.vehicleNumber)) return false;
         return end.equals(that.end);
     }
 
@@ -122,6 +135,7 @@ public class Reservation {
     public int hashCode() {
         int result = 31 * begin.hashCode();
         result = 31 * result + end.hashCode();
+        result = 31 * result + vehicleNumber.hashCode();
         result = 31 * result + (int) (parkingId ^ (parkingId >>> 32));
         result = 31 * result + (int) (ownerId ^ (ownerId >>> 32));
         result = 31 * result + (int) (garageId ^ (garageId >>> 32));

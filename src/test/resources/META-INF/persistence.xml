@@ -23,6 +23,7 @@
         <class>com.edvantis.training.parking.models.Owner</class>
         <class>com.edvantis.training.parking.models.Vehicle</class>
         <class>com.edvantis.training.parking.models.Reservation</class>
+        <class>com.edvantis.training.parking.models.ActivityLog</class>
         <properties>
             <property name="hibernate.dialect" value="org.hibernate.dialect.H2Dialect"/>
             <property name="hibernate.hbm2ddl.auto" value="update"/>

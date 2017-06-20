@@ -1,7 +1,7 @@
 package com.edvantis.training.parking.repository;
 
 import com.edvantis.training.parking.models.Garage;
-import com.edvantis.training.parking.models.GarageType;
+import com.edvantis.training.parking.models.enums.GarageType;
 
 import java.util.Set;
 

@@ -1,6 +1,7 @@
 package com.edvantis.training.parking.repository.jpa.imp;
 
 import com.edvantis.training.parking.models.*;
+import com.edvantis.training.parking.models.enums.ModelState;
 import com.edvantis.training.parking.repository.VehicleRepository;
 import com.edvantis.training.parking.repository.jpa.CrudRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,10 +49,10 @@ public class VehicleJpaRepository extends CrudRepository<Vehicle> implements Veh
         EntityManager em = emFactory.createEntityManager();
         String makeQuery = "SELECT t1.ID " +
                 "FROM vehicle as t1 " +
-                "WHERE t1.OWNER_ID = " + ownerId;
+                "WHERE t1.OWNER_ID = " + ownerId +
+                " AND t1.STATE = 'ACTIVE'";
         List<? extends BigInteger> vehicleIdList = em.createNativeQuery(makeQuery).getResultList();
-        vehicleIdList.forEach(i -> vehicles.add(getById(i.longValue()))
-        );
+        vehicleIdList.forEach(i -> vehicles.add(getById(i.longValue())));
         if (em.isOpen()) em.close();
         return vehicles;
     }

@@ -1,12 +1,15 @@
 package com.edvantis.training.parking.test.controllerTests;
 
 import com.edvantis.training.parking.api.OwnerEndpoint;
+import com.edvantis.training.parking.api.VehicleEndpoint;
 import com.edvantis.training.parking.config.TestControllerContext;
-import com.edvantis.training.parking.models.Gender;
+import com.edvantis.training.parking.models.enums.Gender;
 import com.edvantis.training.parking.models.Owner;
 import com.edvantis.training.parking.models.Vehicle;
-import com.edvantis.training.parking.models.VehicleType;
-import com.edvantis.training.parking.services.ParkingService;
+import com.edvantis.training.parking.models.enums.VehicleType;
+import com.edvantis.training.parking.services.HelpService;
+import com.edvantis.training.parking.services.OwnerService;
+import com.edvantis.training.parking.services.VehicleService;
 import com.edvantis.training.parking.util.TestsHelper;
 import org.junit.Before;
 import org.junit.Test;
@@ -44,15 +47,18 @@ public class OwnerControllerTest {
 
     private MockMvc mockMvc;
 
-    private ParkingService parkingServiceMock;
+    private OwnerService ownerServiceMock;
+
+    private VehicleService vehicleServiceMock;
 
     @Autowired
     private WebApplicationContext webApplicationContext;
 
     @Before
     public void setUp() {
-        parkingServiceMock = Mockito.mock(ParkingService.class);
-        mockMvc = MockMvcBuilders.standaloneSetup(new OwnerEndpoint(parkingServiceMock))
+        ownerServiceMock = Mockito.mock(OwnerService.class);
+        vehicleServiceMock = Mockito.mock(VehicleService.class);
+        mockMvc = MockMvcBuilders.standaloneSetup(new OwnerEndpoint(ownerServiceMock), new VehicleEndpoint(vehicleServiceMock))
                 .build();
     }
 
@@ -75,7 +81,7 @@ public class OwnerControllerTest {
         ownerList.add(owner1);
         ownerList.add(owner2);
 
-        when(parkingServiceMock.getAllOwners()).thenReturn(ownerList);
+        when(ownerServiceMock.getAllOwners()).thenReturn(ownerList);
 
         mockMvc.perform(get("/parking/api/owners"))
                 .andExpect(status().isOk())
@@ -90,7 +96,7 @@ public class OwnerControllerTest {
                 .andExpect(jsonPath("$[1].lastName", is("LastName_User2")))
                 .andExpect(jsonPath("$[1].gender", is(Gender.FEMALE.toString())));
 
-        verify(parkingServiceMock, times(1)).getAllOwners();
+        verify(ownerServiceMock, times(1)).getAllOwners();
     }
 
     @Test
@@ -109,7 +115,7 @@ public class OwnerControllerTest {
         vehicList.add(v1);
         vehicList.add(v2);
 
-        when(parkingServiceMock.getOwnerVehicles(1)).thenReturn(vehicList);
+        when(vehicleServiceMock.getOwnerVehicles(1)).thenReturn(vehicList);
 
         mockMvc.perform(get("/parking/api/owner/1/vehicles"))
                 .andExpect(status().isOk())
@@ -124,7 +130,7 @@ public class OwnerControllerTest {
                 .andExpect(jsonPath("$[1].number", is("654321")))
                 .andExpect(jsonPath("$[1].carType", is(VehicleType.HIBRID.toString())));
 
-        verify(parkingServiceMock, times(1)).getOwnerVehicles(1);
+        verify(vehicleServiceMock, times(1)).getOwnerVehicles(1);
     }
 
     @Test
@@ -136,7 +142,7 @@ public class OwnerControllerTest {
         owner.setGender(Gender.MALE);
         owner.setId(1L);
 
-        doNothing().when(parkingServiceMock).addNewOwner(owner);
+        doNothing().when(ownerServiceMock).addNewOwner(owner);
 
         mockMvc.perform(
                 post("/parking/api/owners/createOwner")
@@ -144,7 +150,7 @@ public class OwnerControllerTest {
                         .content(createOwnerInJson(owner)))
                 .andExpect(status().isCreated());
 
-        verify(parkingServiceMock, times(1)).addNewOwner(owner);
+        verify(ownerServiceMock, times(1)).addNewOwner(owner);
     }
 
     private String createOwnerInJson(Owner owner) {

@@ -1,7 +1,7 @@
 package com.edvantis.training.parking.repository.jdbc.impl;
 
 import com.edvantis.training.parking.models.Garage;
-import com.edvantis.training.parking.models.GarageType;
+import com.edvantis.training.parking.models.enums.GarageType;
 import com.edvantis.training.parking.repository.GarageRepository;
 import com.edvantis.training.parking.repository.jdbc.AbstractJdbcRepository;
 import org.slf4j.Logger;

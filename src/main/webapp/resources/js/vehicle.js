@@ -7,9 +7,7 @@ var rowData;
 var data;
 var activeOwners = [];
 
-function closeOpenModal(modalLocator) {
-    $(modalLocator).modal('toggle');
-}
+
 function populateVehicleDataModal(data) {
     $('#vehicleModalHeader').text("Edit " + data.number + " vehicle");
     $('#vehicleOwnerInput').val(data.owner.firstName + " " + data.owner.lastName);
@@ -52,32 +50,6 @@ function updateCreateVehicleAjax(type, url, data) {
         type: type,
         data: JSON.stringify(data)
     })
-}
-function getOwnersToDataList() {
-    var dataList = document.getElementById('ownerList');
-    $.ajax({
-        url: '/parking/api/owners/active',
-    }).done(function (owners) {
-        activeOwners = owners;
-        owners.map(function (owner) {
-            var option = document.createElement('option');
-            option.value = owner.firstName + " " + owner.lastName;
-            dataList.appendChild(option);
-        })
-    });
-}
-
-function getOwnerId(ownerInput) {
-    var id;
-    var ownerName = ownerInput.split(" ");
-    for (var i = 0; i < activeOwners.length; i++) {
-        var first = activeOwners[i].firstName;
-        var last = activeOwners[i].lastName;
-        if (first === ownerName[0] && last === ownerName[1]) {
-            id = activeOwners[i].id;
-        }
-    }
-    return id;
 }
 
 $(document).ready(function () {
@@ -147,7 +119,7 @@ $(document).ready(function () {
     $('#activeVehicleTable tbody').on('click', 'button', function () {
         rowData = activeVehicleDataTable.row($(this).parents('tr')).data();
         closeOpenModal('#vehicleModal');
-        getOwnersToDataList();
+        getOwnersToDataList('ownerList');
         populateVehicleDataModal(rowData);
     });
 
@@ -171,39 +143,43 @@ $(document).ready(function () {
 
     $('#add_vehicle').on('click', function () {
         clearForm('#vehicleModal');
-        getOwnersToDataList();
+        getOwnersToDataList('ownerList');
     });
+
     $('#vehicleModal').on('hidden.bs.modal', function () {
         $('#vehicleModalHeader').text("Create New Vehicle");
         $('#ownerList').empty();
     });
 
     $('#vehicleForm').submit(function (event) {
-        //debugger;
         data = { //grab data from form inputs
             owner: {"id": getOwnerId($('#vehicleOwnerInput')[0].value)},
             model: $('#vehicleNumberInput')[0].value,
             number: $('#vehicleModelInput')[0].value,
             carType: $('#vehicleType')[0].value
         };
-        console.log(data);
         event.preventDefault(); // prevent default page reload
         var vehicleFormHeader = document.getElementById('vehicleModalLabel').innerText;
         if (vehicleFormHeader.indexOf('Create') > -1) {
-            updateCreateVehicleAjax('post', 'createVehicle', data).done(function () {
+            updateCreateVehicleAjax('post', 'createVehicle', data).done(function (vehicle) {
                 closeOpenModal('#vehicleModal');
                 clearForm('#vehicleForm');
                 updateActiveVehicleTable();
+                addActivityRowDashboard('vehicle', vehicle.id, 'created');
+
             });
         } else if (vehicleFormHeader.indexOf('Edit') > -1) {
             data.id = getTableRowId();
-            updateCreateVehicleAjax('put', 'updateVehicle', data).done(function () {
+            updateCreateVehicleAjax('put', 'updateVehicle', data).done(function (vehicle) {
                 closeOpenModal('#vehicleModal');
                 updateActiveVehicleTable();
                 $('#vehicleModalHeader').text("Create New Vehicle");
+                addActivityRowDashboard('vehicle', vehicle.id, 'updated');
+
             });
         }
     });
+
     $('#deleteVehicleButton').on('click', function () {
         $.ajax({
             url: '/parking/api/vehicle/delete/' + rowData.id,
@@ -211,6 +187,7 @@ $(document).ready(function () {
         }).done(function () {
             closeOpenModal('#deleteVehicleModal');
             updateInactiveVehicleTable();
+            addActivityRowDashboard('vehicle', rowData.id, 'deleted');
         });
     });
 });

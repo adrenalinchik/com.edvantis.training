@@ -1,10 +1,11 @@
 package com.edvantis.training.parking.test.controllerTests;
 
 import com.edvantis.training.parking.config.TestControllerContext;
-import com.edvantis.training.parking.controllers.ParkingController;
-import com.edvantis.training.parking.models.Gender;
+import com.edvantis.training.parking.controllers.OwnerController;
+import com.edvantis.training.parking.models.enums.Gender;
 import com.edvantis.training.parking.models.Owner;
-import com.edvantis.training.parking.services.ParkingService;
+import com.edvantis.training.parking.services.OwnerService;
+import com.edvantis.training.parking.services.VehicleService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -41,15 +42,17 @@ public class JspControllerTest {
 
     private MockMvc mockMvc;
 
-    private ParkingService parkingServiceMock;
+    private OwnerService ownerService;
+    private VehicleService vehicleService;
 
     @Autowired
     private WebApplicationContext webApplicationContext;
 
     @Before
     public void setUp() {
-        parkingServiceMock = Mockito.mock(ParkingService.class);
-        mockMvc = MockMvcBuilders.standaloneSetup(new ParkingController(parkingServiceMock))
+        ownerService = Mockito.mock(OwnerService.class);
+        vehicleService = Mockito.mock(VehicleService.class);
+        mockMvc = MockMvcBuilders.standaloneSetup(new OwnerController(ownerService))
                 .setViewResolvers(jspViewResolver())
                 .build();
     }
@@ -73,7 +76,7 @@ public class JspControllerTest {
         ownerList.add(owner1);
         ownerList.add(owner2);
 
-        when(parkingServiceMock.getAllOwners()).thenReturn(ownerList);
+        when(ownerService.getAllOwners()).thenReturn(ownerList);
 
         mockMvc.perform(get("/parking/owners"))
                 .andExpect(status().isOk())
@@ -98,7 +101,7 @@ public class JspControllerTest {
                                 hasProperty("DOB", is(LocalDate.now()))
                         )
                 )));
-        verify(parkingServiceMock, times(1)).getAllOwners();
+        verify(ownerService, times(1)).getAllOwners();
     }
 
     private ViewResolver jspViewResolver() {

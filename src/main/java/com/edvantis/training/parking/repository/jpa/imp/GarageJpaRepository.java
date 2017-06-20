@@ -1,7 +1,7 @@
 package com.edvantis.training.parking.repository.jpa.imp;
 
 import com.edvantis.training.parking.models.Garage;
-import com.edvantis.training.parking.models.GarageType;
+import com.edvantis.training.parking.models.enums.GarageType;
 import com.edvantis.training.parking.models.Garage_;
 import com.edvantis.training.parking.repository.GarageRepository;
 import com.edvantis.training.parking.repository.jpa.CrudRepository;

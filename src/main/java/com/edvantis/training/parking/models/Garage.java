@@ -1,6 +1,6 @@
 package com.edvantis.training.parking.models;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.edvantis.training.parking.models.enums.GarageType;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;

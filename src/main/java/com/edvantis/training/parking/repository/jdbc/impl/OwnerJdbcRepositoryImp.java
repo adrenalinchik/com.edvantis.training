@@ -1,7 +1,7 @@
 package com.edvantis.training.parking.repository.jdbc.impl;
 
-import com.edvantis.training.parking.models.Gender;
-import com.edvantis.training.parking.models.ModelState;
+import com.edvantis.training.parking.models.enums.Gender;
+import com.edvantis.training.parking.models.enums.ModelState;
 import com.edvantis.training.parking.models.Owner;
 import com.edvantis.training.parking.repository.OwnerRepository;
 import com.edvantis.training.parking.repository.jdbc.AbstractJdbcRepository;

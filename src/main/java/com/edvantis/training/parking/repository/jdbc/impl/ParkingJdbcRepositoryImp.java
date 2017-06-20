@@ -1,6 +1,7 @@
 package com.edvantis.training.parking.repository.jdbc.impl;
 
 import com.edvantis.training.parking.models.Parking;
+import com.edvantis.training.parking.models.enums.ModelState;
 import com.edvantis.training.parking.repository.ParkingRepository;
 import com.edvantis.training.parking.repository.jdbc.AbstractJdbcRepository;
 import org.slf4j.Logger;
@@ -38,8 +39,6 @@ public class ParkingJdbcRepositoryImp extends AbstractJdbcRepository implements 
             rs.next();
             parking = new Parking();
             parking.setAddress(rs.getString(2));
-            if (rs.getInt(3) != 0)
-                parking.setFreeGaragesNumber(rs.getInt(3));
         } catch (SQLException e) {
             logger.warn(e.getMessage());
         }
@@ -52,14 +51,16 @@ public class ParkingJdbcRepositoryImp extends AbstractJdbcRepository implements 
     }
 
     @Override
+    public Set<Parking> getActiveOrInactive(ModelState state) {
+        throw new UnsupportedOperationException("Not implemented");
+    }
+
+    @Override
     public void insert(Parking parking) {
         try {
-            PreparedStatement pstmt = getConnection().prepareStatement("INSERT INTO PARKING(MANAGER_ID, ADDRESS, FREE_GARAGES) VALUES(?,?,?)");
+            PreparedStatement pstmt = getConnection().prepareStatement("INSERT INTO PARKING(ADDRESS, GARAGES_NUMBER) VALUES(?,?)");
             pstmt.setNull(1, Types.INTEGER);
             pstmt.setString(2, parking.getAddress());
-            if (parking.getFreeGaragesNumber() != 0) {
-                pstmt.setInt(3, parking.getFreeGaragesNumber());
-            } else pstmt.setNull(3, Types.INTEGER);
             pstmt.executeUpdate();
             logger.info("Parking with id={} id saved to db successfully.", parking.getId());
         } catch (SQLException e) {
@@ -70,10 +71,9 @@ public class ParkingJdbcRepositoryImp extends AbstractJdbcRepository implements 
     @Override
     public void update(long parkingId, Parking parking) {
         try {
-            PreparedStatement pstmt = getConnection().prepareStatement("UPDATE GARAGE SET ADDRESS = ?, FREE_GARAGES = ? WHERE ID=?");
-            pstmt.setString(2, parking.getAddress());
-            pstmt.setInt(3, parking.getFreeGaragesNumber());
-            pstmt.setLong(4, parkingId);
+            PreparedStatement pstmt = getConnection().prepareStatement("UPDATE GARAGE SET ADDRESS = ? WHERE ID=?");
+            pstmt.setString(1, parking.getAddress());
+            pstmt.setLong(2, parkingId);
             pstmt.executeUpdate();
             logger.info("Parking with id={} id updated successfully.", parking.getId());
         } catch (SQLException e) {
@@ -91,5 +91,10 @@ public class ParkingJdbcRepositoryImp extends AbstractJdbcRepository implements 
         } catch (SQLException e) {
             logger.warn(e.getMessage());
         }
+    }
+
+    @Override
+    public Parking getParkingByAddress(String address) {
+        throw new UnsupportedOperationException("Not implemented");
     }
 }

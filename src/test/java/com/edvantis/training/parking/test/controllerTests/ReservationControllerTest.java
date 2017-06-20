@@ -3,10 +3,11 @@ package com.edvantis.training.parking.test.controllerTests;
 import com.edvantis.training.parking.api.ReservationEndpoind;
 import com.edvantis.training.parking.config.TestControllerContext;
 import com.edvantis.training.parking.models.Garage;
-import com.edvantis.training.parking.models.GarageType;
+import com.edvantis.training.parking.models.enums.GarageType;
 import com.edvantis.training.parking.models.Parking;
 import com.edvantis.training.parking.models.Reservation;
-import com.edvantis.training.parking.services.ParkingService;
+import com.edvantis.training.parking.services.HelpService;
+import com.edvantis.training.parking.services.ReservationService;
 import com.edvantis.training.parking.util.TestsHelper;
 import org.junit.Before;
 import org.junit.Test;
@@ -43,15 +44,15 @@ public class ReservationControllerTest {
     private Date from = TestsHelper.parseDate("2017-04-25 00:00:00");
     private Date to = TestsHelper.parseDate("2018-05-29 00:00:00");
 
-    private ParkingService parkingServiceMock;
+    private ReservationService reservationServiceMock;
 
     @Autowired
     private WebApplicationContext webApplicationContext;
 
     @Before
     public void setUp() {
-        parkingServiceMock = Mockito.mock(ParkingService.class);
-        mockMvc = MockMvcBuilders.standaloneSetup(new ReservationEndpoind(parkingServiceMock))
+        reservationServiceMock = Mockito.mock(ReservationService.class);
+        mockMvc = MockMvcBuilders.standaloneSetup(new ReservationEndpoind(reservationServiceMock))
                 .build();
     }
 
@@ -60,7 +61,6 @@ public class ReservationControllerTest {
         Parking p1 = new Parking();
         p1.setId(1L);
         p1.setAddress("Lviv, Main str 15");
-        p1.setFreeGaragesNumber(15);
         Garage g1 = new Garage();
         g1.setGarageType(GarageType.BIG);
         g1.setId(1L);
@@ -76,7 +76,7 @@ public class ReservationControllerTest {
         garageList.add(g1);
         garageList.add(g2);
 
-        when(parkingServiceMock.getAvailableGaragesByParking(any(Date.class), any(Date.class), eq(1L))).thenReturn(garageList);
+        when(reservationServiceMock.getAvailableGaragesByParking(any(Date.class), any(Date.class), eq(1L))).thenReturn(garageList);
 
         mockMvc.perform(get("/parking/api/reservation/availableGarages/parking/{parkingId}", 1)
                 .param("from", "2017-04-25")
@@ -87,17 +87,15 @@ public class ReservationControllerTest {
                 .andExpect(jsonPath("$[0].id", is(1)))
                 .andExpect(jsonPath("$[0].parking.id", is(1)))
                 .andExpect(jsonPath("$[0].parking.address", is("Lviv, Main str 15")))
-                .andExpect(jsonPath("$[0].parking.freeGaragesNumber", is(15)))
                 .andExpect(jsonPath("$[0].square", is(11.0)))
                 .andExpect(jsonPath("$[0].garageType", is(GarageType.BIG.toString())))
                 .andExpect(jsonPath("$[1].id", is(2)))
                 .andExpect(jsonPath("$[1].parking.id", is(1)))
                 .andExpect(jsonPath("$[0].parking.address", is("Lviv, Main str 15")))
-                .andExpect(jsonPath("$[0].parking.freeGaragesNumber", is(15)))
                 .andExpect(jsonPath("$[1].square", is(22.0)))
                 .andExpect(jsonPath("$[1].garageType", is(GarageType.MEDIUM.toString())));
 
-        verify(parkingServiceMock, times(1)).getAvailableGaragesByParking(from, to, 1);
+        verify(reservationServiceMock, times(1)).getAvailableGaragesByParking(from, to, 1);
     }
 
 
@@ -111,14 +109,14 @@ public class ReservationControllerTest {
         r1.setOwnerId(1);
         r1.setId(1L);
 
-        when(parkingServiceMock.makeReservation(any(Reservation.class))).thenReturn(r1);
+        when(reservationServiceMock.makeReservation(any(Reservation.class))).thenReturn(r1);
         mockMvc.perform(
                 post("/parking/api/reservations/addReservation")
                         .contentType(TestsHelper.APPLICATION_JSON_UTF8)
                         .content(createReservationInJson(r1)))
                 .andExpect(status().isCreated());
 
-        verify(parkingServiceMock, times(1)).makeReservation(any(Reservation.class));
+        verify(reservationServiceMock, times(1)).makeReservation(any(Reservation.class));
     }
 
     private String createReservationInJson(Reservation reserv) {

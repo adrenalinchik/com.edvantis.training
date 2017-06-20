@@ -1,6 +1,9 @@
 package com.edvantis.training.parking.util;
 
 import com.edvantis.training.parking.models.*;
+import com.edvantis.training.parking.models.enums.GarageType;
+import com.edvantis.training.parking.models.enums.Gender;
+import com.edvantis.training.parking.models.enums.VehicleType;
 import org.springframework.http.MediaType;
 
 import java.nio.charset.Charset;
@@ -20,7 +23,6 @@ public class TestsHelper {
         Date to = parseDate("2017-03-25 19:16:59");
         ArrayList<Object> arrayList = new ArrayList<>();
         Parking parking = new Parking();
-        parking.setFreeGaragesNumber(15);
         parking.setAddress("Lviv, Main str " + 15);
         arrayList.add(parking);
         for (int i = 0; i < 5; i++) {
@@ -58,7 +60,6 @@ public class TestsHelper {
             vehicle.setOwner(owner);
             arrayList.add(vehicle);
             Parking parking1 = new Parking();
-            parking1.setFreeGaragesNumber(1 + i);
             parking1.setAddress("Lviv, Main str " + i);
             arrayList.add(parking1);
             Garage garage = new Garage();

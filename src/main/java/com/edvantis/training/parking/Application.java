@@ -3,8 +3,11 @@ package com.edvantis.training.parking;
 import com.edvantis.training.parking.config.ApplicationConfig;
 import com.edvantis.training.parking.jdbc.DataBaseJdbcUtil;
 import com.edvantis.training.parking.models.*;
+import com.edvantis.training.parking.models.enums.GarageType;
+import com.edvantis.training.parking.models.enums.Gender;
+import com.edvantis.training.parking.models.enums.VehicleType;
 import com.edvantis.training.parking.repository.ReservationRepository;
-import com.edvantis.training.parking.services.ParkingService;
+import com.edvantis.training.parking.services.HelpService;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 import java.text.ParseException;
@@ -12,19 +15,18 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 public class Application {
     public static Date from = parseDate("2017-03-18 19:14:59");
     public static Date to = parseDate("2017-03-23 19:16:59");
 
     public static void main(String[] args) throws Exception {
-//           DataBaseJdbcUtil.dropDb();
-//        DataBaseJdbcUtil.createDb();
+        DataBaseJdbcUtil.dropDb();
+        DataBaseJdbcUtil.createDb();
         AnnotationConfigApplicationContext ctx = new AnnotationConfigApplicationContext(ApplicationConfig.class);
-        ParkingService parkingService = ctx.getBean(ParkingService.class);
+        HelpService parkingService = ctx.getBean(HelpService.class);
         ReservationRepository reserRepo = ctx.getBean(ReservationRepository.class);
-        //  parkingService.populateWithMockObjects(generateObjects());
+        parkingService.populateWithMockObjects(generateObjects());
 
 //        List<Owner> list = parkingService.getAllActiveOwners();
 //        list.forEach(System.out::println);
@@ -68,11 +70,10 @@ public class Application {
 
 
     public static ArrayList<Object> generateObjects() {
-        Date from = parseDate("2017-03-15 19:16:59");
-        Date to = parseDate("2017-03-25 19:16:59");
+        Date from = parseDate("2017-06-15 19:16:59");
+        Date to = parseDate("2017-07-25 19:16:59");
         ArrayList<Object> arrayList = new ArrayList<>();
         Parking parking = new Parking();
-        parking.setFreeGaragesNumber(15);
         parking.setAddress("Lviv, Main str " + 15);
         arrayList.add(parking);
         for (int i = 0; i < 5; i++) {
@@ -110,8 +111,8 @@ public class Application {
             vehicle.setOwner(owner);
             arrayList.add(vehicle);
             Parking parking1 = new Parking();
-            parking1.setFreeGaragesNumber(1 + i);
             parking1.setAddress("Lviv, Main str " + i);
+            parking1.setGaragesNumber(i+25+i);
             arrayList.add(parking1);
             Garage garage = new Garage();
             garage.setGarageType(GarageType.BIG);
@@ -124,6 +125,7 @@ public class Application {
             reservation.setOwnerId(1);
             reservation.setParkingId(1);
             reservation.setGarageId(i + 1);
+            reservation.setVehicleNumber(i+"2345"+i);
             arrayList.add(reservation);
         }
 

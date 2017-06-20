@@ -1,6 +1,6 @@
 package com.edvantis.training.parking.repository;
 
-import com.edvantis.training.parking.models.ModelState;
+import com.edvantis.training.parking.models.enums.ModelState;
 import com.edvantis.training.parking.models.Owner;
 
 import java.util.Set;

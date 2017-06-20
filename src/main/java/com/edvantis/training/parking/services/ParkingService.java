@@ -1,80 +1,29 @@
 package com.edvantis.training.parking.services;
 
-import com.edvantis.training.parking.models.*;
+import com.edvantis.training.parking.models.Parking;
+import com.edvantis.training.parking.models.Reservation;
+import com.edvantis.training.parking.models.Vehicle;
 
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ExecutionException;
 
 /**
- * Created by taras.fihurnyak on 2/11/2017.
+ * Created by taras.fihurnyak on 6/14/2017.
  */
 public interface ParkingService {
 
-    void populateWithMockObjects(ArrayList<Object> arrayList);
+    List<Parking> getAllParking();
 
-    void addNewOwner(Owner owner);
+    List<Parking> getAllInactiveParking();
 
-    List<Owner> getAllOwners();
+    List<Parking> getAllActiveParking();
 
-    Owner getOwner(long id);
+    Parking getParking(long id);
 
-    Owner getOwnerByLastName(String ownerLastName);
+    Parking updateParking(long id, Parking parking);
 
-    Owner getOwnerByVehicleNumber(String vehicleNumber);
+    void addNewParking(Parking parking);
 
-    List<Vehicle> getOwnerVehicles(long ownerId);
+    void deleteParking(long id);
 
-    Reservation makeReservation(Reservation reserv, GarageType type);
-
-    Reservation makeReservation(Reservation reserv);
-
-    List<Garage> getAvailableGaragesByType(Date from, Date to, GarageType garageType);
-
-    List<Garage> getAvailableGaragesByParking(Date from, Date to, long parkingId);
-
-    List<Garage> getAvailableGarages(Date from, Date to);
-
-    Owner updateOwner(long id, Owner owner);
-
-    List<Garage> getAllParkingGarages(long parkingId);
-
-    List<Garage> getAllGarages();
-
-    List<Reservation> getAllReservations();
-
-    void deleteOwner(long id);
-
-    Map<Owner, Long> getProfitForAllOwners(Date from, Date to) throws ExecutionException, InterruptedException;
-
-    long countProfitFromOwner(Date from, Date to, long ownerId);
-
-    List<Owner> getAllActiveOwners();
-
-    List<Owner> getAllInactiveOwners();
-
-    void deleteVehicle(long id);
-
-    List<Vehicle> getAllVehicles();
-
-    List<Vehicle> getAllActiveVehicles();
-
-    List<Vehicle> getAllInactiveVehicles();
-
-    Vehicle getVehicle(long id);
-
-    Vehicle updateVehicle(long id, Vehicle vehicle);
-
-    void addNewVehicle(Vehicle vehicle);
-
-    Vehicle getVehicleByNumber(String number);
-
-    List<Reservation> getAllInactiveReservations();
-
-    List<Reservation> getAllActiveReservations();
-
-    Reservation updateReservation(long id, Reservation reservation);
-
+    Parking getParkingByAddress(String address);
 }

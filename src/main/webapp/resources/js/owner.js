@@ -1,4 +1,3 @@
-
 var activeDataTable;
 var inactiveDataTable;
 var rowData;
@@ -161,17 +160,20 @@ $(document).ready(function () {
         event.preventDefault(); // prevent default page reload
         var ownerFormHeader = document.getElementById('ownerModalLabel').innerText;
         if (ownerFormHeader.indexOf('Create') > -1) {
-            updateCreateOwnerAjax('post', 'createOwner', data).done(function () {
+            updateCreateOwnerAjax('post', 'createOwner', data).done(function (owner) {
                 closeOpenModal('#ownerModal');
                 clearForm('#ownerForm');
                 updateActiveOwnerTable();
+                addActivityRowDashboard('owner', owner.id, 'created');
             });
         } else if (ownerFormHeader.indexOf('Edit') > -1) {
             data.id = getTableRowId();
-            updateCreateOwnerAjax('put', 'updateOwner', data).done(function () {
+            updateCreateOwnerAjax('put', 'updateOwner', data).done(function (owner) {
                 closeOpenModal('#ownerModal');
                 updateActiveOwnerTable();
                 $('#ownerModalHeader').text("Create New Owner");
+                addActivityRowDashboard('owner', owner.id, 'updated');
+
             });
         }
     });
@@ -187,6 +189,7 @@ $(document).ready(function () {
         }).done(function () {
             closeOpenModal('#deleteOwnerModal');
             updateInactiveOwnerTable();
+            addActivityRowDashboard('owner', rowData.id, 'deleted');
         });
     });
 

@@ -1,5 +1,6 @@
 package com.edvantis.training.parking.models;
 
+import com.edvantis.training.parking.models.enums.ModelState;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.GenericGenerator;
 
@@ -23,8 +24,12 @@ public class Parking {
     @Column(name = "ADDRESS")
     private String address;
 
-    @Column(name = "FREE_GARAGES")
-    private int freeGarages;
+    @Column(name = "GARAGES_NUMBER")
+    private int garagesNumber;
+
+    @Column(name = "STATE")
+    @Enumerated(EnumType.STRING)
+    private ModelState state = ModelState.ACTIVE;
 
     @JsonIgnore
     @OneToMany(orphanRemoval = true, mappedBy = "parking", fetch = FetchType.EAGER)
@@ -50,14 +55,6 @@ public class Parking {
         this.address = address;
     }
 
-    public int getFreeGaragesNumber() {
-        return freeGarages;
-    }
-
-    public void setFreeGaragesNumber(int freeGarages) {
-        this.freeGarages = freeGarages;
-    }
-
     public Set<Garage> getGarages() {
         return garages;
     }
@@ -78,4 +75,19 @@ public class Parking {
         garages.add(garage);
     }
 
+    public int getGaragesNumber() {
+        return garagesNumber;
+    }
+
+    public void setGaragesNumber(int garagesNumber) {
+        this.garagesNumber = garagesNumber;
+    }
+
+    public ModelState getState() {
+        return state;
+    }
+
+    public void setState(ModelState state) {
+        this.state = state;
+    }
 }

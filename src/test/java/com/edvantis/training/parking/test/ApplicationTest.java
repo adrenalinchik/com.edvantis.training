@@ -3,8 +3,11 @@ package com.edvantis.training.parking.test;
 import com.edvantis.training.parking.config.ApplicationTestConfig;
 import com.edvantis.training.parking.jdbc.DataBaseJdbcUtil;
 import com.edvantis.training.parking.models.*;
+import com.edvantis.training.parking.models.enums.GarageType;
+import com.edvantis.training.parking.models.enums.VehicleType;
 import com.edvantis.training.parking.repository.*;
-import com.edvantis.training.parking.services.ParkingService;
+import com.edvantis.training.parking.services.HelpService;
+import com.edvantis.training.parking.services.OwnerService;
 import com.edvantis.training.parking.util.TestsHelper;
 import org.junit.AfterClass;
 import org.junit.Assert;
@@ -27,7 +30,8 @@ public class ApplicationTest {
     private static ParkingRepository parkingRepo;
     private static GarageRepository garageRepo;
     private static ReservationRepository reservationRepo;
-    private static ParkingService parkingService;
+    private static HelpService helpService;
+    private static OwnerService ownerService;
 
     @BeforeClass
     public static void createPopulateDb() {
@@ -38,8 +42,8 @@ public class ApplicationTest {
         parkingRepo = ctx.getBean(ParkingRepository.class);
         garageRepo = ctx.getBean(GarageRepository.class);
         reservationRepo = ctx.getBean(ReservationRepository.class);
-        parkingService = ctx.getBean(ParkingService.class);
-        parkingService.populateWithMockObjects(TestsHelper.generateObjects());
+        helpService = ctx.getBean(HelpService.class);
+        helpService.populateWithMockObjects(TestsHelper.generateObjects());
         Assert.assertNotNull(ownerRepo.getById(1));
         Assert.assertNotNull(vehicleRepo.getById(1));
         Assert.assertNotNull(parkingRepo.getById(1));
@@ -118,14 +122,14 @@ public class ApplicationTest {
     @Test
     public void testGetOwnerByLastName() {
         String ownerLastName = "ownerLastName_9";
-        Owner owner = parkingService.getOwnerByLastName(ownerLastName);
+        Owner owner = ownerService.getOwnerByLastName(ownerLastName);
         Assert.assertEquals(ownerLastName, owner.getLastName());
     }
 
     @Test
     public void testGetOwnerByVehicleNumber() {
         String vehicleNumber = "123452";
-        Owner owner = parkingService.getOwnerByVehicleNumber(vehicleNumber);
+        Owner owner = ownerService.getOwnerByVehicleNumber(vehicleNumber);
         Assert.assertEquals(vehicleNumber, owner.getVehicleByNumber(vehicleNumber).getNumber());
     }
 

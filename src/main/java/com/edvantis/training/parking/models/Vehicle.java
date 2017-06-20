@@ -1,5 +1,7 @@
 package com.edvantis.training.parking.models;
 
+import com.edvantis.training.parking.models.enums.ModelState;
+import com.edvantis.training.parking.models.enums.VehicleType;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
