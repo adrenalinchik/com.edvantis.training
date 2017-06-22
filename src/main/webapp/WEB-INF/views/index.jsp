@@ -10,21 +10,6 @@
           href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.1/css/bootstrap-datepicker3.css"/>
     <link href="<c:url value="../../resources/lib/bootstrap-datetimepicker-master/css/bootstrap-datetimepicker.min.css"/>"
           rel="stylesheet">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-    <script src="https://cdn.datatables.net/1.10.15/js/jquery.dataTables.min.js"></script>
-    <script src="https://cdn.datatables.net/1.10.15/js/dataTables.bootstrap.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.10.6/moment.min.js"></script>
-    <script type="text/javascript"
-            src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.1/js/bootstrap-datepicker.min.js"></script>
-    <script type="text/javascript" src="<c:url value="../../resources/js/general.js"/>"></script>
-    <script type="text/javascript" src="<c:url value="../../resources/js/owner.js"/>"></script>
-    <script type="text/javascript" src="<c:url value="../../resources/js/vehicle.js"/>"></script>
-    <script type="text/javascript" src="<c:url value="../../resources/js/reservation.js"/>"></script>
-    <script type="text/javascript" src="<c:url value="../../resources/js/dashboard.js"/>"></script>
-    <script type="text/javascript" src="<c:url value="../../resources/js/parking.js"/>"></script>
-    <script type="text/javascript"
-            src="<c:url value="../../resources/lib/bootstrap-datetimepicker-master/js/bootstrap-datetimepicker.min.js"/>"></script>
 </head>
 <body>
 
@@ -36,7 +21,9 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand" href="#">Logo</a>
+            <a class="navbar-left" href="#">
+                <img src="../../resources/img/parking_logo.png" alt="Parking Logo" style="width:70px;height:50px;">
+            </a>
         </div>
         <div class="collapse navbar-collapse" id="navBar">
             <ul class="nav navbar-nav">
@@ -47,9 +34,9 @@
                 <li><a data-toggle="tab" id="parkingTab" href="#parkings">Parking</a>
                 </li>
             </ul>
-            <ul class="nav navbar-nav navbar-right">
-                <li><a href="#"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
-            </ul>
+            <%--<ul class="nav navbar-nav navbar-right">--%>
+            <%--<li><a href="#"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>--%>
+            <%--</ul>--%>
         </div>
     </div>
 </nav>
@@ -96,7 +83,7 @@
                     <div class="col-lg-12">
                         <div class="panel panel-default">
                             <div class="panel-heading">
-                                <h3 class="panel-title"><i class="fa fa-money fa-fw"></i>Show income from Owner</h3>
+                                <h3 class="panel-title"><i class="fa fa-money fa-fw"></i>Show income from Owners</h3>
                             </div>
                             <div class="panel-body">
                                 <form class="form-horizontal" role="form">
@@ -768,7 +755,8 @@
                                     </label>
                                     <div class="col-sm-10">
                                         <input type="text" class="form-control"
-                                               id="parkingGaragesInput" placeholder="How many garages are on this parking?" required/>
+                                               id="parkingGaragesInput"
+                                               placeholder="How many garages are on this parking?" required/>
                                     </div>
                                 </div>
                                 <!--parking Modal Footer -->
@@ -790,7 +778,28 @@
     </div>
 </div>
 <footer class="container-fluid text-center">
-    <p>Footer Text</p>
+    <h4>
+        <a class="nav-link" id="dashboard_footer_link">dashboard &nbsp;&nbsp;</a>
+        <a class="nav-link" id="reservation_footer_link">reservations &nbsp;&nbsp;</a>
+        <a class="nav-link" id="owner_footer_link">owners &nbsp;&nbsp;</a>
+        <a class="nav-link" id="vehicle_footer_link">vehicles &nbsp;&nbsp;</a>
+        <a class="nav-link" id="parking_footer_link">parking</a>
+    </h4>
 </footer>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<script src="https://cdn.datatables.net/1.10.15/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.10.15/js/dataTables.bootstrap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.10.6/moment.min.js"></script>
+<script type="text/javascript"
+        src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.1/js/bootstrap-datepicker.min.js"></script>
+<script type="text/javascript" src="<c:url value="../../resources/js/general.js"/>"></script>
+<script type="text/javascript" src="<c:url value="../../resources/js/owner.js"/>"></script>
+<script type="text/javascript" src="<c:url value="../../resources/js/vehicle.js"/>"></script>
+<script type="text/javascript" src="<c:url value="../../resources/js/reservation.js"/>"></script>
+<script type="text/javascript" src="<c:url value="../../resources/js/dashboard.js"/>"></script>
+<script type="text/javascript" src="<c:url value="../../resources/js/parking.js"/>"></script>
+<script type="text/javascript"
+        src="<c:url value="../../resources/lib/bootstrap-datetimepicker-master/js/bootstrap-datetimepicker.min.js"/>"></script>
 </body>
 </html>

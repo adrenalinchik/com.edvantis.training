@@ -8,12 +8,13 @@
 /* Set height of the grid so .sidenav can be 100% (adjust as needed) */
 .row.content {
     height: auto;
+    background-color: 	#f2f2f2;
 }
 
 /* Set gray background color and 100% height */
 .sidenav {
     /*padding-top: 20px;*/
-    background-color: #f1f1f1;
+    background-color: 	#cccccc;
     height: 100%;
 }
 
@@ -55,11 +56,4 @@ footer {
 
 .modal-body .form-horizontal .col-sm-offset-2 {
     margin-left: 15px;
-}
-
-.edit-owner-button {
-    outline: none;
-    padding: 5px;
-    border: 0px;
-    background-color: transparent;
 }

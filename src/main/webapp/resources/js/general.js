@@ -125,5 +125,26 @@ $(document).ready(function () {
     $('#parkingTab').on('click', function () {
         addParkingButtonVisible();
     })
+
+    $('#dashboard_footer_link').click(function () {
+        $('#dashboardTab').click();
+        $('html, body').animate({ scrollTop: 0 }, 'fast');
+    });
+    $('#reservation_footer_link').click(function () {
+        $('#reservationTab').click();
+        $('html, body').animate({ scrollTop: 0 }, 'fast');
+    });
+    $('#owner_footer_link').click(function () {
+        $('#ownerTab').click();
+        $('html, body').animate({ scrollTop: 0 }, 'fast');
+    });
+    $('#vehicle_footer_link').click(function () {
+        $('#vehicleTab').click();
+        $('html, body').animate({ scrollTop: 0 }, 'fast');
+    });
+    $('#parking_footer_link').click(function () {
+        $('#parkingTab').click();
+        $('html, body').animate({ scrollTop: 0 }, 'fast');
+    });
 });
 

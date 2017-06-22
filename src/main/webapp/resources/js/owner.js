@@ -82,7 +82,7 @@ $(document).ready(function () {
             {
                 "data": "",
                 "orderable": false,
-                "defaultContent": "<button role='link' class='edit-owner-button btn-link'>edit</button>|  <a>make inactive</a>"
+                "defaultContent": "<button role='link' class='edit-owner-button btn-link'>Edit</button>|  <a>Inactivate</a>"
             }
         ]
     });
@@ -110,7 +110,7 @@ $(document).ready(function () {
             {
                 "data": "",
                 "orderable": false,
-                "defaultContent": "<button role='link' class='edit-owner-button btn-link'>delete</button>|  <a>make active</a>"
+                "defaultContent": "<button role='link' class='edit-owner-button btn-link'>Delete</button>|  <a>Activate</a>"
             }
         ]
     });

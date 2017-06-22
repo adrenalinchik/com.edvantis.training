@@ -141,7 +141,7 @@ public class ApplicationTest {
 
     @AfterClass
     public static void dropDb() {
-        DataBaseJdbcUtil.clearDb(TestsHelper.tablesList());
-        DataBaseJdbcUtil.dropDB();
+//        DataBaseJdbcUtil.clearDb(TestsHelper.tablesList());
+//        DataBaseJdbcUtil.dropDB();
     }
 }
