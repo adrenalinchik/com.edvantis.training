@@ -4,13 +4,13 @@
 <head>
     <title>Parking management system</title>
     <link rel="icon" href="../../resources/img/parking_logo.png">
-    <link href="<c:url value="../../resources/css/custom.css"/>" rel="stylesheet">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdn.datatables.net/1.10.15/css/dataTables.bootstrap.min.css">
     <link rel="stylesheet"
           href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.1/css/bootstrap-datepicker3.css"/>
     <link href="<c:url value="../../resources/lib/bootstrap-datetimepicker-master/css/bootstrap-datetimepicker.min.css"/>"
           rel="stylesheet">
+    <link href="<c:url value="../../resources/css/custom.css"/>" rel="stylesheet">
 </head>
 <body>
 <nav class="navbar-inverse">
@@ -42,353 +42,352 @@
 </nav>
 
 <div class="container-fluid text-center">
-    <div class="row content">
-        <div class="col-sm-2 sidenav"></div>
-        <div class="col-sm-8 text-left">
-            <h1><a href="<c:url value="/"/>">Parking Management System</a></h1>
-            <div class="tab-content">
-                <div id="dashboard" class="tab-pane fade in active">
-                    <h2>Dashboard</h2>
-                    <div class="col-lg-12">
-                        <div class="panel panel-warning">
-                            <div class="panel-heading">
-                                <h3 class="panel-title"><i class="fa fa-money fa-fw"></i>Active Reservations for
-                                    today</h3>
+    <div class="row content paddingTopBottom20">
+        <div class="col-sm-8 col-sm-offset-1 text-left app-content">
+          <h1><a href="<c:url value="/"/>">Parking Management System</a></h1>
+          <div class="tab-content">
+            <div id="dashboard" class="tab-pane fade in active">
+              <h2>Dashboard</h2>
+              <div class="col-lg-12">
+                <div class="panel panel-warning">
+                  <div class="panel-heading">
+                    <h3 class="panel-title"><i class="fa fa-money fa-fw"></i>Active Reservations for
+                    today</h3>
+                  </div>
+                  <div class="panel-body">
+                    <div class="table-responsive">
+                      <table class="table table-bordered table-hover table-striped"
+                        id="dashboardReservationTable" width="100%">
+                        <thead>
+                          <tr>
+                            <th>ID</th>
+                            <th>Start</th>
+                            <th>End</th>
+                            <th>Vehicle</th>
+                            <th>Parking</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                      </table>
+                    </div>
+                    <div class="form-group"></div>
+                    <div class="text-right">
+                      <a id="reservationLink" href="#">View All Reservations <i
+                        class="fa fa-arrow-circle-right"></i></a>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-lg-12">
+                  <div class="panel panel-default">
+                    <div class="panel-heading">
+                      <h3 class="panel-title"><i class="fa fa-money fa-fw"></i>Show income from Owners</h3>
+                    </div>
+                    <div class="panel-body">
+                      <form class="form-horizontal" role="form">
+                        <div class="form-group">
+                          <label class="col-sm-2 control-label requiredField"
+                            for="dashboardStartDateInput">
+                            Start date
+                            <span class="asteriskField">
+                              *
+                            </span>
+                          </label>
+                          <div id="dashboardDateStart" class="col-sm-10 ">
+                            <input class="form-control" data-format="dd/MM/yyyy HH:mm:ss"
+                              id="dashboardStartDateInput"
+                              placeholder="yyyy-mm-dd HH:mm:ss"
+                              type="text" required/>
+                              <span class="add-on">
+                                <i data-time-icon="icon-time" data-date-icon="icon-calendar"></i>
+                              </span>
                             </div>
-                            <div class="panel-body">
-                                <div class="table-responsive">
-                                    <table class="table table-bordered table-hover table-striped"
-                                           id="dashboardReservationTable" width="100%">
-                                        <thead>
-                                        <tr>
-                                            <th>ID</th>
-                                            <th>Start</th>
-                                            <th>End</th>
-                                            <th>Vehicle</th>
-                                            <th>Parking</th>
-                                        </tr>
-                                        </thead>
-                                        <tbody>
-                                        </tbody>
-                                    </table>
+                          </div>
+                          <div class="form-group">
+                            <label class="col-sm-2 control-label requiredField"
+                              for="dashboardEndDateInput">
+                              End date
+                              <span class="asteriskField">
+                                *
+                              </span>
+                            </label>
+                            <div id="dashboardDateEnd" class="col-sm-10 ">
+                              <input class="form-control" data-format="dd/MM/yyyy HH:mm:ss"
+                                id="dashboardEndDateInput" placeholder="yyyy-mm-dd HH:mm:ss"
+                                type="text" disabled required/>
+                                <span class="add-on">
+                                  <i data-time-icon="icon-time" data-date-icon="icon-calendar"></i>
+                                </span>
+                              </div>
+                            </div>
+                            <div class="form-group">
+                              <label class="col-sm-2 control-label" for="dashboardOwnerInput">
+                                Owner
+                              </label>
+                              <div class="col-sm-10">
+                                <input type="text" class="form-control"
+                                  id="dashboardOwnerInput" placeholder="All owners"
+                                  list="dashboardOwnerList"
+                                  required disabled/>
+                                  <datalist id="dashboardOwnerList">
+                                  </datalist>
                                 </div>
-                                <div class="form-group"></div>
+                              </div>
+                              <div class="col-lg-14">
+                                <input type="text" id="income_result" class="form-control"
+                                  style="text-align:center;display:none;">
+                                  <div class="form-group"></div>
+                                </div>
+                                <div class="col-lg-14">
+                                  <button id="show_income" type="button"
+                                    class="btn btn-primary btn-block">
+                                    Show
+                                  </button>
+                                  <div class="form-group"></div>
+                                </div>
                                 <div class="text-right">
-                                    <a id="reservationLink" href="#">View All Reservations <i
-                                            class="fa fa-arrow-circle-right"></i></a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-lg-12">
-                        <div class="panel panel-default">
-                            <div class="panel-heading">
-                                <h3 class="panel-title"><i class="fa fa-money fa-fw"></i>Show income from Owners</h3>
-                            </div>
-                            <div class="panel-body">
-                                <form class="form-horizontal" role="form">
-                                    <div class="form-group">
-                                        <label class="col-sm-2 control-label requiredField"
-                                               for="dashboardStartDateInput">
-                                            Start date
-                                            <span class="asteriskField">
-                                           *
-                                        </span>
-                                        </label>
-                                        <div id="dashboardDateStart" class="col-sm-10 ">
-                                            <input class="form-control" data-format="dd/MM/yyyy HH:mm:ss"
-                                                   id="dashboardStartDateInput"
-                                                   placeholder="yyyy-mm-dd HH:mm:ss"
-                                                   type="text" required/>
-                                            <span class="add-on">
-                                          <i data-time-icon="icon-time" data-date-icon="icon-calendar"></i>
-                                        </span>
-                                        </div>
-                                    </div>
-                                    <div class="form-group">
-                                        <label class="col-sm-2 control-label requiredField"
-                                               for="dashboardEndDateInput">
-                                            End date
-                                            <span class="asteriskField">
-                                                   *
-                                                </span>
-                                        </label>
-                                        <div id="dashboardDateEnd" class="col-sm-10 ">
-                                            <input class="form-control" data-format="dd/MM/yyyy HH:mm:ss"
-                                                   id="dashboardEndDateInput" placeholder="yyyy-mm-dd HH:mm:ss"
-                                                   type="text" disabled required/>
-                                            <span class="add-on">
-                                                    <i data-time-icon="icon-time" data-date-icon="icon-calendar"></i>
-                                                </span>
-                                        </div>
-                                    </div>
-                                    <div class="form-group">
-                                        <label class="col-sm-2 control-label" for="dashboardOwnerInput">
-                                            Owner
-                                        </label>
-                                        <div class="col-sm-10">
-                                            <input type="text" class="form-control"
-                                                   id="dashboardOwnerInput" placeholder="All owners"
-                                                   list="dashboardOwnerList"
-                                                   required disabled/>
-                                            <datalist id="dashboardOwnerList">
-                                            </datalist>
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-14">
-                                        <input type="text" id="income_result" class="form-control"
-                                               style="text-align:center;display:none;">
-                                        <div class="form-group"></div>
-                                    </div>
-                                    <div class="col-lg-14">
-                                        <button id="show_income" type="button"
-                                                class="btn btn-primary btn-block">
-                                            Show
-                                        </button>
-                                        <div class="form-group"></div>
-                                    </div>
-                                    <div class="text-right">
-                                        <a href="#" id="dashboardOwnersLink">View All Owners<i
-                                                class="fa fa-arrow-circle-right"></i></a>
-                                    </div>
+                                  <a href="#" id="dashboardOwnersLink">View All Owners<i
+                                    class="fa fa-arrow-circle-right"></i></a>
+                                  </div>
                                 </form>
+                              </div>
                             </div>
-                        </div>
-                    </div>
-                    <div class="col-lg-12">
-                        <div class="panel panel-info">
-                            <div class="panel-heading">
+                          </div>
+                          <div class="col-lg-12">
+                            <div class="panel panel-info">
+                              <div class="panel-heading">
                                 <h3 class="panel-title"><i class="fa fa-money fa-fw"></i>Last Activities</h3>
-                            </div>
-                            <div class="panel-body">
+                              </div>
+                              <div class="panel-body">
                                 <table class="table table-striped table-condensed" id="dashboardActivityTable"
-                                       cellspacing="0"
-                                       width="100%">
-                                    <thead>
+                                  cellspacing="0"
+                                  width="100%">
+                                  <thead>
                                     <tr>
-                                        <th>Object</th>
-                                        <th>ID</th>
-                                        <th>Action</th>
-                                        <th>When</th>
+                                      <th>Object</th>
+                                      <th>ID</th>
+                                      <th>Action</th>
+                                      <th>When</th>
                                     </tr>
-                                    </thead>
-                                    <tr>
-                                    </tr>
-                                    <tbody id="activTableBody">
-                                    </tbody>
+                                  </thead>
+                                  <tr>
+                                  </tr>
+                                  <tbody id="activTableBody">
+                                  </tbody>
                                 </table>
+                              </div>
                             </div>
+                          </div>
                         </div>
-                    </div>
-                </div>
-                <div id="owners" class="tab-pane fade">
-                    <h2>Owners</h2>
-                    <table class="table table-striped table-bordered" id="activeOwnerTable" cellspacing="0"
-                           width="100%">
-                        <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>First Name</th>
-                            <th>Last Name</th>
-                            <th>Gender</th>
-                            <th>Age</th>
-                            <th>Actions</th>
-                        </tr>
-                        </thead>
-                    </table>
-                    <h3>Inactive Owners</h3>
-                    <table class="table table-striped table-bordered" id="inactiveOwnerTable" cellspacing="0"
-                           width="100%">
-                        <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>First Name</th>
-                            <th>Last Name</th>
-                            <th>Gender</th>
-                            <th>Age</th>
-                            <th>Actions</th>
-                        </tr>
-                        </thead>
-                    </table>
-                    <div id="deleteOwnerModal" class="modal fade" role="dialog">
-                        <div class="modal-dialog">
-                            <div class="modal-content">
+                        <div id="owners" class="tab-pane fade">
+                          <h2>Owners</h2>
+                          <table class="table table-striped table-bordered" id="activeOwnerTable" cellspacing="0"
+                            width="100%">
+                            <thead>
+                              <tr>
+                                <th>ID</th>
+                                <th>First Name</th>
+                                <th>Last Name</th>
+                                <th>Gender</th>
+                                <th>Age</th>
+                                <th>Actions</th>
+                              </tr>
+                            </thead>
+                          </table>
+                          <h3>Inactive Owners</h3>
+                          <table class="table table-striped table-bordered" id="inactiveOwnerTable" cellspacing="0"
+                            width="100%">
+                            <thead>
+                              <tr>
+                                <th>ID</th>
+                                <th>First Name</th>
+                                <th>Last Name</th>
+                                <th>Gender</th>
+                                <th>Age</th>
+                                <th>Actions</th>
+                              </tr>
+                            </thead>
+                          </table>
+                          <div id="deleteOwnerModal" class="modal fade" role="dialog">
+                            <div class="modal-dialog">
+                              <div class="modal-content">
                                 <div class="modal-header">
-                                    <button type="button" class="close" data-dismiss="modal">&times;</button>
-                                    <h4 class="modal-title">Delete <var id="name">name</var></h4>
+                                  <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                  <h4 class="modal-title">Delete <var id="name">name</var></h4>
                                 </div>
                                 <div class="modal-body">
-                                    <p>Are you really want to delete owner?</p>
+                                  <p>Are you really want to delete owner?</p>
                                 </div>
                                 <div class="modal-footer">
-                                    <button id="deleteOwnerButton" type="button" class="btn btn-default">
-                                        Yes
-                                    </button>
-                                    <button type="button" class="btn btn-primary" data-dismiss="modal">
-                                        No
-                                    </button>
+                                  <button id="deleteOwnerButton" type="button" class="btn btn-default">
+                                    Yes
+                                  </button>
+                                  <button type="button" class="btn btn-primary" data-dismiss="modal">
+                                    No
+                                  </button>
                                 </div>
+                              </div>
                             </div>
+                          </div>
                         </div>
-                    </div>
-                </div>
-                <div id="vehicles" class="tab-pane fade">
-                    <h2>Vehicles</h2>
-                    <table class="table table-striped table-bordered" id="activeVehicleTable" cellspacing="0"
-                           width="100%">
-                        <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>Owner</th>
-                            <th>Number</th>
-                            <th>Model</th>
-                            <th>Type</th>
-                            <th>Actions</th>
-                        </tr>
-                        </thead>
-                    </table>
-                    <h3>Inactive Vehicles</h3>
-                    <table class="table table-striped table-bordered" id="inactiveVehicleTable" cellspacing="0"
-                           width="100%">
-                        <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>Owner</th>
-                            <th>Number</th>
-                            <th>Model</th>
-                            <th>Type</th>
-                            <th>Actions</th>
-                        </tr>
-                        </thead>
-                    </table>
-                    <div id="deleteVehicleModal" class="modal fade" role="dialog">
-                        <div class="modal-dialog">
-                            <div class="modal-content">
+                        <div id="vehicles" class="tab-pane fade">
+                          <h2>Vehicles</h2>
+                          <table class="table table-striped table-bordered" id="activeVehicleTable" cellspacing="0"
+                            width="100%">
+                            <thead>
+                              <tr>
+                                <th>ID</th>
+                                <th>Owner</th>
+                                <th>Number</th>
+                                <th>Model</th>
+                                <th>Type</th>
+                                <th>Actions</th>
+                              </tr>
+                            </thead>
+                          </table>
+                          <h3>Inactive Vehicles</h3>
+                          <table class="table table-striped table-bordered" id="inactiveVehicleTable" cellspacing="0"
+                            width="100%">
+                            <thead>
+                              <tr>
+                                <th>ID</th>
+                                <th>Owner</th>
+                                <th>Number</th>
+                                <th>Model</th>
+                                <th>Type</th>
+                                <th>Actions</th>
+                              </tr>
+                            </thead>
+                          </table>
+                          <div id="deleteVehicleModal" class="modal fade" role="dialog">
+                            <div class="modal-dialog">
+                              <div class="modal-content">
                                 <div class="modal-header">
-                                    <button type="button" class="close" data-dismiss="modal">&times;</button>
-                                    <h4 class="modal-title">Delete <var id="number">number</var> vehicle</h4>
+                                  <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                  <h4 class="modal-title">Delete <var id="number">number</var> vehicle</h4>
                                 </div>
                                 <div class="modal-body">
-                                    <p>Are you sure you want to delete vehicle?</p>
+                                  <p>Are you sure you want to delete vehicle?</p>
                                 </div>
                                 <div class="modal-footer">
-                                    <button id="deleteVehicleButton" type="button" class="btn btn-default">
-                                        Yes
-                                    </button>
-                                    <button type="button" class="btn btn-primary" data-dismiss="modal">
-                                        No
-                                    </button>
+                                  <button id="deleteVehicleButton" type="button" class="btn btn-default">
+                                    Yes
+                                  </button>
+                                  <button type="button" class="btn btn-primary" data-dismiss="modal">
+                                    No
+                                  </button>
                                 </div>
+                              </div>
                             </div>
+                          </div>
                         </div>
-                    </div>
-                </div>
-                <div id="reservations" class="tab-pane fade">
-                    <h2>Reservations</h2>
-                    <table class="table table-striped table-bordered" id="activeReservationTable" cellspacing="0"
-                           width="100%">
-                        <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>Start</th>
-                            <th>End</th>
-                            <th>Owner</th>
-                            <th>Vehicle</th>
-                            <th>Parking</th>
-                            <th>Garage</th>
-                            <th>Actions</th>
-                        </tr>
-                        </thead>
-                    </table>
-                    <h3>Inactive Reservations</h3>
-                    <table class="table table-striped table-bordered" id="inactiveReservationTable" cellspacing="0"
-                           width="100%">
-                        <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>Start</th>
-                            <th>End</th>
-                            <th>Owner</th>
-                            <th>Vehicle</th>
-                            <th>Parking</th>
-                            <th>Garage</th>
-                            <th>Actions</th>
-                        </tr>
-                        </thead>
-                    </table>
-                    <div id="deleteReservationModal" class="modal fade" role="dialog">
-                        <div class="modal-dialog">
-                            <div class="modal-content">
+                        <div id="reservations" class="tab-pane fade">
+                          <h2>Reservations</h2>
+                          <table class="table table-striped table-bordered" id="activeReservationTable" cellspacing="0"
+                            width="100%">
+                            <thead>
+                              <tr>
+                                <th>ID</th>
+                                <th>Start</th>
+                                <th>End</th>
+                                <th>Owner</th>
+                                <th>Vehicle</th>
+                                <th>Parking</th>
+                                <th>Garage</th>
+                                <th>Actions</th>
+                              </tr>
+                            </thead>
+                          </table>
+                          <h3>Inactive Reservations</h3>
+                          <table class="table table-striped table-bordered" id="inactiveReservationTable" cellspacing="0"
+                            width="100%">
+                            <thead>
+                              <tr>
+                                <th>ID</th>
+                                <th>Start</th>
+                                <th>End</th>
+                                <th>Owner</th>
+                                <th>Vehicle</th>
+                                <th>Parking</th>
+                                <th>Garage</th>
+                                <th>Actions</th>
+                              </tr>
+                            </thead>
+                          </table>
+                          <div id="deleteReservationModal" class="modal fade" role="dialog">
+                            <div class="modal-dialog">
+                              <div class="modal-content">
                                 <div class="modal-header">
-                                    <button type="button" class="close" data-dismiss="modal">&times;</button>
-                                    <h4 class="modal-title">Delete reservation <var id="reservId">id</var></h4>
+                                  <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                  <h4 class="modal-title">Delete reservation <var id="reservId">id</var></h4>
                                 </div>
                                 <div class="modal-body">
-                                    <p>Are you sure you want to delete reservation?</p>
+                                  <p>Are you sure you want to delete reservation?</p>
                                 </div>
                                 <div class="modal-footer">
-                                    <button id="deleteReservationButton" type="button" class="btn btn-default">
-                                        Yes
-                                    </button>
-                                    <button type="button" class="btn btn-primary" data-dismiss="modal">
-                                        No
-                                    </button>
+                                  <button id="deleteReservationButton" type="button" class="btn btn-default">
+                                    Yes
+                                  </button>
+                                  <button type="button" class="btn btn-primary" data-dismiss="modal">
+                                    No
+                                  </button>
                                 </div>
+                              </div>
                             </div>
+                          </div>
                         </div>
-                    </div>
-                </div>
-                <div id="parkings" class="tab-pane fade">
-                    <h2>Parking</h2>
-                    <table class="table table-striped table-bordered" id="activeParkingTable" cellspacing="0"
-                           width="100%">
-                        <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>Address</th>
-                            <th>Garages quantity</th>
-                            <th>Actions</th>
-                        </tr>
-                        </thead>
-                    </table>
-                    <h3>Inactive Parking</h3>
-                    <table class="table table-striped table-bordered" id="inactiveParkingTable" cellspacing="0"
-                           width="100%">
-                        <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>Address</th>
-                            <th>Garages quantity</th>
-                            <th>Actions</th>
-                        </tr>
-                        </thead>
-                    </table>
-                    <div id="deleteParkingModal" class="modal fade" role="dialog">
-                        <div class="modal-dialog">
-                            <div class="modal-content">
+                        <div id="parkings" class="tab-pane fade">
+                          <h2>Parking</h2>
+                          <table class="table table-striped table-bordered" id="activeParkingTable" cellspacing="0"
+                            width="100%">
+                            <thead>
+                              <tr>
+                                <th>ID</th>
+                                <th>Address</th>
+                                <th>Garages quantity</th>
+                                <th>Actions</th>
+                              </tr>
+                            </thead>
+                          </table>
+                          <h3>Inactive Parking</h3>
+                          <table class="table table-striped table-bordered" id="inactiveParkingTable" cellspacing="0"
+                            width="100%">
+                            <thead>
+                              <tr>
+                                <th>ID</th>
+                                <th>Address</th>
+                                <th>Garages quantity</th>
+                                <th>Actions</th>
+                              </tr>
+                            </thead>
+                          </table>
+                          <div id="deleteParkingModal" class="modal fade" role="dialog">
+                            <div class="modal-dialog">
+                              <div class="modal-content">
                                 <div class="modal-header">
-                                    <button type="button" class="close" data-dismiss="modal">&times;</button>
-                                    <h4 class="modal-title">Delete parking <var id="parkingId">id</var>
-                                    </h4>
-                                </div>
-                                <div class="modal-body">
-                                    <p>Are you sure you want to delete parking?</p>
-                                </div>
-                                <div class="modal-footer">
-                                    <button id="deleteParkingButton" type="button" class="btn btn-default">
-                                        Yes
-                                    </button>
-                                    <button type="button" class="btn btn-primary" data-dismiss="modal">
-                                        No
-                                    </button>
-                                </div>
+                                  <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                  <h4 class="modal-title">Delete parking <var id="parkingId">id</var>
+                                </h4>
+                              </div>
+                              <div class="modal-body">
+                                <p>Are you sure you want to delete parking?</p>
+                              </div>
+                              <div class="modal-footer">
+                                <button id="deleteParkingButton" type="button" class="btn btn-default">
+                                  Yes
+                                </button>
+                                <button type="button" class="btn btn-primary" data-dismiss="modal">
+                                  No
+                                </button>
+                              </div>
                             </div>
+                          </div>
                         </div>
-                    </div>
-                </div>
-            </div>
+                      </div>
+          </div>
         </div>
-        <div class="col-sm-2 sidenav">
+        <div class="col-sm-2">
             <button id="add_owner" type="button" class="btn btn-primary btn-block btn-custom"
                     data-toggle="modal"
                     data-target="#ownerModal"
