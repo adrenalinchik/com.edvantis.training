@@ -7,7 +7,9 @@ import com.edvantis.training.parking.models.enums.GarageType;
 import com.edvantis.training.parking.models.enums.Gender;
 import com.edvantis.training.parking.models.enums.VehicleType;
 import com.edvantis.training.parking.repository.ReservationRepository;
+import com.edvantis.training.parking.services.DashboardService;
 import com.edvantis.training.parking.services.HelpService;
+import com.edvantis.training.parking.services.impl.DashboardServiceImp;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 import java.text.ParseException;
@@ -21,12 +23,14 @@ public class Application {
     public static Date to = parseDate("2017-03-23 19:16:59");
 
     public static void main(String[] args) throws Exception {
-        DataBaseJdbcUtil.dropDb();
-        DataBaseJdbcUtil.createDb();
+        //DataBaseJdbcUtil.dropDb();
+        //DataBaseJdbcUtil.createDb();
         AnnotationConfigApplicationContext ctx = new AnnotationConfigApplicationContext(ApplicationConfig.class);
         HelpService parkingService = ctx.getBean(HelpService.class);
         ReservationRepository reserRepo = ctx.getBean(ReservationRepository.class);
-        parkingService.populateWithMockObjects(generateObjects());
+        // parkingService.populateWithMockObjects(generateObjects());
+        DashboardService dashboardService = ctx.getBean(DashboardServiceImp.class);
+        dashboardService.deleteActivities();
 
 //        List<Owner> list = parkingService.getAllActiveOwners();
 //        list.forEach(System.out::println);
@@ -112,7 +116,7 @@ public class Application {
             arrayList.add(vehicle);
             Parking parking1 = new Parking();
             parking1.setAddress("Lviv, Main str " + i);
-            parking1.setGaragesNumber(i+25+i);
+            parking1.setGaragesNumber(i + 25 + i);
             arrayList.add(parking1);
             Garage garage = new Garage();
             garage.setGarageType(GarageType.BIG);
@@ -125,7 +129,7 @@ public class Application {
             reservation.setOwnerId(1);
             reservation.setParkingId(1);
             reservation.setGarageId(i + 1);
-            reservation.setVehicleNumber(i+"2345"+i);
+            reservation.setVehicleNumber(i + "2345" + i);
             arrayList.add(reservation);
         }
 

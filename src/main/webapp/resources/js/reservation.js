@@ -13,6 +13,7 @@ function updateInactiveReservationTable() {
 }
 
 function updateCreateReservationAjax(type, url, data) {
+    $.LoadingOverlay("show");
     return $.ajax({
         headers: {
             'Content-Type': 'application/json'
@@ -216,6 +217,7 @@ $(document).ready(function () {
         rowData = activeReservationDataTable.row($(this).parents('tr')).data();
         rowData.state = 'INACTIVE';
         updateCreateReservationAjax('put', 'updateReservation', rowData).done(function () {
+            $.LoadingOverlay("hide");
             updateActiveReservationTable();
             updateInactiveReservationTable();
         });
@@ -342,18 +344,20 @@ $(document).ready(function () {
         var reservFormHeader = document.getElementById('reservationModalLabel').innerText;
         if (reservFormHeader.indexOf('Make') > -1) {
             updateCreateReservationAjax('post', 'addReservation', data).done(function (reserv) {
+                $.LoadingOverlay("hide");
                 closeOpenModal('#reservationModal');
                 clearForm('#reservationForm');
                 updateActiveReservationTable();
-                addActivityRowDashboard('reservation', reserv.id, 'created');
+                addActivityRowDashboard('RESERVATION', reserv.id, 'CREATED');
             });
         } else if (reservFormHeader.indexOf('Edit') > -1) {
             data.id = getTableRowId();
             updateCreateReservationAjax('put', 'updateReservation', data).done(function (reserv) {
+                $.LoadingOverlay("hide");
                 closeOpenModal('#reservationModal');
                 updateActiveReservationTable();
                 $('#reservationModalHeader').text("Make New Reservation");
-                addActivityRowDashboard('reservation', reserv.id, 'updated');
+                addActivityRowDashboard('RESERVATION', reserv.id, 'UPDATED');
             });
         }
     });
@@ -364,13 +368,15 @@ $(document).ready(function () {
     });
 
     $('#deleteReservationButton').on('click', function () {
+        $.LoadingOverlay("show");
         $.ajax({
             url: '/parking/api/reservation/delete/' + rowData.id,
             type: 'delete'
         }).done(function () {
+            $.LoadingOverlay("hide");
             closeOpenModal('#deleteReservationModal');
             updateInactiveReservationTable();
-            addActivityRowDashboard('reservation', rowData.id, 'deleted');
+            addActivityRowDashboard('RESERVATION', rowData.id, 'DELETED');
         });
     });
 

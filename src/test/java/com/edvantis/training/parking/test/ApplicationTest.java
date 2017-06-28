@@ -6,6 +6,7 @@ import com.edvantis.training.parking.models.*;
 import com.edvantis.training.parking.models.enums.GarageType;
 import com.edvantis.training.parking.models.enums.VehicleType;
 import com.edvantis.training.parking.repository.*;
+import com.edvantis.training.parking.repository.jdbc.impl.GarageJdbcRepositoryImp;
 import com.edvantis.training.parking.services.HelpService;
 import com.edvantis.training.parking.services.OwnerService;
 import com.edvantis.training.parking.util.TestsHelper;
@@ -13,6 +14,8 @@ import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 import java.util.Set;
@@ -22,6 +25,9 @@ import java.util.Set;
  * Created by taras.fihurnyak on 2/24/2017.
  */
 public class ApplicationTest {
+
+    private final Logger logger = LoggerFactory.getLogger(ApplicationTest.class);
+
     private static long id = 1;
 
     private static AnnotationConfigApplicationContext ctx;
@@ -43,6 +49,7 @@ public class ApplicationTest {
         garageRepo = ctx.getBean(GarageRepository.class);
         reservationRepo = ctx.getBean(ReservationRepository.class);
         helpService = ctx.getBean(HelpService.class);
+        ownerService = ctx.getBean(OwnerService.class);
         helpService.populateWithMockObjects(TestsHelper.generateObjects());
         Assert.assertNotNull(ownerRepo.getById(1));
         Assert.assertNotNull(vehicleRepo.getById(1));
@@ -141,7 +148,7 @@ public class ApplicationTest {
 
     @AfterClass
     public static void dropDb() {
-//        DataBaseJdbcUtil.clearDb(TestsHelper.tablesList());
-//        DataBaseJdbcUtil.dropDB();
+        DataBaseJdbcUtil.clearDb(TestsHelper.tablesList());
+        DataBaseJdbcUtil.dropDB();
     }
 }

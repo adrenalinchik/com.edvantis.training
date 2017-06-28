@@ -1,4 +1,10 @@
 var activeOwners = [];
+$body = $("body");
+
+$(document).on({
+    ajaxStart: function() { $body.addClass("loading");    },
+    ajaxStop: function() { $body.removeClass("loading"); }
+});
 
 function makeElementInvisible(element) {
     document.getElementById(element).style.display = 'none';
@@ -52,13 +58,13 @@ function addActivityRowDashboard(objectType, id, action) {
     let markup = "<tr><td>" + objectType + "</td><td>" + id + "</td><td>" + action + "</td><td>" + yyyy + "-" + MM + "-" + dd + " " + hh + ":" + mm + ":" + sec + "</td></tr>";
     $("#dashboardActivityTable").append(markup);
     switch (action) {
-        case "created":
+        case "CREATED":
             $('#dashboardActivityTable tr:last').css("background", "hsla(120, 60%, 70%, 0.3)");
             break;
-        case "updated":
+        case "UPDATED":
             $('#dashboardActivityTable tr:last').css("background", "hsla(290, 60%, 70%, 0.3)");
             break;
-        case "deleted":
+        case "DELETED":
             $('#dashboardActivityTable tr:last').css("background", "hsla(356, 90%, 50%, 0.3)");
             break;
     }

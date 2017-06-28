@@ -38,8 +38,8 @@ public class ReservationJpaRepository extends CrudRepository<Reservation> implem
         Set<Garage> garages = new HashSet<>();
         EntityManager em = emFactory.createEntityManager();
         String makeQuery = "SELECT t1.ID " +
-                "FROM garage as t1 " +
-                "LEFT JOIN reservation as t2 ON t2.GARAGE_ID = t1.ID " +
+                "FROM GARAGE as t1 " +
+                "LEFT JOIN RESERVATION as t2 ON t2.GARAGE_ID = t1.ID " +
                 "WHERE t2.GARAGE_ID IS NULL and t1.PARKING_ID = " + parkingId;
         List<? extends BigInteger> garageIdList = em.createNativeQuery(makeQuery).getResultList();
         //GarageRepository garageJpaRepository = new ApplicationConfig().getGarageRepository();
@@ -58,8 +58,8 @@ public class ReservationJpaRepository extends CrudRepository<Reservation> implem
         Set<Garage> garages = new HashSet<>();
         EntityManager em = emFactory.createEntityManager();
         String makeQuery = "SELECT t1.ID " +
-                "FROM garage as t1 " +
-                "LEFT JOIN reservation as t2 ON t2.GARAGE_ID = t1.ID " +
+                "FROM GARAGE as t1 " +
+                "LEFT JOIN RESERVATION as t2 ON t2.GARAGE_ID = t1.ID " +
                 "WHERE t2.GARAGE_ID IS NULL and t1.TYPE = ?1";
         List<? extends BigInteger> garageIdList = em.createNativeQuery(makeQuery)
                 .setParameter(1, garageType.toString())
@@ -82,8 +82,8 @@ public class ReservationJpaRepository extends CrudRepository<Reservation> implem
         Set<Garage> garages = new HashSet<>();
         EntityManager em = emFactory.createEntityManager();
         String makeQuery = "SELECT t1.ID " +
-                "FROM garage as t1 " +
-                "LEFT JOIN reservation as t2 ON t2.GARAGE_ID = t1.ID " +
+                "FROM GARAGE as t1 " +
+                "LEFT JOIN RESERVATION as t2 ON t2.GARAGE_ID = t1.ID " +
                 "WHERE t2.GARAGE_ID IS NULL";
         List<? extends BigInteger> garageIdList = em.createNativeQuery(makeQuery).getResultList();
         if (garageIdList.size() > 0) {
@@ -175,11 +175,11 @@ public class ReservationJpaRepository extends CrudRepository<Reservation> implem
         Set<Reservation> reservationsSet = new HashSet<>();
         EntityManager em = emFactory.createEntityManager();
         List garageIdListFinal = new ArrayList<>();
-        String makeQueryToReservation = "SELECT GARAGE_ID FROM reservation";
+        String makeQueryToReservation = "SELECT GARAGE_ID FROM RESERVATION";
         List garageIdList = em.createNativeQuery(makeQueryToReservation).getResultList();
         if (garageIdList.size() > 0) {
             for (Object i : garageIdList) {
-                String makeQueryToGarage = "select t1.ID from garage as t1 " +
+                String makeQueryToGarage = "select t1.ID from GARAGE as t1 " +
                         "where t1.ID=?1 and t1.TYPE=?2";
                 List list = em.createNativeQuery(makeQueryToGarage)
                         .setParameter(1, i)

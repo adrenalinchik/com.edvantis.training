@@ -9,6 +9,7 @@ function populateParkingDataModal(data) {
 
 
 function updateCreateParkingAjax(type, url, data) {
+    $.LoadingOverlay("show");
     return $.ajax({
         headers: {
             'Content-Type': 'application/json'
@@ -91,6 +92,7 @@ $(document).ready(function () {
         rowData = activeParkingDataTable.row($(this).parents('tr')).data();
         rowData.state = 'INACTIVE';
         updateCreateParkingAjax('put', 'update', rowData).done(function () {
+            $.LoadingOverlay("hide");
             updateActiveParkingTable();
             updateInactiveParkingTable();
         });
@@ -100,19 +102,22 @@ $(document).ready(function () {
         rowData = inactiveParkingDataTable.row($(this).parents('tr')).data();
         rowData.state = 'ACTIVE';
         updateCreateParkingAjax('put', 'update', rowData).done(function () {
+            $.LoadingOverlay("hide");
             updateActiveParkingTable();
             updateInactiveParkingTable();
         });
     });
 
     $('#deleteParkingButton').on('click', function () {
+        $.LoadingOverlay("show");
         $.ajax({
             url: '/parking/api/parking/delete/' + rowData.id,
             type: 'delete'
         }).done(function () {
+            $.LoadingOverlay("hide");
             closeOpenModal('#deleteParkingModal');
             updateInactiveParkingTable();
-            addActivityRowDashboard('parking', rowData.id, 'deleted');
+            addActivityRowDashboard('PARKING', rowData.id, 'DELETED');
         });
     });
 
@@ -130,19 +135,21 @@ $(document).ready(function () {
         var parkingFormHeader = document.getElementById('parkingModalLabel').innerText;
         if (parkingFormHeader.indexOf('Create') > -1) {
             updateCreateParkingAjax('post', 'create', data).done(function (parking) {
+                $.LoadingOverlay("hide");
                 closeOpenModal('#parkingModal');
                 clearForm('#parkingForm');
                 updateActiveParkingTable();
-                addActivityRowDashboard('parking', parking.id, 'created');
+                addActivityRowDashboard('PARKING', parking.id, 'CREATED');
 
             });
         } else if (parkingFormHeader.indexOf('Edit') > -1) {
             data.id = getTableRowId();
             updateCreateParkingAjax('put', 'update', data).done(function (parking) {
+                $.LoadingOverlay("hide");
                 closeOpenModal('#parkingModal');
                 updateActiveParkingTable();
                 $('#parkingModalHeader').text("Create New Parking");
-                addActivityRowDashboard('parking', parking.id, 'updated');
+                addActivityRowDashboard('PARKING', parking.id, 'UPDATED');
 
             });
         }

@@ -1,6 +1,9 @@
-
+html, body {
+    width: 100%;
+    height: 100%;
+}
 /* Remove the navbar's default margin-bottom and rounded borders */
-.navbar {
+.navbar.custom {
     margin-bottom: 0;
     border-radius: 0;
 }
@@ -13,15 +16,15 @@
 
 /* Set gray background color and 100% height */
 .sidenav {
-    /*padding-top: 20px;*/
-    background-color: 	#cccccc;
+    background-color: #cccccc;
     height: 100%;
+    border: 1px solid skyblue;
+    width: 100px;
+    position: relative;
 }
-
 /* Set black background color, white text and some padding */
 footer {
     background-color: #555;
-    position: relative;
     color: white;
     padding-top:20px;
     margin-top: -150px;
@@ -56,4 +59,8 @@ footer {
 
 .modal-body .form-horizontal .col-sm-offset-2 {
     margin-left: 15px;
+}
+
+.btn-custom{
+    margin-top: 15px;
 }

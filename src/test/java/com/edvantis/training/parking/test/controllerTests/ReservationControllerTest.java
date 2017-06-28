@@ -79,8 +79,8 @@ public class ReservationControllerTest {
         when(reservationServiceMock.getAvailableGaragesByParking(any(Date.class), any(Date.class), eq(1L))).thenReturn(garageList);
 
         mockMvc.perform(get("/parking/api/reservation/availableGarages/parking/{parkingId}", 1)
-                .param("from", "2017-04-25")
-                .param("to", "2018-05-29"))
+                .param("from", "2017-04-25 00:00:00")
+                .param("to", "2018-05-29 00:00:00"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(TestsHelper.APPLICATION_JSON_UTF8))
                 .andExpect(jsonPath("$", hasSize(2)))
@@ -108,10 +108,11 @@ public class ReservationControllerTest {
         r1.setParkingId(1);
         r1.setOwnerId(1);
         r1.setId(1L);
+        r1.setVehicleNumber("12345678");
 
         when(reservationServiceMock.makeReservation(any(Reservation.class))).thenReturn(r1);
         mockMvc.perform(
-                post("/parking/api/reservations/addReservation")
+                post("/parking/api/reservation/addReservation")
                         .contentType(TestsHelper.APPLICATION_JSON_UTF8)
                         .content(createReservationInJson(r1)))
                 .andExpect(status().isCreated());

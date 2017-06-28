@@ -2,7 +2,8 @@
 <%@ page session="false" %>
 <html>
 <head>
-    <title>parking-management-system</title>
+    <title>Parking management system</title>
+    <link rel="icon" href="../../resources/img/parking_logo.png">
     <link href="<c:url value="../../resources/css/custom.css"/>" rel="stylesheet">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdn.datatables.net/1.10.15/css/dataTables.bootstrap.min.css">
@@ -12,8 +13,7 @@
           rel="stylesheet">
 </head>
 <body>
-
-<nav class="navbar navbar-inverse">
+<nav class="navbar-inverse">
     <div class="container-fluid">
         <div class="navbar-header">
             <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
@@ -174,7 +174,7 @@
                                     </thead>
                                     <tr>
                                     </tr>
-                                    <tbody>
+                                    <tbody id="activTableBody">
                                     </tbody>
                                 </table>
                             </div>
@@ -389,7 +389,7 @@
             </div>
         </div>
         <div class="col-sm-2 sidenav">
-            <button id="add_owner" type="button" class="btn btn-primary btn-block"
+            <button id="add_owner" type="button" class="btn btn-primary btn-block btn-custom"
                     data-toggle="modal"
                     data-target="#ownerModal"
                     style="display:none;">
@@ -484,7 +484,7 @@
                     </div>
                 </div>
             </div>
-            <button id="add_vehicle" type="button" class="btn btn-primary btn-block"
+            <button id="add_vehicle" type="button" class="btn btn-primary btn-block btn-custom"
                     data-toggle="modal"
                     data-target="#vehicleModal"
                     style="display:none;">
@@ -576,7 +576,7 @@
                     </div>
                 </div>
             </div>
-            <button id="add_reservation" type="button" class="btn btn-primary btn-block" data-toggle="modal"
+            <button id="add_reservation" type="button" class="btn btn-primary btn-block btn-custom" data-toggle="modal"
                     data-target="#reservationModal" style="display:none;">
                 Make Reservation
             </button>
@@ -709,7 +709,7 @@
                     </div>
                 </div>
             </div>
-            <button id="add_parking" type="button" class="btn btn-primary btn-block"
+            <button id="add_parking" type="button" class="btn btn-primary btn-block btn-custom"
                     data-toggle="modal"
                     data-target="#parkingModal"
                     style="display:none;">
@@ -791,6 +791,7 @@
 <script src="https://cdn.datatables.net/1.10.15/js/jquery.dataTables.min.js"></script>
 <script src="https://cdn.datatables.net/1.10.15/js/dataTables.bootstrap.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.10.6/moment.min.js"></script>
+<script src="https://cdn.jsdelivr.net/jquery.loadingoverlay/latest/loadingoverlay.min.js"></script>
 <script type="text/javascript"
         src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.1/js/bootstrap-datepicker.min.js"></script>
 <script type="text/javascript" src="<c:url value="../../resources/js/general.js"/>"></script>

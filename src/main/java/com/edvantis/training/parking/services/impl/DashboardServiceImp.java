@@ -6,10 +6,7 @@ import com.edvantis.training.parking.services.DashboardService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 /**
  * Created by taras.fihurnyak on 6/15/2017.
@@ -32,7 +29,9 @@ public class DashboardServiceImp implements DashboardService {
 
     @Override
     public List<ActivityLog> getAllActivities() {
-        return new ArrayList<>(activityRepo.getAll());
+        List<ActivityLog> logList = new ArrayList<>(activityRepo.getAll());
+        logList.sort(Comparator.comparing(ActivityLog::getCreatedDate).reversed());
+        return logList;
     }
 
     @Override
@@ -45,6 +44,12 @@ public class DashboardServiceImp implements DashboardService {
             Date activityDate = i.getCreatedDate();
             if (activityDate.before(yesterday))
                 activityRepo.delete(i.getId());
+        }
+        if (list.size() > 15) {
+            System.out.println("15 index: " + list.get(15));
+            for (int i = 15; i <= list.size() - 1; i++) {
+                activityRepo.delete(list.get(i).getId());
+            }
         }
     }
 }

@@ -117,7 +117,7 @@ public class OwnerControllerTest {
 
         when(vehicleServiceMock.getOwnerVehicles(1)).thenReturn(vehicList);
 
-        mockMvc.perform(get("/parking/api/owner/1/vehicles"))
+        mockMvc.perform(get("/parking/api/vehicles/owner/1"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(TestsHelper.APPLICATION_JSON_UTF8))
                 .andExpect(jsonPath("$", hasSize(2)))
@@ -145,7 +145,7 @@ public class OwnerControllerTest {
         doNothing().when(ownerServiceMock).addNewOwner(owner);
 
         mockMvc.perform(
-                post("/parking/api/owners/createOwner")
+                post("/parking/api/owner/createOwner")
                         .contentType(TestsHelper.APPLICATION_JSON_UTF8)
                         .content(createOwnerInJson(owner)))
                 .andExpect(status().isCreated());

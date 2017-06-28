@@ -48,7 +48,7 @@ public class VehicleJpaRepository extends CrudRepository<Vehicle> implements Veh
         Set<Vehicle> vehicles = new HashSet<>();
         EntityManager em = emFactory.createEntityManager();
         String makeQuery = "SELECT t1.ID " +
-                "FROM vehicle as t1 " +
+                "FROM VEHICLE as t1 " +
                 "WHERE t1.OWNER_ID = " + ownerId +
                 " AND t1.STATE = 'ACTIVE'";
         List<? extends BigInteger> vehicleIdList = em.createNativeQuery(makeQuery).getResultList();

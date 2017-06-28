@@ -135,7 +135,7 @@ public class Reservation {
     public int hashCode() {
         int result = 31 * begin.hashCode();
         result = 31 * result + end.hashCode();
-        result = 31 * result + vehicleNumber.hashCode();
+//        result = 31 * result + vehicleNumber.hashCode();
         result = 31 * result + (int) (parkingId ^ (parkingId >>> 32));
         result = 31 * result + (int) (ownerId ^ (ownerId >>> 32));
         result = 31 * result + (int) (garageId ^ (garageId >>> 32));

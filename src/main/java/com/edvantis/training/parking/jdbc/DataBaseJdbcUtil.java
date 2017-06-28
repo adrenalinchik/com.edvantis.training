@@ -35,7 +35,7 @@ public class DataBaseJdbcUtil {
                 flyway.migrate();
                 logger.info("Tables for {} db are created.", dbName);
             } else if (url.contains("h2")) {
-                url = url.replace("test", "");
+                url = url.replace("parkingDb", "");
                 logger.info("Database {} is created.", dbName);
                 Flyway flyway = new ApplicationConfig().getFlywayInstance(url + dbName, prop.getProperty("login"), prop.getProperty("password"));
                 flyway.setLocations("classpath:db/migration");

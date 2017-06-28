@@ -42,6 +42,7 @@ function clearForm(form) {
 }
 
 function updateCreateVehicleAjax(type, url, data) {
+    $.LoadingOverlay("show");
     return $.ajax({
         headers: {
             'Content-Type': 'application/json'
@@ -127,6 +128,7 @@ $(document).ready(function () {
         rowData = activeVehicleDataTable.row($(this).parents('tr')).data();
         rowData.state = 'INACTIVE';
         updateCreateVehicleAjax('put', 'updateVehicle', rowData).done(function () {
+            $.LoadingOverlay("hide");
             updateActiveVehicleTable();
             updateInactiveVehicleTable();
         });
@@ -136,6 +138,7 @@ $(document).ready(function () {
         rowData = inactiveVehicleDataTable.row($(this).parents('tr')).data();
         rowData.state = 'ACTIVE';
         updateCreateVehicleAjax('put', 'updateVehicle', rowData).done(function () {
+            $.LoadingOverlay("hide");
             updateActiveVehicleTable();
             updateInactiveVehicleTable();
         });
@@ -154,40 +157,44 @@ $(document).ready(function () {
     $('#vehicleForm').submit(function (event) {
         data = { //grab data from form inputs
             owner: {"id": getOwnerId($('#vehicleOwnerInput')[0].value)},
-            model: $('#vehicleNumberInput')[0].value,
-            number: $('#vehicleModelInput')[0].value,
+            model: $('#vehicleModelInput')[0].value,
+            number: $('#vehicleNumberInput')[0].value,
             carType: $('#vehicleType')[0].value
         };
         event.preventDefault(); // prevent default page reload
         var vehicleFormHeader = document.getElementById('vehicleModalLabel').innerText;
         if (vehicleFormHeader.indexOf('Create') > -1) {
             updateCreateVehicleAjax('post', 'createVehicle', data).done(function (vehicle) {
+                $.LoadingOverlay("hide");
                 closeOpenModal('#vehicleModal');
                 clearForm('#vehicleForm');
                 updateActiveVehicleTable();
-                addActivityRowDashboard('vehicle', vehicle.id, 'created');
+                addActivityRowDashboard('VEHICLE', vehicle.id, 'CREATED');
 
             });
         } else if (vehicleFormHeader.indexOf('Edit') > -1) {
             data.id = getTableRowId();
             updateCreateVehicleAjax('put', 'updateVehicle', data).done(function (vehicle) {
+                $.LoadingOverlay("hide");
                 closeOpenModal('#vehicleModal');
                 updateActiveVehicleTable();
                 $('#vehicleModalHeader').text("Create New Vehicle");
-                addActivityRowDashboard('vehicle', vehicle.id, 'updated');
+                addActivityRowDashboard('VEHICLE', vehicle.id, 'UPDATED');
 
             });
         }
     });
 
     $('#deleteVehicleButton').on('click', function () {
+        $.LoadingOverlay("show");
         $.ajax({
             url: '/parking/api/vehicle/delete/' + rowData.id,
             type: 'delete'
         }).done(function () {
+            $.LoadingOverlay("hide");
             closeOpenModal('#deleteVehicleModal');
             updateInactiveVehicleTable();
-            addActivityRowDashboard('vehicle', rowData.id, 'deleted');
+            addActivityRowDashboard('VEHICLE', rowData.id, 'DELETED');
         });
     });
 });

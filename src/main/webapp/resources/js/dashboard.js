@@ -25,6 +25,7 @@ function getDashboardEndDateValue() {
 }
 
 function getActivitiesToTable() {
+    $.LoadingOverlay("show");
     $.ajax({
         url: '/parking/api/activities'
     }).done(function (activities) {
@@ -43,16 +44,20 @@ function getActivitiesToTable() {
                     break;
             }
         });
+        $.LoadingOverlay("hide");
     })
+}
+
+function updateActivitiesTable() {
+    deleteOldActivities();
+    location.reload();
 }
 
 function deleteOldActivities() {
     $.ajax({
         url: '/parking/api/activities/delete',
-        type:'delete'
-    }).done(
-        getActivitiesToTable()
-    )
+        type: 'delete'
+    })
 }
 
 $(document).ready(function () {
@@ -75,10 +80,10 @@ $(document).ready(function () {
             {"data": "parkingId"}
         ]
     });
-
-    deleteOldActivities();
+    getActivitiesToTable();
 
     $('#dashboardTab').click(function () {
+        updateActivitiesTable();
         reservationDataTable.ajax.reload();
     });
 
@@ -133,16 +138,20 @@ $(document).ready(function () {
         event.preventDefault();
         let ownerValue = $('#dashboardOwnerInput')[0].value;
         if (ownerValue.length > 1) {
+            $.LoadingOverlay("show");
             $.ajax({
                 url: '/parking/api/owners/' + getOwnerId(ownerValue) + "?from=" + getDashboardStartDateValue() + "&to=" + getDashboardEndDateValue(),
             }).done(function (result) {
+                $.LoadingOverlay("hide");
                 $('#income_result').val("$" + result);
                 document.getElementById('income_result').style.display = 'block';
             });
         } else if (getDashboardEndDateValue().length > 2 && getDashboardStartDateValue().length > 2) {
+            $.LoadingOverlay("show");
             $.ajax({
                 url: '/parking/api/owners/profit' + "?from=" + getDashboardStartDateValue() + "&to=" + getDashboardEndDateValue(),
             }).done(function (result) {
+                $.LoadingOverlay("hide");
                 $('#income_result').val("For All Owners:  $" + result);
                 document.getElementById('income_result').style.display = 'block';
             });

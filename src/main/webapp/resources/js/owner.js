@@ -47,6 +47,7 @@ function clearForm(form) {
 }
 
 function updateCreateOwnerAjax(type, url, data) {
+    $.LoadingOverlay("show");
     return $.ajax({
         headers: {
             'Content-Type': 'application/json'
@@ -130,6 +131,7 @@ $(document).ready(function () {
         rowData = activeDataTable.row($(this).parents('tr')).data();
         rowData.state = 'INACTIVE';
         updateCreateOwnerAjax('put', 'updateOwner', rowData).done(function () {
+            $.LoadingOverlay("hide");
             updateActiveOwnerTable();
             updateInactiveOwnerTable();
         });
@@ -139,6 +141,7 @@ $(document).ready(function () {
         rowData = inactiveDataTable.row($(this).parents('tr')).data();
         rowData.state = 'ACTIVE';
         updateCreateOwnerAjax('put', 'updateOwner', rowData).done(function () {
+            $.LoadingOverlay("hide");
             updateActiveOwnerTable();
             updateInactiveOwnerTable();
         });
@@ -161,18 +164,20 @@ $(document).ready(function () {
         var ownerFormHeader = document.getElementById('ownerModalLabel').innerText;
         if (ownerFormHeader.indexOf('Create') > -1) {
             updateCreateOwnerAjax('post', 'createOwner', data).done(function (owner) {
+                $.LoadingOverlay("hide");
                 closeOpenModal('#ownerModal');
                 clearForm('#ownerForm');
                 updateActiveOwnerTable();
-                addActivityRowDashboard('owner', owner.id, 'created');
+                addActivityRowDashboard('OWNER', owner.id, 'CREATED');
             });
         } else if (ownerFormHeader.indexOf('Edit') > -1) {
             data.id = getTableRowId();
             updateCreateOwnerAjax('put', 'updateOwner', data).done(function (owner) {
+                $.LoadingOverlay("hide");
                 closeOpenModal('#ownerModal');
                 updateActiveOwnerTable();
                 $('#ownerModalHeader').text("Create New Owner");
-                addActivityRowDashboard('owner', owner.id, 'updated');
+                addActivityRowDashboard('OWNER', owner.id, 'UPDATED');
 
             });
         }
@@ -183,13 +188,15 @@ $(document).ready(function () {
     });
 
     $('#deleteOwnerButton').on('click', function () {
+        $.LoadingOverlay("show");
         $.ajax({
             url: '/parking/api/owner/delete/' + rowData.id,
             type: 'delete'
         }).done(function () {
+            $.LoadingOverlay("hide");
             closeOpenModal('#deleteOwnerModal');
             updateInactiveOwnerTable();
-            addActivityRowDashboard('owner', rowData.id, 'deleted');
+            addActivityRowDashboard('OWNER', rowData.id, 'DELETED');
         });
     });
 

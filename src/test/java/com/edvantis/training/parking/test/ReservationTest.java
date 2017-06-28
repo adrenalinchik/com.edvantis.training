@@ -43,6 +43,7 @@ public class ReservationTest {
         garageRepo = ctx.getBean(GarageRepository.class);
         reservationRepo = ctx.getBean(ReservationRepository.class);
         helpService = ctx.getBean(HelpService.class);
+        resrvService = ctx.getBean(ReservationService.class);
         helpService.populateWithMockObjects(TestsHelper.generateObjects());
         Assert.assertNotNull(ownerRepo.getById(1));
         Assert.assertNotNull(vehicleRepo.getById(1));
