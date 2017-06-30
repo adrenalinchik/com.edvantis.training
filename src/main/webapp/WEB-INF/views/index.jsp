@@ -43,7 +43,7 @@
 
 <div class="container-fluid text-center">
     <div class="row content paddingTopBottom20">
-        <div class="col-sm-8 col-sm-offset-1 text-left app-content">
+        <div class="col-sm-8 col-sm-offset-2 text-left app-content">
           <h1><a href="<c:url value="/"/>">Parking Management System</a></h1>
           <div class="tab-content">
             <div id="dashboard" class="tab-pane fade in active">
@@ -785,6 +785,7 @@
         <a class="nav-link" id="parking_footer_link">parking</a>
     </h4>
 </footer>
+
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 <script src="https://cdn.datatables.net/1.10.15/js/jquery.dataTables.min.js"></script>

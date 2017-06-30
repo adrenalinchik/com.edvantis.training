@@ -37,16 +37,15 @@ public class DashboardServiceImp implements DashboardService {
     @Override
     public void deleteActivities() {
         List<ActivityLog> list = getAllActivities();
-        final Calendar cal = Calendar.getInstance();
-        cal.add(Calendar.DATE, -1);
-        Date yesterday = cal.getTime();
-        for (ActivityLog i : list) {
-            Date activityDate = i.getCreatedDate();
-            if (activityDate.before(yesterday))
-                activityRepo.delete(i.getId());
-        }
+//        final Calendar cal = Calendar.getInstance();
+//        cal.add(Calendar.DATE, -1);
+//        Date yesterday = cal.getTime();
+//        for (ActivityLog i : list) {
+//            Date activityDate = i.getCreatedDate();
+//            if (activityDate.before(yesterday))
+//                activityRepo.delete(i.getId());
+//        }
         if (list.size() > 15) {
-            System.out.println("15 index: " + list.get(15));
             for (int i = 15; i <= list.size() - 1; i++) {
                 activityRepo.delete(list.get(i).getId());
             }
